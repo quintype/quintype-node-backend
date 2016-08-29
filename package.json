@@ -1,0 +1,27 @@
+{
+  "name": "quintype-backend",
+  "version": "0.0.1",
+  "description": "client for accessing quintype API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/quintype/quintype-backend-js.git"
+  },
+  "keywords": [
+    "quintype"
+  ],
+  "author": "Quintype Developers <dev-core@quintype.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quintype/quintype-backend-js/issues"
+  },
+  "homepage": "https://github.com/quintype/quintype-backend-js#readme",
+  "dependencies": {
+    "lodash": "^4.15.0",
+    "request": "^2.74.0",
+    "request-promise": "^4.1.1"
+  }
+}
