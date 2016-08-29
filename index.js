@@ -29,9 +29,9 @@ class Story {
     return new Proxy(new Story(story), handler);
   }
 
-  static getStories(client, params) {
+  static getStories(client, storyGroup, params) {
     return client
-      .getStories(params)
+      .getStories(_.extend({'story-group': storyGroup}, params))
       .then(response => _.map(response["stories"], story => Story.build(story)));
   }
 
