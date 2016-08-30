@@ -64,6 +64,23 @@ class Member {
 }
 wrapBuildFunction(Member, "member");
 
+class Author {
+  constructor(author) {
+    this.author = author;
+  }
+
+  asJson() {
+    return this.author;
+  }
+
+  static getAuthor(client, authorId) {
+    return client
+      .getAuthor(authorId)
+      .then(response => response && Author.build(response["author"]));
+  }
+}
+wrapBuildFunction(Author, "author");
+
 class Client {
   constructor(baseUrl) {
     this.baseUrl = baseUrl;
@@ -105,6 +122,14 @@ class Client {
     });
   }
 
+  getAuthor(authorId) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/authors/" + authorId,
+      json: true
+    });
+  }
+
   updateConfig() {
     return rp({
       method: 'GET',
@@ -117,5 +142,6 @@ class Client {
 module.exports = {
   Story: Story,
   Client: Client,
-  Member: Member
+  Member: Member,
+  Author: Author
 };
