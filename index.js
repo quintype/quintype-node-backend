@@ -41,6 +41,14 @@ class Story {
       .getStoryBySlug(slug)
       .then(response => Story.build(response["story"]));
   }
+
+  static getSearch(client, params) {
+    return client
+      .getSearch(params)
+      .then(response =>
+        _.merge(response["results"],
+          {'stories': _.map(response["results"]["stories"], story => Story.build(story))}));
+  }
 }
 wrapBuildFunction(Story, "story");
 
@@ -103,6 +111,15 @@ class Client {
       },
       json: true
     });
+  }
+
+  getSearch(params) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/search",
+      qs: params,
+      json: true
+    })
   }
 
   updateConfig() {
