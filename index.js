@@ -39,7 +39,7 @@ class Story {
   static getStoryBySlug(client, slug) {
     return client
       .getStoryBySlug(slug)
-      .then(story => Story.build(story));
+      .then(response => Story.build(response["story"]));
   }
 }
 wrapBuildFunction(Story, "story");
