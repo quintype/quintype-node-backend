@@ -1,6 +1,7 @@
 'use strict';
 
 var rp = require('request-promise');
+var Promise = require("bluebird");
 var _ = require("lodash");
 
 function wrapBuildFunction(clazz, upstream) {
@@ -41,8 +42,27 @@ class Story {
       .then(story => Story.build(story));
   }
 }
-
 wrapBuildFunction(Story, "story");
+
+class Member {
+  constructor(member) {
+    this.member = member;
+  }
+
+  asJson() {
+    return this.member;
+  }
+
+  static getCurrentMember(client, authToken) {
+    if(!authToken || authToken == "")
+      return new Promise((resolve, reject) => resolve(null));
+    return client
+      .getCurrentMember(authToken)
+      .catch(() => null)
+      .then(response => response && Member.build(response["member"]));
+  }
+}
+wrapBuildFunction(Member, "member");
 
 class Client {
   constructor(baseUrl) {
@@ -74,6 +94,17 @@ class Client {
     return this.config;
   }
 
+  getCurrentMember(authToken) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/members/me",
+      headers: {
+        "X-QT-AUTH": authToken
+      },
+      json: true
+    });
+  }
+
   updateConfig() {
     return rp({
       method: 'GET',
@@ -85,5 +116,6 @@ class Client {
 
 module.exports = {
   Story: Story,
-  Client: Client
+  Client: Client,
+  Member: Member
 };
