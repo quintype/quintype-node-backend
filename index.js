@@ -36,6 +36,12 @@ class Story {
       .then(response => _.map(response["stories"], story => Story.build(story)));
   }
 
+  static getRelatedStories(client, storyId) {
+    return client
+      .getRelatedStories(storyId)
+      .then(response => _.map(response["related-stories"], story => Story.build(story)));
+  }
+
   static getStoryBySlug(client, slug) {
     return client
       .getStoryBySlug(slug)
@@ -67,10 +73,27 @@ class Member {
     return client
       .getCurrentMember(authToken)
       .catch(() => null)
-      .then(response => response && Member.build(response["member"]));
+      .then(response => response && Member.build(response));
   }
 }
 wrapBuildFunction(Member, "member");
+
+class Author {
+  constructor(author) {
+    this.author = author;
+  }
+
+  asJson() {
+    return this.author;
+  }
+
+  static getAuthor(client, authorId) {
+    return client
+      .getAuthor(authorId)
+      .then(response => Author.build(response["author"]));
+  }
+}
+wrapBuildFunction(Author, "author");
 
 class Client {
   constructor(baseUrl) {
@@ -122,6 +145,22 @@ class Client {
     })
   }
 
+  getAuthor(id) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/authors/" + id,
+      json: true
+    })
+  }
+
+  getRelatedStories(storyId) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/stories/"+ storyId + "/related-stories",
+      json: true
+    })
+  }
+
   updateConfig() {
     return rp({
       method: 'GET',
@@ -134,5 +173,6 @@ class Client {
 module.exports = {
   Story: Story,
   Client: Client,
-  Member: Member
+  Member: Member,
+  Author: Author
 };
