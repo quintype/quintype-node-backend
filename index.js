@@ -72,8 +72,8 @@ class Member {
       return new Promise((resolve, reject) => resolve(null));
     return client
       .getCurrentMember(authToken)
-      .catch(() => null)
-      .then(response => response && Member.build(response));
+      .then(response => response && Member.build(response["member"]))
+      .catch(() => null);
   }
 }
 wrapBuildFunction(Member, "member");
