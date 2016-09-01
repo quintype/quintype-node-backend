@@ -36,9 +36,9 @@ class Story {
       .then(response => _.map(response["stories"], story => Story.build(story)));
   }
 
-  static getRelatedStories(client, storyId) {
+  getRelatedStories(client) {
     return client
-      .getRelatedStories(storyId)
+      .getRelatedStories(this.id)
       .then(response => _.map(response["related-stories"], story => Story.build(story)));
   }
 
