@@ -1,6 +1,6 @@
 {
   "name": "quintype-backend",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
