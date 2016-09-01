@@ -36,10 +36,24 @@ class Story {
       .then(response => _.map(response["stories"], story => Story.build(story)));
   }
 
+  static getRelatedStories(client, storyId) {
+    return client
+      .getRelatedStories(storyId)
+      .then(response => _.map(response["related-stories"], story => Story.build(story)));
+  }
+
   static getStoryBySlug(client, slug) {
     return client
       .getStoryBySlug(slug)
       .then(response => Story.build(response["story"]));
+  }
+
+  static getSearch(client, params) {
+    return client
+      .getSearch(params)
+      .then(response =>
+        _.merge(response["results"],
+          {'stories': _.map(response["results"]["stories"], story => Story.build(story))}));
   }
 }
 wrapBuildFunction(Story, "story");
@@ -59,7 +73,7 @@ class Member {
     return client
       .getCurrentMember(authToken)
       .catch(() => null)
-      .then(response => response && Member.build(response["member"]));
+      .then(response => response && Member.build(response));
   }
 }
 wrapBuildFunction(Member, "member");
@@ -128,6 +142,23 @@ class Client {
       uri: this.baseUrl + "/api/v1/authors/" + authorId,
       json: true
     });
+  }
+
+  getSearch(params) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/search",
+      qs: params,
+      json: true
+    })
+  }
+
+  getRelatedStories(storyId) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/stories/"+ storyId + "/related-stories",
+      json: true
+    })
   }
 
   updateConfig() {
