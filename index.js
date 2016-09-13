@@ -92,6 +92,12 @@ class Author {
       .getAuthor(authorId)
       .then(response => response && Author.build(response["author"]));
   }
+
+  static getAuthors(client, params) {
+    return client
+      .getAuthors(params)
+      .then(authors => _.map(authors, author => Author.build(author)));
+  }
 }
 wrapBuildFunction(Author, "author");
 
@@ -140,6 +146,15 @@ class Client {
     return rp({
       method: 'GET',
       uri: this.baseUrl + "/api/v1/authors/" + authorId,
+      json: true
+    });
+  }
+
+  getAuthors(params) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/authors",
+      qs: params,
       json: true
     });
   }
