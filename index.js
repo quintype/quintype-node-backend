@@ -181,7 +181,7 @@ class Client {
       method: 'GET',
       uri: this.baseUrl + "/api/v1/config",
       json: true
-    }).then(config => this.config = config);
+    }).then(config => this.config = _.isEmpty(config) ? this.config : config);
   }
 }
 
