@@ -17,6 +17,10 @@ function wrapBuildFunction(clazz, upstream) {
   }
 }
 
+function just(any) {
+  return new Promise((resolve, reject) => resolve(any));
+}
+
 class Story {
   constructor(story) {
     this.story = story;
@@ -128,7 +132,7 @@ class Client {
   }
 
   getConfig() {
-    return this.config;
+    return this.config ? just(this.config) : updateConfig();
   }
 
   getCurrentMember(authToken) {
@@ -181,7 +185,9 @@ class Client {
       method: 'GET',
       uri: this.baseUrl + "/api/v1/config",
       json: true
-    }).then(config => this.config = _.isEmpty(config) ? this.config : config);
+    })
+    .then(config => this.config = config)
+    .catch(response => console.log(response.status, response.body));
   }
 }
 
