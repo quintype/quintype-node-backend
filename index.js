@@ -132,7 +132,7 @@ class Client {
   }
 
   getConfig() {
-    return this.config ? just(this.config) : updateConfig();
+    return this.config ? just(this.config) : this.updateConfig();
   }
 
   getCurrentMember(authToken) {
