@@ -110,7 +110,7 @@ class Client {
     this.baseUrl = baseUrl;
     this.config = null;
     this.interval = setInterval(() => this.updateConfig(), 120000);
-    this.updateConfig();
+    this.initialUpdateConfig = this.updateConfig();
   }
 
   getStories(params) {
@@ -132,7 +132,7 @@ class Client {
   }
 
   getConfig() {
-    return this.config ? just(this.config) : this.updateConfig();
+    return this.config ? just(this.config) : this.initialUpdateConfig;
   }
 
   getCurrentMember(authToken) {
@@ -186,8 +186,7 @@ class Client {
       uri: this.baseUrl + "/api/v1/config",
       json: true
     })
-    .then(config => this.config = config)
-    .catch(response => console.log(response.status, response.body));
+    .then(config => this.config = config);
   }
 }
 
