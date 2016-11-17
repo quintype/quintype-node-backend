@@ -131,6 +131,14 @@ class Client {
     });
   }
 
+  getStoryById(id) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/stories/" + id,
+      json: true
+    });
+  }
+
   getConfig() {
     return this.config ? just(this.config) : this.initialUpdateConfig;
   }
