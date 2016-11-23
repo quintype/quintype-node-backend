@@ -122,11 +122,11 @@ class Client {
     });
   }
 
-  getStoryBySlug(slug) {
+  getStoryBySlug(slug, params) {
     return rp({
       method: 'GET',
       uri: this.baseUrl + "/api/v1/stories-by-slug",
-      qs: {slug: slug},
+      qs: _.merge({slug: slug}, params),
       json: true
     });
   }
