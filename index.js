@@ -196,6 +196,16 @@ class Client {
     })
     .then(config => this.config = config);
   }
+
+  postComments(params){
+    return rp ({
+      method: 'POST',
+      uri: this.baseUrl + "/api/v1/comments",
+      qs: params,
+      json: true
+    })
+  }
+
 }
 
 module.exports = {
