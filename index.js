@@ -197,11 +197,14 @@ class Client {
     .then(config => this.config = config);
   }
 
-  postComments(params){
+  postComments(params, authToken){
     return rp ({
       method: 'POST',
       uri: this.baseUrl + "/api/v1/comments",
-      qs: params,
+      body: params,
+      headers: {
+          "X-QT-AUTH": authToken
+      },
       json: true
     })
   }
