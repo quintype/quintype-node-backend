@@ -52,6 +52,12 @@ class Story {
       .then(response => Story.build(response["story"]));
   }
 
+  static getStoryById(client, id) {
+    return client
+      .getStoryById(id)
+      .then(response => Story.build(response["story"]));
+  }
+
   static getSearch(client, params) {
     return client
       .getSearch(params)
