@@ -119,6 +119,15 @@ class Client {
     this.initialUpdateConfig = this.updateConfig();
   }
 
+  getCollectionBySlug(slug, params) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/collections/" + slug,
+      qs: params,
+      json: true
+    })
+  }
+
   getStories(params) {
     return rp({
       method: 'GET',
