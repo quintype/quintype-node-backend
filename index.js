@@ -223,7 +223,15 @@ class Client {
       json: true
     })
   }
-
+  
+  getInBulk(requests){
+    return rp ({
+      method: 'POST',
+      uri: this.baseUrl + "/api/v1/bulk",
+      body: params,
+      json: true
+    })
+  }
 }
 
 module.exports = {
