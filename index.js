@@ -228,7 +228,7 @@ class Client {
     return rp ({
       method: 'POST',
       uri: this.baseUrl + "/api/v1/bulk",
-      body: params,
+      body: requests,
       json: true
     })
   }
