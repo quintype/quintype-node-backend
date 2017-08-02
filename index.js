@@ -119,6 +119,14 @@ class Client {
     this.initialUpdateConfig = this.updateConfig();
   }
 
+  getTags(slug) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/tags/" + slug,
+      json: true
+    })
+  }  
+
   getCollectionBySlug(slug, params) {
     return rp({
       method: 'GET',
