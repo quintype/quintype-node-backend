@@ -127,6 +127,14 @@ class Client {
     })
   }  
 
+  getPublicPreviewStory(publicPreviewKey) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/preview/story/" + publicPreviewKey,
+      json: true
+    })
+  }
+
   getCollectionBySlug(slug, params) {
     return rp({
       method: 'GET',
