@@ -52,6 +52,12 @@ class Story {
       .then(response => Story.build(response["story"]));
   }
 
+  static getPublicPreviewStory(publicPreviewKey) {
+    return client
+      .getPublicPreviewStory(publicPreviewKey)
+      .then(response => Story.build(response["story"]));
+  }
+
   static getStoryById(client, id) {
     return client
       .getStoryById(id)
@@ -125,7 +131,7 @@ class Client {
       uri: this.baseUrl + "/api/v1/tags/" + slug,
       json: true
     })
-  }  
+  }
 
   getPublicPreviewStory(publicPreviewKey) {
     return rp({
@@ -239,7 +245,7 @@ class Client {
       json: true
     })
   }
-  
+
   getInBulk(requests){
     return rp ({
       method: 'POST',
