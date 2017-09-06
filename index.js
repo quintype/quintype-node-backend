@@ -52,7 +52,7 @@ class Story {
       .then(response => Story.build(response["story"]));
   }
 
-  static getPublicPreviewStory(publicPreviewKey) {
+  static getPublicPreviewStory(client, publicPreviewKey) {
     return client
       .getPublicPreviewStory(publicPreviewKey)
       .then(response => Story.build(response["story"]));
