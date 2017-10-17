@@ -125,6 +125,15 @@ class Client {
     this.initialUpdateConfig = this.updateConfig();
   }
 
+  getFromBulkApiManager(slug, params) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/bulk/" + slug,
+      qs: params,
+      json: true
+    })
+  }  
+
   getTags(slug) {
     return rp({
       method: 'GET',
