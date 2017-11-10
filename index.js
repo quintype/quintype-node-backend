@@ -118,10 +118,12 @@ class Author {
 wrapBuildFunction(Author, "author");
 
 class Client {
-  constructor(baseUrl) {
+  constructor(baseUrl, temporaryClient) {
     this.baseUrl = baseUrl;
     this.config = null;
-    this.interval = setInterval(() => this.updateConfig(), 120000);
+    if(!temporaryClient) {
+      this.interval = setInterval(() => this.updateConfig(), 120000);
+    }
     this.initialUpdateConfig = this.updateConfig();
   }
 
@@ -132,7 +134,7 @@ class Client {
       qs: params,
       json: true
     })
-  }  
+  }
 
   getTags(slug) {
     return rp({
@@ -265,9 +267,15 @@ class Client {
   }
 }
 
+function buildClient(host, temporaryClient) {
+  const client = new Client(host, temporaryClient);
+  return client.config().then(_ => client);
+}
+
 module.exports = {
   Story: Story,
   Client: Client,
   Member: Member,
-  Author: Author
+  Author: Author,
+  buildClient: buildClient
 };
