@@ -125,6 +125,11 @@ class Client {
       this.interval = setInterval(() => this.updateConfig(), 120000);
     }
     this.initialUpdateConfig = this.updateConfig();
+    this.hostname = baseUrl.replace(/https?:\/\//, "");
+  }
+
+  getHostname() {
+    return this.hostname;
   }
 
   getFromBulkApiManager(slug, params) {
