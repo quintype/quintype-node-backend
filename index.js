@@ -86,7 +86,7 @@ class Collection {
   static getCollectionBySlug(client, slug, params) {
     return client
       .getCollectionBySlug(slug)
-      .then(response => response && Collection.build(response["collection"]));
+      .then(response => response && Collection.build(response["collection"] || response));
   }
 }
 wrapBuildFunction(Collection, "collection");
