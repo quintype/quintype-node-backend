@@ -74,6 +74,23 @@ class Story {
 }
 wrapBuildFunction(Story, "story");
 
+class Collection {
+  constructor(collection) {
+    this.collection = collection;
+  }
+
+  asJson() {
+    return this.collection;
+  }
+
+  static getCollectionBySlug(client, slug, params) {
+    return client
+      .getCollectionBySlug(slug)
+      .then(response => response && Collection.build(response["collection"]));
+  }
+}
+wrapBuildFunction(Collection, "collection");
+
 class Member {
   constructor(member) {
     this.member = member;
@@ -282,5 +299,6 @@ module.exports = {
   Client: Client,
   Member: Member,
   Author: Author,
+  Collection: Collection,
   buildClient: buildClient
 };
