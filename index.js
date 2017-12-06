@@ -134,6 +134,21 @@ class Author {
 }
 wrapBuildFunction(Author, "author");
 
+class Config {
+  constructor(config) {
+    this.config = config;
+  }
+
+  asJson() {
+    return this.config;
+  }
+
+  getStack(heading) {
+    return this.config.layout.stacks.find(stack => stack.heading == heading);
+  }
+}
+wrapBuildFunction(Config, "config");
+
 class Client {
   constructor(baseUrl, temporaryClient) {
     this.baseUrl = baseUrl;
@@ -264,7 +279,7 @@ class Client {
       uri: this.baseUrl + "/api/v1/config",
       json: true
     })
-    .then(config => this.config = config);
+    .then(config => this.config = Config.build(config));
   }
 
   postComments(params, authToken){
