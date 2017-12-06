@@ -139,7 +139,7 @@ class Client {
     this.baseUrl = baseUrl;
     this.config = null;
     if(!temporaryClient) {
-      this.interval = setInterval(() => this.updateConfig(), 120000);
+      this.interval = setInterval(() => this.updateConfig().catch(e => console.error("Unable to update config")), 120000);
     }
     this.initialUpdateConfig = this.updateConfig();
     this.hostname = baseUrl.replace(/https?:\/\//, "");

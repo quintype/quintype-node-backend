@@ -1,10 +1,10 @@
 {
   "name": "quintype-backend",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublishOnly": "git diff --quiet && git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master"
   },
   "repository": {
     "type": "git",
