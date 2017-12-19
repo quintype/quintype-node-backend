@@ -46,9 +46,9 @@ class Story {
       .then(response => _.map(response["related-stories"], story => Story.build(story)));
   }
 
-  static getStoryBySlug(client, slug) {
+  static getStoryBySlug(client, slug, params) {
     return client
-      .getStoryBySlug(slug)
+      .getStoryBySlug(slug, params)
       .then(response => Story.build(response["story"]));
   }
 
