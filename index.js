@@ -21,6 +21,11 @@ function just(any) {
   return new Promise((resolve, reject) => resolve(any));
 }
 
+function mapValues(f, object) {
+  return Object.entries(object)
+    .reduce((acc, [key, value]) => { acc[key] = f(value, key); return acc}, {})
+}
+
 class Story {
   constructor(story) {
     this.story = story;
@@ -70,6 +75,19 @@ class Story {
       .then(response =>
         _.merge(response["results"],
           {'stories': _.map(response["results"]["stories"], story => Story.build(story))}));
+  }
+
+  static getInBulk(client, requests) {
+    function wrapResult(result) {
+      if(!result.stories)
+        return result;
+      return Object.assign({}, result, {stories: result.stories.map(Story.build)})
+    }
+
+    return client
+      .getInBulk({requests: mapValues(r => Object.assign({_type: "stories"}, r), requests)})
+      .then(response => response["results"])
+      .then(results => mapValues(result => wrapResult(result), results))
   }
 }
 wrapBuildFunction(Story, "story");
@@ -295,11 +313,12 @@ class Client {
   }
 
   getInBulk(requests){
-    return rp ({
+    return rp({
       method: 'POST',
-      uri: this.baseUrl + "/api/v1/bulk",
+      uri: this.baseUrl + "/api/v1/bulk-request",
       body: requests,
-      json: true
+      json: true,
+      followAllRedirects: true
     })
   }
 }
