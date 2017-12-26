@@ -103,7 +103,7 @@ class Collection {
 
   static getCollectionBySlug(client, slug, params) {
     return client
-      .getCollectionBySlug(slug)
+      .getCollectionBySlug(slug, params)
       .then(response => response && Collection.build(response["collection"] || response));
   }
 }
