@@ -82,7 +82,6 @@ class Story {
 
     return client
       .getInBulk({requests: mapValues(r => Object.assign({_type: "stories"}, r), requests)})
-      .then(response => {console.log({results: mapValues(result => wrapResult(result), response["results"])}); return response})
       .then(response => BulkResults.build(mapValues(result => wrapResult(result), response["results"])));
   }
 }
