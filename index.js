@@ -35,10 +35,6 @@ class Story {
     return this.story;
   }
 
-  static build(story) {
-    return new Proxy(new Story(story), handler);
-  }
-
   static getStories(client, storyGroup, params) {
     return client
       .getStories(_.extend({'story-group': storyGroup}, params))
@@ -86,11 +82,28 @@ class Story {
 
     return client
       .getInBulk({requests: mapValues(r => Object.assign({_type: "stories"}, r), requests)})
-      .then(response => response["results"])
-      .then(results => mapValues(result => wrapResult(result), results))
+      .then(response => {console.log({results: mapValues(result => wrapResult(result), response["results"])}); return response})
+      .then(response => BulkResults.build(mapValues(result => wrapResult(result), response["results"])));
   }
 }
 wrapBuildFunction(Story, "story");
+
+class BulkResults {
+  constructor(results) {
+    this.results = results;
+  }
+
+  asJson() {
+    return mapValues(response => {
+      if(response.stories) {
+        return Object.assign({}, response, {stories: response.stories.map(story => story.asJson())})
+      } else {
+        return response;
+      }
+    }, this.results);
+  }
+}
+wrapBuildFunction(BulkResults, "results");
 
 class Collection {
   constructor(collection) {
