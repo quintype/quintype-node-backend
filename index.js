@@ -17,10 +17,6 @@ function wrapBuildFunction(clazz, upstream) {
   }
 }
 
-function just(any) {
-  return new Promise((resolve, reject) => resolve(any));
-}
-
 function mapValues(f, object) {
   return Object.entries(object)
     .reduce((acc, [key, value]) => { acc[key] = f(value, key); return acc}, {})
@@ -185,8 +181,8 @@ class Client {
     this.config = null;
     if(!temporaryClient) {
       this.interval = setInterval(() => this.updateConfig().catch(e => console.error("Unable to update config")), 120000);
+      this.initialUpdateConfig = this.updateConfig();
     }
-    this.initialUpdateConfig = this.updateConfig();
     this.hostname = baseUrl.replace(/https?:\/\//, "");
   }
 
@@ -255,7 +251,12 @@ class Client {
   }
 
   getConfig() {
-    return this.config ? just(this.config) : this.initialUpdateConfig;
+    if(this.config)
+      return Promise.resolve(this.config);
+
+    this.initialUpdateConfig = this.initialUpdateConfig || this.updateConfig();
+
+    return this.initialUpdateConfig;
   }
 
   getCurrentMember(authToken) {
