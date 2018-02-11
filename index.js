@@ -242,6 +242,16 @@ class Client {
     });
   }
 
+  getAmpStoryBySlug(slug, params) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "api/v1/amp/story?slug",
+      qs: _.merge({slug: slug}, params),
+      body: requests,
+      json: true
+    });
+  }
+
   getStoryById(id) {
     return rp({
       method: 'GET',
