@@ -334,6 +334,15 @@ class Client {
       followAllRedirects: true
     })
   }
+
+  getAmpStoryBySlug(slug) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/amp/story",
+      qs :  {slug},
+      json: true
+    });
+  }
 }
 
 function buildClient(host, temporaryClient) {
