@@ -339,7 +339,7 @@ class Client {
     return rp({
       method: 'GET',
       uri: this.baseUrl + "/api/v1/amp/story",
-      qs :  {slug:slug},
+      qs :  {slug},
       json: true
     });
   }
