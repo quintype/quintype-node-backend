@@ -335,7 +335,7 @@ class Client {
     })
   }
 
- getAmpStoryBySlug(slug) {
+  getAmpStoryBySlug(slug) {
     return rp({
       method: 'GET',
       uri: this.baseUrl + "/api/v1/amp/story",
