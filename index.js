@@ -335,11 +335,11 @@ class Client {
     })
   }
 
- getAmpStoryBySlug(slug, params) {
+ getAmpStoryBySlug(slug) {
     return rp({
       method: 'GET',
-      uri: this.baseUrl + "/api/v1/amp/story?slug",
-      qs: _.merge({slug: slug}, params),
+      uri: this.baseUrl + "/api/v1/amp/story",
+      qs :  {slug:slug},
       json: true
     });
   }
