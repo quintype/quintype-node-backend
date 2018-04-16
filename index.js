@@ -38,8 +38,9 @@ class Story {
   }
 
   getRelatedStories(client) {
+    const sectionId = _.get(this, ['sections', 0, 'id'], null);
     return client
-      .getRelatedStories(this.id)
+      .getRelatedStories(this.id, sectionId)
       .then(response => _.map(response["related-stories"], story => Story.build(story)));
   }
 
@@ -296,10 +297,10 @@ class Client {
     })
   }
 
-  getRelatedStories(storyId) {
+  getRelatedStories(storyId = null, sectionId = null) {
     return rp({
       method: 'GET',
-      uri: this.baseUrl + "/api/v1/stories/"+ storyId + "/related-stories",
+      uri: `${this.baseUrl}/api/v1/stories/${storyId}/related-stories?section-id=${sectionId}`,
       json: true
     })
   }
