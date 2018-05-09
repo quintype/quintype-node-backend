@@ -111,7 +111,7 @@ function mergeCollectionItems(items, collectionsBulkData) {
     Object.assign({}, item, {items: collectionsBulkData[item.slug].items || []}) : item);
 }
 
-function loadItemsData(client, config, items, templatesConfig, depth) {
+function loadItemsData(client, items, templatesConfig, depth) {
   if(depth < 1) return Promise.resolve({items});
 
   const collections = extractCollections(items);
@@ -131,7 +131,7 @@ function loadItemsData(client, config, items, templatesConfig, depth) {
       if (collectionTypeConfigs.length) {
         const matchedCollections = extractCollectionSlugs(collectionTypeConfigs);
         const allNestedItems = getAllNestedItems(matchedCollections, collectionsBulkData);
-        return loadItemsData(client, config, allNestedItems, templatesConfig, (depth-1))
+        return loadItemsData(client, allNestedItems, templatesConfig, (depth-1))
           .then(({items:nestedItemsWithData}) => ({
             items: mergeCollectionItems(
               items,
@@ -151,18 +151,15 @@ function loadItemsData(client, config, items, templatesConfig, depth) {
   });
 }
 
-function loadNestedCollectionData(client, config, collection, options = {}) {
+function loadNestedCollectionData(client, collectionProxy, options = {}) {
   const { templatesConfig = [], depth } = options;
+  const { collection = {} } = collectionProxy;
   const { items = [] } = collection;
-  const cacheKeys = [`q/${config["publisher-id"]}/top/${collection.slug}`];
 
-  if (items.length < 1) return Promise.resolve({collection, cacheKeys});
+  if (items.length < 1) return Promise.resolve({collection});
 
-  return loadItemsData(client, config, items, templatesConfig, depth)
-    .then(({items:data = [], cacheKeys:itemsCacheKeys = []}) => ({
-      collection: Object.assign({}, collection, {items: data}),
-      cacheKeys: itemsCacheKeys
-    }));
+  return loadItemsData(client, items, templatesConfig, depth)
+    .then(({items = []}) => Object.assign({}, collection, {items}));
 }
 
 module.exports = {loadNestedCollectionData};
