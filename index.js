@@ -2,11 +2,9 @@
 
 const rp = require('request-promise');
 const Promise = require("bluebird");
-const extend = require("lodash/extend") ;
-const get = require("lodash/get");
-const map = require("lodash/map");
-const merge = require("lodash/merge");
-const {loadCollectionData}  = require("./collection-loader");
+const _ = require("lodash");
+const {loadNestedCollectionData}  = require("./collection-loader");
+const { DEFAULT_DEPTH } = require("./constants");
 
 function wrapBuildFunction(clazz, upstream) {
   clazz.build = function() {
@@ -114,11 +112,11 @@ class Collection {
     return this.collection;
   }
 
-  static getCollectionBySlug(client, slug, params, {templatesConfig, loadNestedCollections= false, depth= DEFAULT_DEPTH}) {
+  static getCollectionBySlug(config, client, slug, params, {templatesConfig = [], loadNestedCollections = true, depth = DEFAULT_DEPTH} = {}) {
     return client
       .getCollectionBySlug(slug, params)
       .then(response => response && Collection.build(response["collection"] || response))
-      .then(collection => loadNestedCollections? loadNestedCollectionData(collection, depth) : collection);
+      .then(collection => loadNestedCollections ? loadNestedCollectionData(client, config, collection, { templatesConfig, depth }) : collection);
   }
 }
 wrapBuildFunction(Collection, "collection");

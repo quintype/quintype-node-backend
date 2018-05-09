@@ -1,4 +1,5 @@
 const keyBy = require("lodash/keyBy");
+const { DEFAULT_LIMIT } = require("./constants");
 
 function extractCollections(items) {
   return items.filter(({type}) => type === "collection");
@@ -157,7 +158,7 @@ function loadNestedCollectionData(client, config, collection, options = {}) {
 
   if (items.length < 1) return Promise.resolve({collection, cacheKeys});
 
-  return loadItemsData(client, config, items, templateOptions, depth)
+  return loadItemsData(client, config, items, templatesConfig, depth)
     .then(({items:data = [], cacheKeys:itemsCacheKeys = []}) => ({
       collection: Object.assign({}, collection, {items: data}),
       cacheKeys: itemsCacheKeys
