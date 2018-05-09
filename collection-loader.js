@@ -151,15 +151,52 @@ function loadItemsData(client, items, templatesConfig, depth) {
   });
 }
 
+function loadItemsDataForPreview(client, items, templatesConfig) {
+  const collections = extractCollections(items);
+  if (collections.length < 1) return Promise.resolve({items: collections});
+
+  const collectionsConfig = mapTemplateConfigAndCollection(collections, templatesConfig);
+  if (collectionsConfig.length < 1) return Promise.resolve({items: collections});
+
+  const collectionTypeConfigs = filterByTemplateTypeCollection(collectionsConfig);
+  if (collectionTypeConfigs.length < 1) return Promise.resolve({items: collections});
+
+  const bulkRequestBody = formBulkRequestBody(collectionTypeConfigs);
+
+  return client.getInBulk(bulkRequestBody).then(data => {
+    if (data.results) {
+      const collectionsBulkData = data.results;
+
+      const matchedCollections = extractCollectionSlugs(collectionTypeConfigs);
+      const allNestedItems = getAllNestedItems(matchedCollections, collectionsBulkData);
+      return loadItemsDataForPreview(client, allNestedItems, templatesConfig)
+        .then(({items:nestedItemsWithData}) => ({
+          items: mergeCollectionItems(
+            items,
+            keyByCollectionSlug(mergeNestedCollectionItems(
+              collectionsBulkData,
+              matchedCollections,
+              nestedItemsWithData
+            ))
+          )
+        }));
+    }
+
+    return {items: collections};
+  })
+}
+
 function loadNestedCollectionData(client, collectionProxy, options = {}) {
-  const { templatesConfig = [], depth } = options;
+  const { templatesConfig = [], depth, preview = false } = options;
   const { collection = {} } = collectionProxy;
   const { items = [] } = collection;
 
   if (items.length < 1) return Promise.resolve({collection});
 
-  return loadItemsData(client, items, templatesConfig, depth)
-    .then(({items = []}) => Object.assign({}, collection, {items}));
+  const loadItemsPromise = preview? loadItemsDataForPreview(client, items, templatesConfig) :
+    loadItemsData(client, items, templatesConfig, depth);
+
+  return loadItemsPromise.then(({items = []}) => Object.assign({}, collection, {items}));
 }
 
 module.exports = {loadNestedCollectionData};

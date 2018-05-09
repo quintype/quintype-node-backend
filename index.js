@@ -112,11 +112,12 @@ class Collection {
     return this.collection;
   }
 
-  static getCollectionBySlug(client, slug, params, {templatesConfig = [], loadNestedCollections = true, depth = DEFAULT_DEPTH} = {}) {
+  static getCollectionBySlug(client, slug, params, options = {}) {
+    const {preview = false, templatesConfig = [], loadNestedCollections = true, depth = DEFAULT_DEPTH} = options;
     return client
       .getCollectionBySlug(slug, params)
       .then(response => response && Collection.build(response["collection"] || response))
-      .then(collection => loadNestedCollections ? loadNestedCollectionData(client, collection, { templatesConfig, depth }) : collection);
+      .then(collection => loadNestedCollections ? loadNestedCollectionData(client, collection, { templatesConfig, depth, preview }) : collection);
   }
 }
 wrapBuildFunction(Collection, "collection");
