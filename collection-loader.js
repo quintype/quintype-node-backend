@@ -5,59 +5,27 @@ function extractCollections(items) {
   return items.filter(({type}) => type === "collection");
 }
 
-function getAssociatedTemplate({"associated-metadata": associatedMetadata}) {
-  return associatedMetadata ? associatedMetadata.layout : '';
-}
-
-function findTemplateMatch(template, templatesConfig) {
-  return templatesConfig.find(templateConfig => templateConfig.name === template);
-}
-
-function mapTemplateConfigAndCollection(collections, templatesConfig) {
-  return collections.reduce((acc, collection) => {
-    const associatedTemplate = getAssociatedTemplate(collection);
-    if (associatedTemplate) {
-      const matchedTemplateConfig = findTemplateMatch(associatedTemplate, templatesConfig);
-      if (matchedTemplateConfig) {
-        return acc.concat(Object.assign({}, matchedTemplateConfig, {"collection": collection.slug}));
-      }
-    }
-
-    return acc;
-  }, []);
-}
-
-function requestParams({collection:slug, "item-type":itemType = "story", "item-limit":itemLimit = DEFAULT_LIMIT}) {
+function requestParams({slug}) {
   const params = {};
 
   params._type = "collection";
   params.slug = slug;
-  params["item-type"] = itemType;
-  params.limit = itemLimit;
 
   return params;
 }
 
-function formBulkRequestBody(collectionsConfig) {
-  const bulkRequestParams = collectionsConfig.reduce(
-    (acc, config) => Object.assign({}, acc, {[config.collection]: requestParams(config)}),
+function formBulkRequestBody(collections) {
+  const bulkRequestParams = collections.reduce(
+    (acc, collection) => Object.assign({}, acc, {[collection.slug]: requestParams(collection)}),
     {}
   );
 
   return {requests: bulkRequestParams};
 }
 
-function filterByTemplateTypeCollection(collectionsConfig) {
-  return collectionsConfig.reduce((acc, config) => config["item-type"] === "collection"? acc.concat(config) : acc, []);
-}
-
-function extractCollectionSlugs(collectionTypeConfigs) {
-  return collectionTypeConfigs.map(config => config.collection);
-}
-
-function getAllNestedItems(collections, collectionData) {
-  return collections.reduce((acc, collection) =>
-    collectionData[collection] ? acc.concat(collectionData[collection].items || []) : acc, []);
+function getAllNestedItems(bulkData) {
+  return Object.values(bulkData).reduce((acc, collection) =>
+  collection.items && collection.items.length > 0 ? acc.concat(collection.items || []) : acc, []);
 }
 
 function getItemData(item, itemsData) {
@@ -81,9 +49,9 @@ function mapItemsData(items, itemsData) {
 function groupItemsByCollection(parentCollections, collectionsBulkData, nestedItemsWithData) {
   return parentCollections.reduce(
     (acc, collection) => {
-      const collectionData = collectionsBulkData[collection];
+      const collectionData = collectionsBulkData[collection.slug];
       if (collectionData && collectionData.items && collectionData.items.length) {
-        return Object.assign({}, acc, { [collection]: mapItemsData(collectionData.items, nestedItemsWithData) } );
+        return Object.assign({}, acc, { [collection.slug]: mapItemsData(collectionData.items, nestedItemsWithData) } );
       }
 
       return acc;
@@ -111,92 +79,42 @@ function mergeCollectionItems(items, collectionsBulkData) {
     Object.assign({}, item, {items: collectionsBulkData[item.slug].items || []}) : item);
 }
 
-function loadItemsData(client, items, templatesConfig, depth) {
+function loadItemsData(client, items, depth) {
   if(depth < 1) return Promise.resolve({items});
 
   const collections = extractCollections(items);
 
   if (collections.length < 1) return Promise.resolve({items});
 
-  const collectionsConfig = mapTemplateConfigAndCollection(collections, templatesConfig);
-
-  if (collectionsConfig.length < 1) return Promise.resolve({items});
-
-  const bulkRequestBody = formBulkRequestBody(collectionsConfig);
+  const bulkRequestBody = formBulkRequestBody(collections);
   return client.getInBulk(bulkRequestBody).then(data => {
-    if (data.results) {
-      const collectionsBulkData = data.results;
-      const collectionTypeConfigs = filterByTemplateTypeCollection(collectionsConfig);
+    if (!data.results) return {items};
 
-      if (collectionTypeConfigs.length) {
-        const matchedCollections = extractCollectionSlugs(collectionTypeConfigs);
-        const allNestedItems = getAllNestedItems(matchedCollections, collectionsBulkData);
-        return loadItemsData(client, allNestedItems, templatesConfig, (depth-1))
-          .then(({items:nestedItemsWithData}) => ({
-            items: mergeCollectionItems(
-              items,
-              keyByCollectionSlug(mergeNestedCollectionItems(
-                collectionsBulkData,
-                matchedCollections,
-                nestedItemsWithData
-              ))
-            )
-          }));
-      }
+    const collectionsBulkData = data.results;
+    const allNestedItems = getAllNestedItems(collectionsBulkData);
 
-      return {items: mergeCollectionItems(items, collectionsBulkData)};
-    }
-
-    return {items};
+    return loadItemsData(client, allNestedItems, (depth-1))
+      .then(({items:nestedItemsWithData}) => ({
+        items: mergeCollectionItems(
+          items,
+          keyByCollectionSlug(mergeNestedCollectionItems(
+            collectionsBulkData,
+            collections,
+            nestedItemsWithData
+          ))
+        )
+      }));
   });
 }
 
-function loadItemsDataForPreview(client, items, templatesConfig) {
-  const collections = extractCollections(items);
-  if (collections.length < 1) return Promise.resolve({items: collections});
-
-  const collectionsConfig = mapTemplateConfigAndCollection(collections, templatesConfig);
-  if (collectionsConfig.length < 1) return Promise.resolve({items: collections});
-
-  const collectionTypeConfigs = filterByTemplateTypeCollection(collectionsConfig);
-  if (collectionTypeConfigs.length < 1) return Promise.resolve({items: collections});
-
-  const bulkRequestBody = formBulkRequestBody(collectionTypeConfigs);
-
-  return client.getInBulk(bulkRequestBody).then(data => {
-    if (data.results) {
-      const collectionsBulkData = data.results;
-
-      const matchedCollections = extractCollectionSlugs(collectionTypeConfigs);
-      const allNestedItems = getAllNestedItems(matchedCollections, collectionsBulkData);
-      return loadItemsDataForPreview(client, allNestedItems, templatesConfig)
-        .then(({items:nestedItemsWithData}) => ({
-          items: mergeCollectionItems(
-            items,
-            keyByCollectionSlug(mergeNestedCollectionItems(
-              collectionsBulkData,
-              matchedCollections,
-              nestedItemsWithData
-            ))
-          )
-        }));
-    }
-
-    return {items: collections};
-  })
-}
-
-function loadNestedCollectionData(client, collectionProxy, options = {}) {
-  const { templatesConfig = [], depth, preview = false } = options;
+function loadNestedCollectionData(client, collectionProxy, {depth}) {
   const { collection = {} } = collectionProxy;
   const { items = [] } = collection;
 
   if (items.length < 1) return Promise.resolve({collection});
 
-  const loadItemsPromise = preview? loadItemsDataForPreview(client, items, templatesConfig) :
-    loadItemsData(client, items, templatesConfig, depth);
-
-  return loadItemsPromise.then(({items = []}) => Object.assign({}, collection, {items}));
+  return loadItemsData(client, items, depth)
+    .then(({items = []}) => Object.assign({}, collection, {items}));
 }
 
 module.exports = {loadNestedCollectionData};
