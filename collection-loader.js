@@ -1,103 +1,37 @@
-const keyBy = require("lodash/keyBy");
-const { DEFAULT_LIMIT } = require("./constants");
+const get = require("lodash/get");
+const flatMap = require("lodash/flatMap");
+const {DEFAULT_STORY_FIELDS} = require("./constants");
 
-function formBulkRequestBody(collections) {
-  const bulkRequestParams = collections.reduce(
+function loadCollectionItems(client, collections) {
+  const bulkRequestBody = collections.reduce(
     (acc, collection) => Object.assign(acc, {
       [collection.slug]: {
         _type: "collection",
         slug: collection.slug,
-        "story-fields": "headline,slug,url,hero-image-s3-key,hero-image-metadata,first-published-at,last-published-at,alternative,published-at,author-name,author-id,sections,story-template,metadata"}
-    }), {}
-  );
+        "story-fields": DEFAULT_STORY_FIELDS}
+    }), {});
 
-  return {requests: bulkRequestParams};
+  return client.getInBulk({requests: bulkRequestBody}).then(response => response.results);
 }
 
-function getAllNestedItems(bulkData) {
-  return Object.values(bulkData).reduce((acc, collection) =>
-    collection.items ? acc.concat(collection.items) : acc,
-    []);
-}
+// Ugly. This function updates all the items in place.
+// However, this is way more readable than a pure version
+function updateItemsInPlace(client, depth, items) {
+  const collections = items.filter(item => item.type == "collection");
 
-function getItemData(item, itemsData) {
-  return itemsData.find(itemData => itemData.slug === item.slug);
-}
+  if(depth == 0 || collections.length == 0)
+    return Promise.resolve();
 
-function mapItemsData(items, itemsData) {
-  return items.map(item => {
-    if (item.type === "collection") {
-      const itemData = getItemData(item, itemsData);
-
-      if (itemData) {
-        return itemData;
-      }
-    }
-
-    return item;
-  });
-}
-
-function mergeNestedCollectionItems(collectionsBulkData, parentCollections, nestedItemsWithData) {
-  const collectionSlugToCollection = parentCollections.reduce((acc, collection) => {
-      const collectionData = collectionsBulkData[collection.slug];
-      if (collectionData && collectionData.items) {
-        return Object.assign(acc, { [collection.slug]: mapItemsData(collectionData.items, nestedItemsWithData) } )
-      }
-      else {
-        acc;
-     }
-    },
-    {});
-
-  const collectionsToUpdate = Object.values(collectionsBulkData).map(collection =>
-    collectionSlugToCollection[collection.slug] ? Object.assign({}, collection, {"items": collectionSlugToCollection[collection.slug]}) : collection
-  );
-
-  return keyBy(collectionsToUpdate, collection => collection.slug);
-}
-
-function mergeCollectionItems(items, collectionsBulkData) {
-  return items.map(item => item.type === "collection" && collectionsBulkData[item.slug]
-    ? Object.assign({}, item, {items: collectionsBulkData[item.slug].items || []})
-    : item);
-}
-
-// I Have a feeling this can be simplified. It loads two levels before merging.
-function loadItemsData(client, items, depth) {
-  if(depth == 0)
-    return Promise.resolve({items});
-
-  const collections = items.filter(({type}) => type === "collection");
-
-  if (collections.length == 0)
-    return Promise.resolve({items});
-
-  const bulkRequestBody = formBulkRequestBody(collections);
-  return client.getInBulk(bulkRequestBody).then(data => {
-    const collectionsBulkData = data.results;
-    const allNestedItems = getAllNestedItems(collectionsBulkData);
-
-    return loadItemsData(client, allNestedItems, (depth-1))
-      .then(({items:nestedItemsWithData}) => ({
-        items: mergeCollectionItems(
-          items,
-          mergeNestedCollectionItems(
-            collectionsBulkData,
-            collections,
-            nestedItemsWithData
-          )
-        )
-      }));
-  });
+  return loadCollectionItems(client, collections)
+    .then(collectionSlugToCollection => {
+      collections.forEach(collection => collection.items = get(collectionSlugToCollection, [collection.slug, "items"]));
+      return updateItemsInPlace(client, depth - 1, flatMap(collections, collection => collection.items))
+    })
 }
 
 function loadNestedCollectionData(client, collection, {depth}) {
-  if (collection.items.length == 0)
-    return Promise.resolve({collection});
-
-  return loadItemsData(client, collection.items, depth)
-    .then(({items}) => Object.assign({}, collection, {items}));
+  return updateItemsInPlace(client, depth, collection.items)
+    .then(() => collection);
 }
 
 module.exports = {loadNestedCollectionData};
