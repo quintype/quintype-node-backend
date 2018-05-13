@@ -6,6 +6,9 @@ var _ = require("lodash");
 
 function wrapBuildFunction(clazz, upstream) {
   clazz.build = function() {
+    if(!arguments[0])
+      return null;
+
     return new Proxy(new clazz(...arguments), {
       get: function(target, key) {
         if(key in target)
@@ -176,6 +179,12 @@ class Config {
 }
 wrapBuildFunction(Config, "config");
 
+function catch404(e, defaultValue) {
+  if(e && e.statusCode == 404)
+    return defaultValue;
+  throw e;
+}
+
 class Client {
   constructor(baseUrl, temporaryClient) {
     this.baseUrl = baseUrl;
@@ -213,7 +222,7 @@ class Client {
       method: 'GET',
       uri: this.baseUrl + "/api/v1/preview/story/" + publicPreviewKey,
       json: true
-    })
+    }).catch(e => catch404(e, {}))
   }
 
   getCollectionBySlug(slug, params) {
@@ -222,7 +231,7 @@ class Client {
       uri: this.baseUrl + "/api/v1/collections/" + slug,
       qs: params,
       json: true
-    })
+    }).catch(e => catch404(e, null))
   }
 
   getStories(params) {
@@ -240,7 +249,7 @@ class Client {
       uri: this.baseUrl + "/api/v1/stories-by-slug",
       qs: _.merge({slug: slug}, params),
       json: true
-    });
+    }).catch(e => catch404(e, {}));
   }
 
   getStoryById(id) {
@@ -248,7 +257,7 @@ class Client {
       method: 'GET',
       uri: this.baseUrl + "/api/v1/stories/" + id,
       json: true
-    });
+    }).catch(e => catch404(e, {}));
   }
 
   getConfig() {
@@ -276,7 +285,7 @@ class Client {
       method: 'GET',
       uri: this.baseUrl + "/api/v1/authors/" + authorId,
       json: true
-    });
+    }).catch(e => catch404(e, {}));
   }
 
   getAuthors(params) {
