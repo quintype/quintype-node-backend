@@ -113,11 +113,13 @@ class Collection {
   }
 
   static getCollectionBySlug(client, slug, params, options = {}) {
-    const {loadNestedCollections = true, depth = DEFAULT_DEPTH} = options;
+    const {depth = DEFAULT_DEPTH} = options;
     return client
       .getCollectionBySlug(slug, params)
-      .then(response => response && Collection.build(response["collection"] || response))
-      .then(collection => loadNestedCollections ? loadNestedCollectionData(client, collection, { depth }) : collection);
+      .then(response => {
+        const collection = response ? response["collection"] || response : null;
+        return collection && loadNestedCollectionData(client, collection, {depth})
+      }).then(collection => Collection.build(collection))
   }
 }
 wrapBuildFunction(Collection, "collection");

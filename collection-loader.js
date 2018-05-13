@@ -1,23 +1,14 @@
 const keyBy = require("lodash/keyBy");
 const { DEFAULT_LIMIT } = require("./constants");
 
-function extractCollections(items) {
-  return items.filter(({type}) => type === "collection");
-}
-
-function requestParams({slug}) {
-  const params = {};
-
-  params._type = "collection";
-  params.slug = slug;
-
-  return params;
-}
-
 function formBulkRequestBody(collections) {
   const bulkRequestParams = collections.reduce(
-    (acc, collection) => Object.assign({}, acc, {[collection.slug]: requestParams(collection)}),
-    {}
+    (acc, collection) => Object.assign(acc, {
+      [collection.slug]: {
+        _type: "collection",
+        slug: collection.slug,
+        "story-fields": "headline,slug,url,hero-image-s3-key,hero-image-metadata,first-published-at,last-published-at,alternative,published-at,author-name,author-id,sections,story-template,metadata"}
+    }), {}
   );
 
   return {requests: bulkRequestParams};
@@ -25,7 +16,8 @@ function formBulkRequestBody(collections) {
 
 function getAllNestedItems(bulkData) {
   return Object.values(bulkData).reduce((acc, collection) =>
-  collection.items && collection.items.length > 0 ? acc.concat(collection.items || []) : acc, []);
+    collection.items ? acc.concat(collection.items) : acc,
+    []);
 }
 
 function getItemData(item, itemsData) {
@@ -46,50 +38,43 @@ function mapItemsData(items, itemsData) {
   });
 }
 
-function groupItemsByCollection(parentCollections, collectionsBulkData, nestedItemsWithData) {
-  return parentCollections.reduce(
-    (acc, collection) => {
-      const collectionData = collectionsBulkData[collection.slug];
-      if (collectionData && collectionData.items && collectionData.items.length) {
-        return Object.assign({}, acc, { [collection.slug]: mapItemsData(collectionData.items, nestedItemsWithData) } );
-      }
-
-      return acc;
-    },{});
-}
-
 function mergeNestedCollectionItems(collectionsBulkData, parentCollections, nestedItemsWithData) {
-  const collectionItemsMap = groupItemsByCollection(
-    parentCollections,
-    collectionsBulkData,
-    nestedItemsWithData
+  const collectionSlugToCollection = parentCollections.reduce((acc, collection) => {
+      const collectionData = collectionsBulkData[collection.slug];
+      if (collectionData && collectionData.items) {
+        return Object.assign(acc, { [collection.slug]: mapItemsData(collectionData.items, nestedItemsWithData) } )
+      }
+      else {
+        acc;
+     }
+    },
+    {});
+
+  const collectionsToUpdate = Object.values(collectionsBulkData).map(collection =>
+    collectionSlugToCollection[collection.slug] ? Object.assign({}, collection, {"items": collectionSlugToCollection[collection.slug]}) : collection
   );
 
-  return Object.values(collectionsBulkData).map(collection =>
-    collectionItemsMap[collection.slug]? Object.assign({}, collection, {"items": collectionItemsMap[collection.slug]}) : collection
-  );
-}
-
-function keyByCollectionSlug(collections) {
-  return keyBy(collections, collection => collection.slug);
+  return keyBy(collectionsToUpdate, collection => collection.slug);
 }
 
 function mergeCollectionItems(items, collectionsBulkData) {
-  return items.map(item => item.type === "collection" && collectionsBulkData[item.slug] ?
-    Object.assign({}, item, {items: collectionsBulkData[item.slug].items || []}) : item);
+  return items.map(item => item.type === "collection" && collectionsBulkData[item.slug]
+    ? Object.assign({}, item, {items: collectionsBulkData[item.slug].items || []})
+    : item);
 }
 
+// I Have a feeling this can be simplified. It loads two levels before merging.
 function loadItemsData(client, items, depth) {
-  if(depth < 1) return Promise.resolve({items});
+  if(depth == 0)
+    return Promise.resolve({items});
 
-  const collections = extractCollections(items);
+  const collections = items.filter(({type}) => type === "collection");
 
-  if (collections.length < 1) return Promise.resolve({items});
+  if (collections.length == 0)
+    return Promise.resolve({items});
 
   const bulkRequestBody = formBulkRequestBody(collections);
   return client.getInBulk(bulkRequestBody).then(data => {
-    if (!data.results) return {items};
-
     const collectionsBulkData = data.results;
     const allNestedItems = getAllNestedItems(collectionsBulkData);
 
@@ -97,24 +82,22 @@ function loadItemsData(client, items, depth) {
       .then(({items:nestedItemsWithData}) => ({
         items: mergeCollectionItems(
           items,
-          keyByCollectionSlug(mergeNestedCollectionItems(
+          mergeNestedCollectionItems(
             collectionsBulkData,
             collections,
             nestedItemsWithData
-          ))
+          )
         )
       }));
   });
 }
 
-function loadNestedCollectionData(client, collectionProxy, {depth}) {
-  const { collection = {} } = collectionProxy;
-  const { items = [] } = collection;
+function loadNestedCollectionData(client, collection, {depth}) {
+  if (collection.items.length == 0)
+    return Promise.resolve({collection});
 
-  if (items.length < 1) return Promise.resolve({collection});
-
-  return loadItemsData(client, items, depth)
-    .then(({items = []}) => Object.assign({}, collection, {items}));
+  return loadItemsData(client, collection.items, depth)
+    .then(({items}) => Object.assign({}, collection, {items}));
 }
 
 module.exports = {loadNestedCollectionData};
