@@ -1,8 +1,10 @@
 'use strict';
 
-var rp = require('request-promise');
-var Promise = require("bluebird");
-var _ = require("lodash");
+const rp = require('request-promise');
+const Promise = require("bluebird");
+const _ = require("lodash");
+const {loadNestedCollectionData}  = require("./collection-loader");
+const { DEFAULT_DEPTH } = require("./constants");
 
 function wrapBuildFunction(clazz, upstream) {
   clazz.build = function() {
@@ -113,10 +115,14 @@ class Collection {
     return this.collection;
   }
 
-  static getCollectionBySlug(client, slug, params) {
+  static getCollectionBySlug(client, slug, params, options = {}) {
+    const {depth = DEFAULT_DEPTH} = options;
     return client
       .getCollectionBySlug(slug, params)
-      .then(response => response && Collection.build(response["collection"] || response));
+      .then(response => {
+        const collection = response ? response["collection"] || response : null;
+        return collection && loadNestedCollectionData(client, collection, {depth})
+      }).then(collection => Collection.build(collection))
   }
 }
 wrapBuildFunction(Collection, "collection");
