@@ -335,7 +335,8 @@ class Client {
       uri: this.baseUrl + "/api/v1/comments",
       body: params,
       headers: {
-          "X-QT-AUTH": authToken
+          "X-QT-AUTH": authToken,
+          'content-type': 'application/json'
       },
       json: true
     })
@@ -347,6 +348,9 @@ class Client {
       uri: this.baseUrl + "/api/v1/bulk-request",
       body: requests,
       json: true,
+      headers: {
+        'content-type': 'application/json'
+      },
       followAllRedirects: true
     })
   }
