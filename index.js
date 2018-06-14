@@ -185,6 +185,23 @@ class Config {
 }
 wrapBuildFunction(Config, "config");
 
+class Entity {
+  constructor(entity) {
+    this.entity = entity;
+  }
+
+  asJson() {
+    return this.entity;
+  }
+
+  static getEntities(client, params) {
+    return client
+      .getEntities(params)
+      .then(response => _.map(response["entities"], entity => Entity.build(entity)));
+  }
+}
+wrapBuildFunction(Entity, "entity");
+
 function catch404(e, defaultValue) {
   if(e && e.statusCode == 404)
     return defaultValue;
@@ -363,6 +380,15 @@ class Client {
       json: true
     });
   }
+
+  getEntities(params) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/entities",
+      qs: params,
+      json: true
+    });
+  }
 }
 
 function buildClient(host, temporaryClient) {
@@ -376,5 +402,6 @@ module.exports = {
   Member: Member,
   Author: Author,
   Collection: Collection,
+  Entity: Entity,
   buildClient: buildClient
 };
