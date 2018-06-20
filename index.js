@@ -410,7 +410,7 @@ class Client {
   getCustomURL(slug) {
     return rp({
       method: 'GET',
-      uri: this.baseUrl + "/api/v1/custom-urls/" + slug,
+      uri: this.baseUrl + "/api/v1/custom-urls/" + encodeURIComponent(slug),
       json: true
     })
   }
