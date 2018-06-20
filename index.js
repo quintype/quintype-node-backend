@@ -202,6 +202,23 @@ class Entity {
 }
 wrapBuildFunction(Entity, "entity");
 
+class Url {
+  constructor(url) {
+    this.url = url;
+  }
+
+  asJson() {
+    return this.url;
+  }
+
+  static getCustomURL(client, slug) {
+    return client
+      .getCustomURL(slug)
+        .then(url => Url.build(url))
+  }
+}
+wrapBuildFunction(Url, "url");
+
 function catch404(e, defaultValue) {
   if(e && e.statusCode == 404)
     return defaultValue;
@@ -389,6 +406,14 @@ class Client {
       json: true
     });
   }
+
+  getCustomURL(slug) {
+    return rp({
+      method: 'GET',
+      uri: this.baseUrl + "/api/v1/custom-urls/" + slug,
+      json: true
+    })
+  }
 }
 
 function buildClient(host, temporaryClient) {
@@ -403,5 +428,6 @@ module.exports = {
   Author: Author,
   Collection: Collection,
   Entity: Entity,
+  Url: Url,
   buildClient: buildClient
 };
