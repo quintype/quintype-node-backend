@@ -240,64 +240,50 @@ class Client {
     return this.hostname;
   }
 
-  getFromBulkApiManager(slug, params) {
-    return rp({
+  request(path, opts) {
+    const params = Object.assign({
       method: 'GET',
-      uri: this.baseUrl + "/api/v1/bulk/" + slug,
-      qs: params,
-      json: true
+      uri: this.baseUrl + path,
+      json: true,
+      gzip: true
+    }, opts);
+    return rp(params);
+  }
+
+  getFromBulkApiManager(slug, params) {
+    return this.request("/api/v1/bulk/" + slug,{
+      qs: params
     })
   }
 
   getTags(slug) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/tags/" + slug,
-      json: true
-    })
+    return this.request("/api/v1/tags/" + slug)
   }
 
   getPublicPreviewStory(publicPreviewKey) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/preview/story/" + publicPreviewKey,
-      json: true
-    }).catch(e => catch404(e, {}))
+    return this.request("/api/v1/preview/story/" + publicPreviewKey).catch(e => catch404(e, {}))
   }
 
   getCollectionBySlug(slug, params) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/collections/" + slug,
-      qs: params,
-      json: true
+    return this.request("/api/v1/collections/" + slug, {
+      qs: params
     }).catch(e => catch404(e, null))
   }
 
   getStories(params) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/stories",
-      qs: params,
-      json: true
-    });
+    return this.request("/api/v1/stories", {
+      qs: params
+    })
   }
 
   getStoryBySlug(slug, params) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/stories-by-slug",
-      qs: _.merge({slug: slug}, params),
-      json: true
-    }).catch(e => catch404(e, {}));
+    return this.request("/api/v1/stories-by-slug", {
+      qs: _.merge({slug: slug}, params)
+    }).catch(e => catch404(e, {}))
   }
 
   getStoryById(id) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/stories/" + id,
-      json: true
-    }).catch(e => catch404(e, {}));
+    return this.request("/api/v1/stories/" + id).catch(e => catch404(e, {}))
   }
 
   getConfig() {
@@ -310,78 +296,53 @@ class Client {
   }
 
   getCurrentMember(authToken) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/members/me",
+    return this.request("/api/v1/members/me", {
       headers: {
         "X-QT-AUTH": authToken
-      },
-      json: true
-    });
+      }
+    })
   }
 
   getAuthor(authorId) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/authors/" + authorId,
-      json: true
-    }).catch(e => catch404(e, {}));
+    return this.request("/api/v1/authors/" + authorId).catch(e => catch404(e, {}))
   }
 
   getAuthors(params) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/authors",
-      qs: params,
-      json: true
-    });
+    return this.request("/api/authors", {
+      qs: params
+    })
   }
 
   getSearch(params) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/search",
-      qs: params,
-      json: true
+    return this.request("/api/v1/search", {
+      qs: params
     })
   }
 
   getRelatedStories(storyId = null, sectionId = null) {
-    return rp({
-      method: 'GET',
-      uri: `${this.baseUrl}/api/v1/stories/${storyId}/related-stories?section-id=${sectionId}`,
-      json: true
-    })
+    return this.request("/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId)
   }
 
   updateConfig() {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/config",
-      json: true
-    })
-    .then(config => this.config = Config.build(config));
+    return this.request("/api/v1/config")
+    .then(config => this.config = Config.build(config))
   }
 
   postComments(params, authToken){
-    return rp ({
+    return this.request("/api/v1/comments", {
       method: 'POST',
-      uri: this.baseUrl + "/api/v1/comments",
       body: params,
       headers: {
-          "X-QT-AUTH": authToken,
-          'content-type': 'application/json'
-      },
-      json: true
+        "X-QT-AUTH": authToken,
+        'content-type': 'application/json'
+      }
     })
   }
 
   getInBulk(requests){
-    return rp({
+    return this.request("/api/v1/bulk-request", {
       method: 'POST',
-      uri: this.baseUrl + "/api/v1/bulk-request",
       body: requests,
-      json: true,
       headers: {
         'content-type': 'application/json'
       },
@@ -390,29 +351,19 @@ class Client {
   }
 
   getAmpStoryBySlug(slug) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/amp/story",
-      qs :  {slug},
-      json: true
-    });
+    return this.request("/api/v1/amp/story", {
+      qs: {slug}
+    })
   }
 
   getEntities(params) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/entities",
-      qs: params,
-      json: true
-    });
+    return this.request("/api/v1/entities", {
+      qs: params
+    })
   }
 
   getCustomURL(slug) {
-    return rp({
-      method: 'GET',
-      uri: this.baseUrl + "/api/v1/custom-urls/" + encodeURIComponent(slug),
-      json: true
-    })
+    return this.request("/api/v1/custom-urls/" + encodeURIComponent(slug))
   }
 }
 
