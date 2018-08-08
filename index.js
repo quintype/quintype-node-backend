@@ -170,6 +170,14 @@ class Author {
 }
 wrapBuildFunction(Author, "author");
 
+class Static {
+  static getStatic(client, config, params) {
+    return client
+      .getStaticData(config, params)
+      .then(response => response);
+  }
+}
+
 class Config {
   constructor(config) {
     this.config = config;
@@ -313,6 +321,10 @@ class Client {
     })
   }
 
+  getStaticData(config, params) {
+    return this.request("/api/v1/static-pages/" + params.customSlug)
+  }
+
   getSearch(params) {
     return this.request("/api/v1/search", {
       qs: params
@@ -377,6 +389,7 @@ module.exports = {
   Client: Client,
   Member: Member,
   Author: Author,
+  Static: Static,
   Collection: Collection,
   Entity: Entity,
   Url: Url,
