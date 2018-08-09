@@ -171,9 +171,9 @@ class Author {
 wrapBuildFunction(Author, "author");
 
 class Static {
-  static getStaticData(client, params) {
+  static getStaticData(client, slug) {
     return client
-      .getStaticData(params)
+      .getStaticData(slug)
       .then(response => response);
   }
 }
@@ -322,7 +322,7 @@ class Client {
   }
 
   getStaticData(params) {
-    return this.request("/api/v1/static-pages/" + params.customSlug)
+    return this.request("/api/v1/custom-urls/%2f" + slug)
   }
 
   getSearch(params) {
