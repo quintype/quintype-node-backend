@@ -321,7 +321,7 @@ class Client {
     })
   }
 
-  getStaticData(params) {
+  getStaticData(slug) {
     return this.request("/api/v1/custom-urls/%2f" + slug)
   }
 
