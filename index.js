@@ -170,10 +170,10 @@ class Author {
 }
 wrapBuildFunction(Author, "author");
 
-class Static {
-  static getStaticData(client, slug) {
+class CustomPath {
+  static getCustomPathData(client, slug) {
     return client
-      .getStaticData(slug)
+      .getCustomPathData(slug)
       .then(response => response);
   }
 }
@@ -321,7 +321,7 @@ class Client {
     })
   }
 
-  getStaticData(slug) {
+  getCustomPathData(slug) {
     return this.request("/api/v1/custom-urls/%2f" + slug)
   }
 
@@ -389,7 +389,7 @@ module.exports = {
   Client: Client,
   Member: Member,
   Author: Author,
-  Static: Static,
+  CustomPath: CustomPath,
   Collection: Collection,
   Entity: Entity,
   Url: Url,
