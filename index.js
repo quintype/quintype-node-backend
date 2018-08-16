@@ -171,12 +171,21 @@ class Author {
 wrapBuildFunction(Author, "author");
 
 class CustomPath {
-  static getCustomPathData(client, slug) {
+  constructor(page) {
+    this.page = page;
+  }
+
+  asJson() {
+    return this.page;
+  }
+
+  static getCustomPathData(client, path) {
     return client
-      .getCustomPathData(slug)
-      .then(response => response);
+      .getCustomPathData(path.startsWith('/') ? path : "/" + path)
+      .then(response => response["page"] && CustomPath.build(response["page"]));
   }
 }
+wrapBuildFunction(CustomPath, "page");
 
 class Config {
   constructor(config) {
@@ -321,10 +330,6 @@ class Client {
     })
   }
 
-  getCustomPathData(slug) {
-    return this.request("/api/v1/custom-urls/%2f" + slug)
-  }
-
   getSearch(params) {
     return this.request("/api/v1/search", {
       qs: params
@@ -375,7 +380,12 @@ class Client {
   }
 
   getCustomURL(slug) {
-    return this.request("/api/v1/custom-urls/" + encodeURIComponent(slug))
+    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path))
+  }
+
+  getCustomPathData(path) {
+    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path))
+               .catch(e => catch404(e, {}));
   }
 }
 
