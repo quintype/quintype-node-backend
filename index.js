@@ -170,6 +170,23 @@ class Author {
 }
 wrapBuildFunction(Author, "author");
 
+class CustomPath {
+  constructor(page) {
+    this.page = page;
+  }
+
+  asJson() {
+    return this.page;
+  }
+
+  static getCustomPathData(client, path) {
+    return client
+      .getCustomPathData(path.startsWith('/') ? path : "/" + path)
+      .then(response => response["page"] && CustomPath.build(response["page"]));
+  }
+}
+wrapBuildFunction(CustomPath, "page");
+
 class Config {
   constructor(config) {
     this.config = config;
@@ -363,7 +380,12 @@ class Client {
   }
 
   getCustomURL(slug) {
-    return this.request("/api/v1/custom-urls/" + encodeURIComponent(slug))
+    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path))
+  }
+
+  getCustomPathData(path) {
+    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path))
+               .catch(e => catch404(e, {}));
   }
 }
 
@@ -377,6 +399,7 @@ module.exports = {
   Client: Client,
   Member: Member,
   Author: Author,
+  CustomPath: CustomPath,
   Collection: Collection,
   Entity: Entity,
   Url: Url,
