@@ -26,7 +26,7 @@ function updateItemsInPlace(client, depth, items) {
     .then(collectionSlugToCollection => {
       collections.forEach(collection => {
         collection.summary = get(collectionSlugToCollection, [collection.slug, "summary"], '')
-        collection.items = get(collectionSlugToCollection, [collection.slug, "items"]) 
+        collection.items = get(collectionSlugToCollection, [collection.slug, "items"], []) 
       });
       return updateItemsInPlace(client, depth - 1, flatMap(collections, collection => collection.items))
     })
