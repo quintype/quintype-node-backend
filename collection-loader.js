@@ -17,7 +17,7 @@ function loadCollectionItems(client, collections) {
 // Ugly. This function updates all the items in place.
 // However, this is way more readable than a pure version
 function updateItemsInPlace(client, depth, items) {
-  const collections = items.filter(item => item.type == "collection");
+  const collections = items.filter(item => item.type == "collection" && item.slug);
 
   if(depth == 0 || collections.length == 0)
     return Promise.resolve();
@@ -26,7 +26,7 @@ function updateItemsInPlace(client, depth, items) {
     .then(collectionSlugToCollection => {
       collections.forEach(collection => {
         collection.summary = get(collectionSlugToCollection, [collection.slug, "summary"], '')
-        collection.items = get(collectionSlugToCollection, [collection.slug, "items"]) 
+        collection.items = get(collectionSlugToCollection, [collection.slug, "items"], []) 
       });
       return updateItemsInPlace(client, depth - 1, flatMap(collections, collection => collection.items))
     })
