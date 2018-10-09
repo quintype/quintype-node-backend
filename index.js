@@ -167,6 +167,12 @@ class Author {
       .getAuthors(params)
       .then(authors => _.map(authors, author => Author.build(author)));
   }
+
+  static getAuthorCollection(client, authorId, params){
+    return client
+    .getAuthorCollection(authorId, params)
+    .catch(e => catch404(e, null))
+  }
 }
 wrapBuildFunction(Author, "author");
 
@@ -386,6 +392,11 @@ class Client {
   getCustomPathData(path) {
     return this.request("/api/v1/custom-urls/" + encodeURIComponent(path))
                .catch(e => catch404(e, {}));
+  }
+  getAuthorCollection(authorId, params){
+    return this.request(`/api/v1/authors/${authorId}/collection`, {
+      qs: params
+    })
   }
 }
 
