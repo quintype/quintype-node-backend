@@ -1,5 +1,5 @@
 {
-  "name": "quintype-backend",
+  "name": "@quintype/backend",
   "version": "1.14.0",
   "description": "client for accessing quintype API",
   "main": "index.js",
