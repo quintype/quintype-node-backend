@@ -6,11 +6,11 @@ const _ = require("lodash");
 const { loadNestedCollectionData } = require("./collection-loader");
 const { DEFAULT_DEPTH } = require("./constants");
 
-function wrapBuildFunction(clazz, upstream) {
-  clazz.build = function() {
+function wrapBuildFunction(Clazz, upstream) {
+  Clazz.build = function() {
     if (!arguments[0]) return null;
 
-    return new Proxy(new clazz(...arguments), {
+    return new Proxy(new Clazz(...arguments), {
       get: function(target, key) {
         if (key in target) return target[key];
         if (key in target[upstream]) return target[upstream][key];
@@ -157,7 +157,7 @@ class Member {
   }
 
   static getCurrentMember(client, authToken) {
-    if (!authToken || authToken == "")
+    if (!authToken || authToken === "")
       return new Promise((resolve, reject) => resolve(null));
     return client
       .getCurrentMember(authToken)
@@ -223,7 +223,7 @@ class Config {
   }
 
   getStack(heading) {
-    return this.config.layout.stacks.find(stack => stack.heading == heading);
+    return this.config.layout.stacks.find(stack => stack.heading === heading);
   }
 }
 wrapBuildFunction(Config, "config");
@@ -263,7 +263,7 @@ class Url {
 wrapBuildFunction(Url, "url");
 
 function catch404(e, defaultValue) {
-  if (e && e.statusCode == 404) return defaultValue;
+  if (e && e.statusCode === 404) return defaultValue;
   throw e;
 }
 
@@ -420,7 +420,7 @@ class Client {
   }
 
   getCustomURL(slug) {
-    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path));
+    return this.request("/api/v1/custom-urls/" + encodeURIComponent(slug));
   }
 
   getCustomPathData(path) {
