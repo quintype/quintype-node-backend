@@ -4,7 +4,8 @@
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
-    "prepublishOnly": "npm install && git diff --quiet && git tag -m '' -a v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --follow-tags origin"
+    "prepublishOnly": "npm install && git diff --quiet && git tag -m '' -a v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --follow-tags origin",
+    "lint:js:ci": "npx eslint $(git diff --pretty='' --name-only origin/master..HEAD -- '*.js') ./index.js"
   },
   "repository": {
     "type": "git",
