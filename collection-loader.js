@@ -1,17 +1,23 @@
 const get = require("lodash/get");
 const flatMap = require("lodash/flatMap");
-const {DEFAULT_STORY_FIELDS} = require("./constants");
+const { DEFAULT_STORY_FIELDS } = require("./constants");
 
 function loadCollectionItems(client, collections) {
   const bulkRequestBody = collections.reduce(
-    (acc, collection) => Object.assign(acc, {
-      [collection.slug]: {
-        _type: "collection",
-        slug: collection.slug,
-        "story-fields": DEFAULT_STORY_FIELDS}
-    }), {});
+    (acc, collection) =>
+      Object.assign(acc, {
+        [collection.slug]: {
+          _type: "collection",
+          slug: collection.slug,
+          "story-fields": DEFAULT_STORY_FIELDS
+        }
+      }),
+    {}
+  );
 
-  return client.getInBulk({requests: bulkRequestBody}).then(response => response.results);
+  return client
+    .getInBulk({ requests: bulkRequestBody })
+    .then(response => response.results);
 }
 
 // Ugly. This function updates all the items in place.
@@ -19,22 +25,34 @@ function loadCollectionItems(client, collections) {
 function updateItemsInPlace(client, depth, items) {
   const collections = items.filter(item => item.type == "collection");
 
-  if(depth == 0 || collections.length == 0)
-    return Promise.resolve();
+  if (depth == 0 || collections.length == 0) return Promise.resolve();
 
-  return loadCollectionItems(client, collections)
-    .then(collectionSlugToCollection => {
+  return loadCollectionItems(client, collections).then(
+    collectionSlugToCollection => {
       collections.forEach(collection => {
-        collection.summary = get(collectionSlugToCollection, [collection.slug, "summary"], '')
-        collection.items = get(collectionSlugToCollection, [collection.slug, "items"]) 
+        collection.summary = get(
+          collectionSlugToCollection,
+          [collection.slug, "summary"],
+          ""
+        );
+        collection.items = get(collectionSlugToCollection, [
+          collection.slug,
+          "items"
+        ]);
       });
-      return updateItemsInPlace(client, depth - 1, flatMap(collections, collection => collection.items))
-    })
+      return updateItemsInPlace(
+        client,
+        depth - 1,
+        flatMap(collections, collection => collection.items)
+      );
+    }
+  );
 }
 
-function loadNestedCollectionData(client, collection, {depth}) {
-  return updateItemsInPlace(client, depth, collection.items)
-    .then(() => collection);
+function loadNestedCollectionData(client, collection, { depth }) {
+  return updateItemsInPlace(client, depth, collection.items).then(
+    () => collection
+  );
 }
 
-module.exports = {loadNestedCollectionData};
+module.exports = { loadNestedCollectionData };

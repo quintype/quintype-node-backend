@@ -1,30 +1,29 @@
-'use strict';
+"use strict";
 
-const rp = require('request-promise');
+const rp = require("request-promise");
 const Promise = require("bluebird");
 const _ = require("lodash");
-const {loadNestedCollectionData}  = require("./collection-loader");
+const { loadNestedCollectionData } = require("./collection-loader");
 const { DEFAULT_DEPTH } = require("./constants");
 
 function wrapBuildFunction(clazz, upstream) {
   clazz.build = function() {
-    if(!arguments[0])
-      return null;
+    if (!arguments[0]) return null;
 
     return new Proxy(new clazz(...arguments), {
       get: function(target, key) {
-        if(key in target)
-          return target[key];
-        if(key in target[upstream])
-          return target[upstream][key];
+        if (key in target) return target[key];
+        if (key in target[upstream]) return target[upstream][key];
       }
     });
-  }
+  };
 }
 
 function mapValues(f, object) {
-  return Object.entries(object)
-    .reduce((acc, [key, value]) => { acc[key] = f(value, key); return acc}, {})
+  return Object.entries(object).reduce((acc, [key, value]) => {
+    acc[key] = f(value, key);
+    return acc;
+  }, {});
 }
 
 class Story {
@@ -38,15 +37,19 @@ class Story {
 
   static getStories(client, storyGroup, params) {
     return client
-      .getStories(_.extend({'story-group': storyGroup}, params))
-      .then(response => _.map(response["stories"], story => Story.build(story)));
+      .getStories(_.extend({ "story-group": storyGroup }, params))
+      .then(response =>
+        _.map(response["stories"], story => Story.build(story))
+      );
   }
 
   getRelatedStories(client) {
-    const sectionId = _.get(this, ['sections', 0, 'id'], null);
+    const sectionId = _.get(this, ["sections", 0, "id"], null);
     return client
       .getRelatedStories(this.id, sectionId)
-      .then(response => _.map(response["related-stories"], story => Story.build(story)));
+      .then(response =>
+        _.map(response["related-stories"], story => Story.build(story))
+      );
   }
 
   static getStoryBySlug(client, slug, params) {
@@ -68,23 +71,35 @@ class Story {
   }
 
   static getSearch(client, params) {
-    return client
-      .getSearch(params)
-      .then(response =>
-        _.merge(response["results"],
-          {'stories': _.map(response["results"]["stories"], story => Story.build(story))}));
+    return client.getSearch(params).then(response =>
+      _.merge(response["results"], {
+        stories: _.map(response["results"]["stories"], story =>
+          Story.build(story)
+        )
+      })
+    );
   }
 
   static getInBulk(client, requests) {
     function wrapResult(result) {
-      if(!result.stories)
-        return result;
-      return Object.assign({}, result, {stories: result.stories.map(Story.build)})
+      if (!result.stories) return result;
+      return Object.assign({}, result, {
+        stories: result.stories.map(Story.build)
+      });
     }
 
     return client
-      .getInBulk({requests: mapValues(r => Object.assign({_type: "stories"}, r), requests)})
-      .then(response => BulkResults.build(mapValues(result => wrapResult(result), response["results"])));
+      .getInBulk({
+        requests: mapValues(
+          r => Object.assign({ _type: "stories" }, r),
+          requests
+        )
+      })
+      .then(response =>
+        BulkResults.build(
+          mapValues(result => wrapResult(result), response["results"])
+        )
+      );
   }
 }
 wrapBuildFunction(Story, "story");
@@ -96,8 +111,10 @@ class BulkResults {
 
   asJson() {
     return mapValues(response => {
-      if(response.stories) {
-        return Object.assign({}, response, {stories: response.stories.map(story => story.asJson())})
+      if (response.stories) {
+        return Object.assign({}, response, {
+          stories: response.stories.map(story => story.asJson())
+        });
       } else {
         return response;
       }
@@ -116,13 +133,16 @@ class Collection {
   }
 
   static getCollectionBySlug(client, slug, params, options = {}) {
-    const {depth = DEFAULT_DEPTH} = options;
+    const { depth = DEFAULT_DEPTH } = options;
     return client
       .getCollectionBySlug(slug, params)
       .then(response => {
         const collection = response ? response["collection"] || response : null;
-        return collection && loadNestedCollectionData(client, collection, {depth})
-      }).then(collection => Collection.build(collection))
+        return (
+          collection && loadNestedCollectionData(client, collection, { depth })
+        );
+      })
+      .then(collection => Collection.build(collection));
   }
 }
 wrapBuildFunction(Collection, "collection");
@@ -137,7 +157,7 @@ class Member {
   }
 
   static getCurrentMember(client, authToken) {
-    if(!authToken || authToken == "")
+    if (!authToken || authToken == "")
       return new Promise((resolve, reject) => resolve(null));
     return client
       .getCurrentMember(authToken)
@@ -168,10 +188,10 @@ class Author {
       .then(authors => _.map(authors, author => Author.build(author)));
   }
 
-  static getAuthorCollection(client, authorId, params){
+  static getAuthorCollection(client, authorId, params) {
     return client
-    .getAuthorCollection(authorId, params)
-    .catch(e => catch404(e, null))
+      .getAuthorCollection(authorId, params)
+      .catch(e => catch404(e, null));
   }
 }
 wrapBuildFunction(Author, "author");
@@ -187,7 +207,7 @@ class CustomPath {
 
   static getCustomPathData(client, path) {
     return client
-      .getCustomPathData(path.startsWith('/') ? path : "/" + path)
+      .getCustomPathData(path.startsWith("/") ? path : "/" + path)
       .then(response => response["page"] && CustomPath.build(response["page"]));
   }
 }
@@ -220,7 +240,9 @@ class Entity {
   static getEntities(client, params) {
     return client
       .getEntities(params)
-      .then(response => _.map(response["entities"], entity => Entity.build(entity)));
+      .then(response =>
+        _.map(response["entities"], entity => Entity.build(entity))
+      );
   }
 }
 wrapBuildFunction(Entity, "entity");
@@ -235,16 +257,13 @@ class Url {
   }
 
   static getCustomURL(client, slug) {
-    return client
-      .getCustomURL(slug)
-        .then(url => Url.build(url))
+    return client.getCustomURL(slug).then(url => Url.build(url));
   }
 }
 wrapBuildFunction(Url, "url");
 
 function catch404(e, defaultValue) {
-  if(e && e.statusCode == 404)
-    return defaultValue;
+  if (e && e.statusCode == 404) return defaultValue;
   throw e;
 }
 
@@ -252,8 +271,14 @@ class Client {
   constructor(baseUrl, temporaryClient) {
     this.baseUrl = baseUrl;
     this.config = null;
-    if(!temporaryClient) {
-      this.interval = setInterval(() => this.updateConfig().catch(e => console.error("Unable to update config")), 120000);
+    if (!temporaryClient) {
+      this.interval = setInterval(
+        () =>
+          this.updateConfig().catch(e =>
+            console.error("Unable to update config")
+          ),
+        120000
+      );
       this.initialUpdateConfig = this.updateConfig();
     }
     this.hostname = baseUrl.replace(/https?:\/\//, "");
@@ -264,54 +289,58 @@ class Client {
   }
 
   request(path, opts) {
-    const params = Object.assign({
-      method: 'GET',
-      uri: this.baseUrl + path,
-      json: true,
-      gzip: true
-    }, opts);
+    const params = Object.assign(
+      {
+        method: "GET",
+        uri: this.baseUrl + path,
+        json: true,
+        gzip: true
+      },
+      opts
+    );
     return rp(params);
   }
 
   getFromBulkApiManager(slug, params) {
-    return this.request("/api/v1/bulk/" + slug,{
+    return this.request("/api/v1/bulk/" + slug, {
       qs: params
-    })
+    });
   }
 
   getTags(slug) {
-    return this.request("/api/v1/tags/" + slug)
+    return this.request("/api/v1/tags/" + slug);
   }
 
   getPublicPreviewStory(publicPreviewKey) {
-    return this.request("/api/v1/preview/story/" + publicPreviewKey).catch(e => catch404(e, {}))
+    return this.request("/api/v1/preview/story/" + publicPreviewKey).catch(e =>
+      catch404(e, {})
+    );
   }
 
   getCollectionBySlug(slug, params) {
     return this.request("/api/v1/collections/" + slug, {
       qs: params
-    }).catch(e => catch404(e, null))
+    }).catch(e => catch404(e, null));
   }
 
   getStories(params) {
     return this.request("/api/v1/stories", {
       qs: params
-    })
+    });
   }
 
   getStoryBySlug(slug, params) {
     return this.request("/api/v1/stories-by-slug", {
-      qs: _.merge({slug: slug}, params)
-    }).catch(e => catch404(e, {}))
+      qs: _.merge({ slug: slug }, params)
+    }).catch(e => catch404(e, {}));
   }
 
   getStoryById(id) {
-    return this.request("/api/v1/stories/" + id).catch(e => catch404(e, {}))
+    return this.request("/api/v1/stories/" + id).catch(e => catch404(e, {}));
   }
 
   getConfig() {
-    if(this.config)
-      return Promise.resolve(this.config);
+    if (this.config) return Promise.resolve(this.config);
 
     this.initialUpdateConfig = this.initialUpdateConfig || this.updateConfig();
 
@@ -323,80 +352,86 @@ class Client {
       headers: {
         "X-QT-AUTH": authToken
       }
-    })
+    });
   }
 
   getAuthor(authorId) {
-    return this.request("/api/v1/authors/" + authorId).catch(e => catch404(e, {}))
+    return this.request("/api/v1/authors/" + authorId).catch(e =>
+      catch404(e, {})
+    );
   }
 
   getAuthors(params) {
     return this.request("/api/authors", {
       qs: params
-    })
+    });
   }
 
   getSearch(params) {
     return this.request("/api/v1/search", {
       qs: params
-    })
+    });
   }
 
   getRelatedStories(storyId = null, sectionId = null) {
-    return this.request("/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId)
+    return this.request(
+      "/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId
+    );
   }
 
   updateConfig() {
-    return this.request("/api/v1/config")
-    .then(config => this.config = Config.build(config))
+    return this.request("/api/v1/config").then(
+      config => (this.config = Config.build(config))
+    );
   }
 
-  postComments(params, authToken){
+  postComments(params, authToken) {
     return this.request("/api/v1/comments", {
-      method: 'POST',
+      method: "POST",
       body: params,
       headers: {
         "X-QT-AUTH": authToken,
-        'content-type': 'application/json'
+        "content-type": "application/json"
       }
-    })
+    });
   }
 
-  getInBulk(requests){
+  getInBulk(requests) {
     return this.request("/api/v1/bulk-request", {
-      method: 'POST',
+      method: "POST",
       body: requests,
       headers: {
-        'content-type': 'application/json'
+        "content-type": "application/json"
       },
       followAllRedirects: true
-    })
+    });
   }
 
   getAmpStoryBySlug(slug) {
     return this.request("/api/v1/amp/story", {
-      qs: {slug}
-    })
+      qs: { slug }
+    });
   }
 
   getEntities(params) {
     return this.request("/api/v1/entities", {
       qs: params
-    })
+    });
   }
 
   getCustomURL(slug) {
-    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path))
+    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path));
   }
 
   getCustomPathData(path) {
-    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path))
-               .catch(e => catch404(e, {}));
+    return this.request(
+      "/api/v1/custom-urls/" + encodeURIComponent(path)
+    ).catch(e => catch404(e, {}));
   }
-  getAuthorCollection(authorId, params){
+  getAuthorCollection(authorId, params) {
     return this.request(`/api/v1/authors/${authorId}/collection`, {
       qs: params
-    })
+    });
   }
 }
 
