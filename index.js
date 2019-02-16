@@ -226,7 +226,7 @@ class Entity {
   static getCollectionsByEntityId(client, entityId, params) {
     return client
       .getCollectionsByEntityId(entityId, params)
-      .then(response => _.map(response["collections"], collection => Collection.build(collection)));
+      .then(response => response["collections"].map(collection => Collection.build(collection)));
   }
 
 }
