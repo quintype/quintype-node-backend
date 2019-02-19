@@ -222,6 +222,19 @@ class Entity {
       .getEntities(params)
       .then(response => _.map(response["entities"], entity => Entity.build(entity)));
   }
+
+  static getEntity(client, entityId, params) {
+    return client
+      .getEntity(entityId, params)
+      .then(response => Entity.build(response));
+  }
+
+  getCollections(client, params) {
+    return client
+      .getCollectionsByEntityId(this.entity.id, params)
+      .then(response => response["collections"].map(collection => Collection.build(collection)));
+  }
+
 }
 wrapBuildFunction(Entity, "entity");
 
@@ -381,6 +394,18 @@ class Client {
 
   getEntities(params) {
     return this.request("/api/v1/entities", {
+      qs: params
+    })
+  }
+
+  getEntity(entityId, params) {
+    return this.request("/api/v1/entity/"+entityId, {
+      qs: params
+    })
+  }
+
+  getCollectionsByEntityId(entityId, params) {
+    return this.request("/api/v1/entity/" + entityId + "/collections", {
       qs: params
     })
   }
