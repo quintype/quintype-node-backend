@@ -4,6 +4,7 @@ const rp = require('request-promise');
 const Promise = require("bluebird");
 const _ = require("lodash");
 const {loadNestedCollectionData}  = require("./collection-loader");
+const { MenuGroups }  = require("./menu-groups");
 const { DEFAULT_DEPTH } = require("./constants");
 
 function wrapBuildFunction(clazz, upstream) {
@@ -255,6 +256,8 @@ class Url {
 }
 wrapBuildFunction(Url, "url");
 
+wrapBuildFunction(MenuGroups, "menu-groups");
+
 function catch404(e, defaultValue) {
   if(e && e.statusCode == 404)
     return defaultValue;
@@ -423,6 +426,12 @@ class Client {
       qs: params
     })
   }
+
+  getMenuGroups() {
+    return this.request(`/api/v1/menu-groups`, {
+      qs: params
+    });
+  }
 }
 
 function buildClient(host, temporaryClient) {
@@ -439,5 +448,6 @@ module.exports = {
   Collection: Collection,
   Entity: Entity,
   Url: Url,
+  MenuGroups: MenuGroups,
   buildClient: buildClient
 };
