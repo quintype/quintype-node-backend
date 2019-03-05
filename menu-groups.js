@@ -7,11 +7,11 @@ class MenuGroups {
     return this.menuGroups;
   }
 
-  static getMenuGroups(client, params) {
+  static getMenuGroups(client, params = {}) {
     return client
       .getMenuGroups(params)
-      .then(menuGroups => MenuGroups.build(menuGroups));
+      .then(response => MenuGroups.build(response['menu-groups']));
   }
 }
 
-export {MenuGroups};
+module.exports = { MenuGroups: MenuGroups };

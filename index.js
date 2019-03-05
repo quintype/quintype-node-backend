@@ -256,7 +256,7 @@ class Url {
 }
 wrapBuildFunction(Url, "url");
 
-wrapBuildFunction(MenuGroups, "menu-groups");
+wrapBuildFunction(MenuGroups, "menuGroups");
 
 function catch404(e, defaultValue) {
   if(e && e.statusCode == 404)
@@ -427,7 +427,7 @@ class Client {
     })
   }
 
-  getMenuGroups() {
+  getMenuGroups(params = {}) {
     return this.request(`/api/v1/menu-groups`, {
       qs: params
     });
