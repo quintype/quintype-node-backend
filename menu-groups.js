@@ -7,6 +7,10 @@ class MenuGroups {
     return this.menuGroups;
   }
 
+  getMenuGroup(slug) {
+    return this.menuGroups[slug];
+  }
+
   static getMenuGroups(client, params = {}) {
     return client
       .getMenuGroups(params)
