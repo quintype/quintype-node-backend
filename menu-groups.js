@@ -1,3 +1,5 @@
+const { wrapBuildFunction } = require('./wrap-build');
+
 class MenuGroups {
   constructor(menuGroups) {
     this.menuGroups = menuGroups;
@@ -18,4 +20,6 @@ class MenuGroups {
   }
 }
 
-module.exports = { MenuGroups: MenuGroups };
+wrapBuildFunction(MenuGroups, "menuGroups");
+
+module.exports = { MenuGroups };

@@ -6,22 +6,7 @@ const _ = require("lodash");
 const {loadNestedCollectionData}  = require("./collection-loader");
 const { MenuGroups }  = require("./menu-groups");
 const { DEFAULT_DEPTH } = require("./constants");
-
-function wrapBuildFunction(clazz, upstream) {
-  clazz.build = function() {
-    if(!arguments[0])
-      return null;
-
-    return new Proxy(new clazz(...arguments), {
-      get: function(target, key) {
-        if(key in target)
-          return target[key];
-        if(key in target[upstream])
-          return target[upstream][key];
-      }
-    });
-  }
-}
+const { wrapBuildFunction } = require('./wrap-build');
 
 function mapValues(f, object) {
   return Object.entries(object)
@@ -255,8 +240,6 @@ class Url {
   }
 }
 wrapBuildFunction(Url, "url");
-
-wrapBuildFunction(MenuGroups, "menuGroups");
 
 function catch404(e, defaultValue) {
   if(e && e.statusCode == 404)
