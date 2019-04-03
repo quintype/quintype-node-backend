@@ -341,6 +341,12 @@ class Client {
     })
   }
 
+  getAdvancedSearch(params) {
+    return this.request("/api/v1/advanced-search", {
+      qs: params
+    })
+  }
+
   getRelatedStories(storyId = null, sectionId = null) {
     return this.request("/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId)
   }
