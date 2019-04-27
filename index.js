@@ -259,7 +259,6 @@ function catch404(e, defaultValue) {
 
 class Client {
   constructor(baseUrl, temporaryClient) {
-    super();
     this.baseUrl = baseUrl;
     this.config = null;
     if(!temporaryClient) {
