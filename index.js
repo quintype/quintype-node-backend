@@ -6,15 +6,16 @@ const _ = require("lodash");
 const {loadNestedCollectionData}  = require("./collection-loader");
 const { MenuGroups }  = require("./menu-groups");
 const { DEFAULT_DEPTH } = require("./constants");
-const { wrapBuildFunction } = require('./wrap-build');
+const { BaseAPI } = require('./base-api');
 
 function mapValues(f, object) {
   return Object.entries(object)
     .reduce((acc, [key, value]) => { acc[key] = f(value, key); return acc}, {})
 }
 
-class Story {
+class Story extends BaseAPI {
   constructor(story) {
+    super();
     this.story = story;
   }
 
@@ -25,32 +26,32 @@ class Story {
   static getStories(client, storyGroup, params) {
     return client
       .getStories(_.extend({'story-group': storyGroup}, params))
-      .then(response => _.map(response["stories"], story => Story.build(story)));
+      .then(response => _.map(response["stories"], story => this.build(story)));
   }
 
   getRelatedStories(client) {
     const sectionId = _.get(this, ['sections', 0, 'id'], null);
     return client
       .getRelatedStories(this.id, sectionId)
-      .then(response => _.map(response["related-stories"], story => Story.build(story)));
+      .then(response => _.map(response["related-stories"], story => this.build(story)));
   }
 
   static getStoryBySlug(client, slug, params) {
     return client
       .getStoryBySlug(slug, params)
-      .then(response => Story.build(response["story"]));
+      .then(response => this.build(response["story"]));
   }
 
   static getPublicPreviewStory(client, publicPreviewKey) {
     return client
       .getPublicPreviewStory(publicPreviewKey)
-      .then(response => Story.build(response["story"]));
+      .then(response => this.build(response["story"]));
   }
 
   static getStoryById(client, id) {
     return client
       .getStoryById(id)
-      .then(response => Story.build(response["story"]));
+      .then(response => this.build(response["story"]));
   }
 
   static getSearch(client, params) {
@@ -58,14 +59,14 @@ class Story {
       .getSearch(params)
       .then(response =>
         _.merge(response["results"],
-          {'stories': _.map(response["results"]["stories"], story => Story.build(story))}));
+          {'stories': _.map(response["results"]["stories"], story => this.build(story))}));
   }
 
   static getInBulk(client, requests) {
     function wrapResult(result) {
       if(!result.stories)
         return result;
-      return Object.assign({}, result, {stories: result.stories.map(Story.build)})
+      return Object.assign({}, result, {stories: result.stories.map(this.build)})
     }
 
     return client
@@ -73,10 +74,11 @@ class Story {
       .then(response => BulkResults.build(mapValues(result => wrapResult(result), response["results"])));
   }
 }
-wrapBuildFunction(Story, "story");
+Story.upstream = "story";
 
-class BulkResults {
+class BulkResults extends BaseAPI {
   constructor(results) {
+    super();
     this.results = results;
   }
 
@@ -90,10 +92,11 @@ class BulkResults {
     }, this.results);
   }
 }
-wrapBuildFunction(BulkResults, "results");
+BulkResults.upstream = "results";
 
-class Collection {
+class Collection extends BaseAPI {
   constructor(collection) {
+    super();
     this.collection = collection;
   }
 
@@ -108,13 +111,14 @@ class Collection {
       .then(response => {
         const collection = response ? response["collection"] || response : null;
         return collection && loadNestedCollectionData(client, collection, {depth})
-      }).then(collection => Collection.build(collection))
+      }).then(collection => this.build(collection))
   }
 }
-wrapBuildFunction(Collection, "collection");
+Collection.upstream = "collection";
 
-class Member {
+class Member extends BaseAPI {
   constructor(member) {
+    super();
     this.member = member;
   }
 
@@ -127,14 +131,15 @@ class Member {
       return new Promise((resolve, reject) => resolve(null));
     return client
       .getCurrentMember(authToken)
-      .then(response => response && Member.build(response["member"]))
+      .then(response => response && this.build(response["member"]))
       .catch(() => null);
   }
 }
-wrapBuildFunction(Member, "member");
+Member.upstream = "member";
 
-class Author {
+class Author extends BaseAPI {
   constructor(author) {
+    super();
     this.author = author;
   }
 
@@ -145,13 +150,13 @@ class Author {
   static getAuthor(client, authorId) {
     return client
       .getAuthor(authorId)
-      .then(response => response && Author.build(response["author"]));
+      .then(response => response && this.build(response["author"]));
   }
 
   static getAuthors(client, params) {
     return client
       .getAuthors(params)
-      .then(authors => _.map(authors, author => Author.build(author)));
+      .then(authors => _.map(authors, author => this.build(author)));
   }
 
   static getAuthorCollection(client, authorId, params){
@@ -160,10 +165,11 @@ class Author {
     .catch(e => catch404(e, null))
   }
 }
-wrapBuildFunction(Author, "author");
+Author.upstream = "author";
 
-class CustomPath {
+class CustomPath extends BaseAPI {
   constructor(page) {
+    super();
     this.page = page;
   }
 
@@ -174,13 +180,14 @@ class CustomPath {
   static getCustomPathData(client, path) {
     return client
       .getCustomPathData(path.startsWith('/') ? path : "/" + path)
-      .then(response => response["page"] && CustomPath.build(response["page"]));
+      .then(response => response["page"] && this.build(response["page"]));
   }
 }
-wrapBuildFunction(CustomPath, "page");
+CustomPath.upstream = "page";
 
-class Config {
+class Config extends BaseAPI {
   constructor(config) {
+    super();
     this.config = config;
   }
 
@@ -192,10 +199,12 @@ class Config {
     return this.config.layout.stacks.find(stack => stack.heading == heading);
   }
 }
-wrapBuildFunction(Config, "config");
 
-class Entity {
+Config.upstream = "config";
+
+class Entity extends BaseAPI {
   constructor(entity) {
+    super();
     this.entity = entity;
   }
 
@@ -206,13 +215,13 @@ class Entity {
   static getEntities(client, params) {
     return client
       .getEntities(params)
-      .then(response => _.map(response["entities"], entity => Entity.build(entity)));
+      .then(response => _.map(response["entities"], entity => this.build(entity)));
   }
 
   static getEntity(client, entityId, params) {
     return client
       .getEntity(entityId, params)
-      .then(response => Entity.build(response));
+      .then(response => this.build(response));
   }
 
   getCollections(client, params) {
@@ -220,12 +229,13 @@ class Entity {
       .getCollectionsByEntityId(this.entity.id, params)
       .then(response => response["collections"].map(collection => Collection.build(collection)));
   }
-
 }
-wrapBuildFunction(Entity, "entity");
 
-class Url {
+Entity.upstream = "entity";
+
+class Url extends BaseAPI {
   constructor(url) {
+    super();
     this.url = url;
   }
 
@@ -236,10 +246,10 @@ class Url {
   static getCustomURL(client, slug) {
     return client
       .getCustomURL(slug)
-        .then(url => Url.build(url))
+        .then(url => this.build(url))
   }
 }
-wrapBuildFunction(Url, "url");
+Url.upstream = "url";
 
 function catch404(e, defaultValue) {
   if(e && e.statusCode == 404)
@@ -249,6 +259,7 @@ function catch404(e, defaultValue) {
 
 class Client {
   constructor(baseUrl, temporaryClient) {
+    super();
     this.baseUrl = baseUrl;
     this.config = null;
     if(!temporaryClient) {
