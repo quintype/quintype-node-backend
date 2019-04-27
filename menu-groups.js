@@ -2,6 +2,7 @@ const { BaseAPI } = require('./base-api');
 
 class MenuGroups extends BaseAPI{
   constructor(menuGroups) {
+    super();
     this.menuGroups = menuGroups;
   }
 
