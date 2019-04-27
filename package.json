@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "1.15.2-inherit-build.0",
+  "version": "1.15.2-inherit-build.1",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
