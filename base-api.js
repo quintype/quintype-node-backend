@@ -5,7 +5,7 @@ class BaseAPI {
     }
 
     return new Proxy(new this.prototype.constructor(...arguments), {
-      get: function(target, key) {
+      get: (target, key) => {
         if(key in target)
           return target[key];
         if(key in target[this.upstream])
