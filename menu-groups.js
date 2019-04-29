@@ -1,7 +1,8 @@
-const { wrapBuildFunction } = require('./wrap-build');
+const { BaseAPI } = require('./base-api');
 
-class MenuGroups {
+class MenuGroups extends BaseAPI{
   constructor(menuGroups) {
+    super();
     this.menuGroups = menuGroups;
   }
 
@@ -16,10 +17,10 @@ class MenuGroups {
   static getMenuGroups(client, params = {}) {
     return client
       .getMenuGroups(params)
-      .then(response => MenuGroups.build(response['menu-groups']));
+      .then(response => this.build(response['menu-groups']));
   }
 }
 
-wrapBuildFunction(MenuGroups, "menuGroups");
+MenuGroups.upstream = "menuGroups";
 
 module.exports = { MenuGroups };
