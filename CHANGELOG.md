@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.17.1](https://github.com/quintype/quintype-backend-js/compare/v1.17.0...v1.17.1) (2019-05-02)
+
+
+### Bug Fixes
+
+* **relatedStories:** Fix breaking function call ([7c0d1bd](https://github.com/quintype/quintype-backend-js/commit/7c0d1bd))
+
+
+
 # [1.17.0](https://github.com/quintype/quintype-backend-js/compare/v1.16.0...v1.17.0) (2019-05-02)
 
 
