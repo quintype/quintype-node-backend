@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.17.0](https://github.com/quintype/quintype-backend-js/compare/v1.16.0...v1.17.0) (2019-05-02)
+
+
+### Features
+
+* Export Config ([5077c2c](https://github.com/quintype/quintype-backend-js/commit/5077c2c))
+
+
+
 # [1.16.0](https://github.com/quintype/quintype-backend-js/compare/v1.15.1...v1.16.0) (2019-04-29)
 
 
