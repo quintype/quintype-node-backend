@@ -33,7 +33,7 @@ class Story extends BaseAPI {
     const sectionId = _.get(this, ['sections', 0, 'id'], null);
     return client
       .getRelatedStories(this.id, sectionId)
-      .then(response => _.map(response["related-stories"], story => this.build(story)));
+      .then(response => _.map(response["related-stories"], story => this.constructor.build(story)));
   }
 
   static getStoryBySlug(client, slug, params) {
