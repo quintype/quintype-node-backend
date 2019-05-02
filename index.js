@@ -198,6 +198,22 @@ class Config extends BaseAPI {
   getStack(heading) {
     return this.config.layout.stacks.find(stack => stack.heading == heading);
   }
+
+  getDomainConfig(domainSlug) {    
+    return (this.domains || []).find((domain => domain.slug === domainSlug)) || {};
+  }
+
+  getHomeCollectionSlug(domainSlug) {
+    return this.getDomainConfig(domainSlug)["home-collection-id"] || "home";
+  }
+
+  // In case the client doesn't have the domainSlug loaded, just return all the domains
+  getDomainSections(domainSlug) {
+    if(domainSlug === undefined) {
+      return this.sections;
+    }
+    return (this.sections || []).filter(section => section["domain-slug"] === domainSlug) || {};
+  }
 }
 
 Config.upstream = "config";
