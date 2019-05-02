@@ -439,6 +439,7 @@ function buildClient(host, temporaryClient) {
 }
 
 module.exports = {
+  Config: Config,
   Story: Story,
   Client: Client,
   Member: Member,
