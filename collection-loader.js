@@ -17,8 +17,7 @@ function loadCollectionItems(client, collections) {
 // Ugly. This function updates all the items in place.
 // However, this is way more readable than a pure version
 function updateItemsInPlace(client, depth, items) {
-  const collections = items.filter(item => item.type == "collection");
-
+  const collections = items.filter(item => get(item, ["type"], "") === "collection");
   if(depth == 0 || collections.length == 0)
     return Promise.resolve();
 
