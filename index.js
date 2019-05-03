@@ -199,7 +199,7 @@ class Config extends BaseAPI {
     return this.config.layout.stacks.find(stack => stack.heading == heading);
   }
 
-  getDomainConfig(domainSlug) {    
+  getDomainConfig(domainSlug) {
     return (this.domains || []).find((domain => domain.slug === domainSlug)) || {};
   }
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepublishOnly": "./bin-dev-scripts/standard-version-release.sh",
-    "test" : "jest"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
