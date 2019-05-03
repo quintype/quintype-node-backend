@@ -1,7 +1,5 @@
 const { Config } = require('./index');
 
-const sortAscendingOrder = (a, b) => a.id > b.id;
-
 describe("Config", function() {
     describe("Returns Home Collection Slug Given a Domain" , function() {
       it("Returns home-collection id provided a hostname", function(){
