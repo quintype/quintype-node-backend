@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.18.0](https://github.com/quintype/quintype-backend-js/compare/v1.17.1...v1.18.0) (2019-05-03)
+
+
+### Features
+
+* If the domain-slug is undefined, all domains are returned ([f35f48a](https://github.com/quintype/quintype-backend-js/commit/f35f48a))
+* Multi Domain Support ([#28](https://github.com/quintype/quintype-backend-js/issues/28)) ([1c0352d](https://github.com/quintype/quintype-backend-js/commit/1c0352d))
+
+
+
 ## [1.17.1](https://github.com/quintype/quintype-backend-js/compare/v1.17.0...v1.17.1) (2019-05-02)
 
 
