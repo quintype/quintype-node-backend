@@ -45,21 +45,31 @@ describe("Config", function() {
             'domain-slug': 'cinema',
             name: 'Bollywood',
             id: 10,
-          }
+          },
         ]
       });
 
       it("gets all sections for a given domain", function() {
         expect(config.getDomainSections('cinema').map(s=> s.id)).toEqual([2, 10]);
       });
+
       it("returns empty array if no matching sections are found", function() {
         expect(config.getDomainSections('business').map(s=> s.id)).toEqual([]);
       });
+
       it("return all sections if domain slug is undefined", function() {
         expect(config.getDomainSections(undefined).map(s=> s.id)).toEqual([2, 3, 10]);
       });
+
       it("return empty list if domain slug is null", function() {
         expect(config.getDomainSections(null).map(s=> s.id)).toEqual([3]);
       });
     });
+
+    it("returns domains to the default domain if domain slug is missing", function (){
+      const config = Config.build({sections: [{id: 2, name: 'hollywood'}]});
+      expect(config.getDomainSections(null).map(s => s.id)).toEqual([2]);
+      expect(config.getDomainSections('cinema').map(s => s.id)).toEqual([2]);
+      expect(config.getDomainSections(undefined).map(s => s.id)).toEqual([2]);
+    })
 });
