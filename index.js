@@ -189,6 +189,7 @@ class Config extends BaseAPI {
   constructor(config) {
     super();
     this.config = config;
+    this._memoized_data = {};
   }
 
   asJson() {
@@ -213,6 +214,11 @@ class Config extends BaseAPI {
       return this.sections;
     }
     return (this.sections || []).filter(section => section["domain-slug"] === undefined || section["domain-slug"] === domainSlug) || {};
+  }
+
+  memoize(key, f) {
+    this._memoized_data[key] = this._memoized_data[key] || {value: f()};
+    return this._memoized_data[key].value;
   }
 }
 

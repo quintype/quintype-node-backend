@@ -30,7 +30,7 @@ describe("Config", function() {
 
     describe("Returns Sections Given a Domain",  function() {
       let config= Config.build({
-        sections:[          
+        sections:[
           {
             'domain-slug': 'cinema',
             name: 'Hollywood',
@@ -71,5 +71,19 @@ describe("Config", function() {
       expect(config.getDomainSections(null).map(s => s.id)).toEqual([2]);
       expect(config.getDomainSections('cinema').map(s => s.id)).toEqual([2]);
       expect(config.getDomainSections(undefined).map(s => s.id)).toEqual([2]);
+    })
+
+    describe("memoize", function() {
+      it("can memoize logic against some key", function () {
+        const config = Config.build({});
+        config.memoize("the-key", () => 1)
+        expect(config.memoize("the-key", () => 2)).toBe(1);
+      })
+
+      it("allows you to memoize an undefined result", function() {
+        const config = Config.build({});
+        config.memoize("the-key", () => undefined)
+        expect(config.memoize("the-key", () => true)).toBe(undefined);
+      })
     })
 });

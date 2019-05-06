@@ -24,3 +24,12 @@ In cases where a 404 is possible (such as getting a story or a collection by slu
 * In case of a success, the promise resolves to an object of the Story class
 * In case of a 404, such as a not found slug, the promise resolves to null
 * In case of a 5xx or any other status code, the promise is rejected with an exception
+
+
+### Memoizing Common Data
+
+The config provides a way to memoize commonly used logic. This is stored in memory, and is never purged.
+
+```
+config.memoize("key-to-memoize-against", () => complexSyncLogic());
+```
