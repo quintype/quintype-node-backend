@@ -212,6 +212,9 @@ class Config extends BaseAPI {
     if(domainSlug === undefined) {
       return this.sections;
     }
+    if ( domainSlug === null ) {
+      return [];
+    }
     return (this.sections || []).filter(section => section["domain-slug"] === domainSlug) || {};
   }
 }

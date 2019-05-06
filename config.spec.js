@@ -30,7 +30,7 @@ describe("Config", function() {
 
     describe("Returns Sections Given a Domain",  function() {
       let config= Config.build({
-        sections:[          
+        sections:[
           {
             'domain-slug': 'cinema',
             name: 'Hollywood',
@@ -59,7 +59,7 @@ describe("Config", function() {
         expect(config.getDomainSections(undefined).map(s=> s.id)).toEqual([2, 3, 10]);
       });
       it("return empty list if domain slug is null", function() {
-        expect(config.getDomainSections(null).map(s=> s.id)).toEqual([3]);
+        expect(config.getDomainSections(null).map(s=> s.id)).toEqual([]);
       });
     });
 });
