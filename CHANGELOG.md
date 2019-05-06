@@ -1,6 +1,15 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [1.19.0](https://github.com/quintype/quintype-backend-js/compare/v1.18.0...v1.19.0) (2019-05-06)
+
+
+### Features
+
+* Allow you to memoize things on the config ([#29](https://github.com/quintype/quintype-backend-js/issues/29)) ([21293df](https://github.com/quintype/quintype-backend-js/commit/21293df))
+
+
 
 # [1.18.0](https://github.com/quintype/quintype-backend-js/compare/v1.17.1...v1.18.0) (2019-05-03)
 
