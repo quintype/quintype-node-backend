@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.20.0](https://github.com/quintype/quintype-backend-js/compare/v1.19.0...v1.20.0) (2019-05-13)
+
+
+### Features
+
+* **add-access-fields:** add access and access-level-value in load nested collections ([#30](https://github.com/quintype/quintype-backend-js/issues/30)) ([479c761](https://github.com/quintype/quintype-backend-js/commit/479c761))
+
+
+
 ## [1.19.0](https://github.com/quintype/quintype-backend-js/compare/v1.18.0...v1.19.0) (2019-05-06)
 
 
