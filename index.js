@@ -36,6 +36,11 @@ class Story extends BaseAPI {
       .then(response => _.map(response["related-stories"], story => this.constructor.build(story)));
   }
 
+  getStoryAttributes(client) {
+    return client
+      .getStoryAttributes(this.id)
+  }
+
   static getStoryBySlug(client, slug, params) {
     return client
       .getStoryBySlug(slug, params)
@@ -381,6 +386,10 @@ class Client {
 
   getRelatedStories(storyId = null, sectionId = null) {
     return this.request("/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId)
+  }
+
+  getStoryAttributes(storyId) {
+    return this.request("/api/v1/stories/" + storyId + "/attributes")
   }
 
   updateConfig() {
