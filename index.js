@@ -111,11 +111,13 @@ class Collection extends BaseAPI {
 
   static getCollectionBySlug(client, slug, params, options = {}) {
     const {depth = DEFAULT_DEPTH} = options;
+    const storyFields = _.get(params, ["story-fields"], null);
+
     return client
       .getCollectionBySlug(slug, params)
       .then(response => {
         const collection = response ? response["collection"] || response : null;
-        return collection && loadNestedCollectionData(client, collection, {depth})
+        return collection && loadNestedCollectionData(client, collection, {depth, storyFields})
       }).then(collection => this.build(collection))
   }
 }
