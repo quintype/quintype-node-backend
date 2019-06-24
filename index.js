@@ -5,7 +5,7 @@ const Promise = require("bluebird");
 const _ = require("lodash");
 const {loadNestedCollectionData}  = require("./collection-loader");
 const { MenuGroups }  = require("./menu-groups");
-const { DEFAULT_DEPTH } = require("./constants");
+const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require('./base-api');
 
 function mapValues(f, object) {
@@ -111,7 +111,8 @@ class Collection extends BaseAPI {
 
   static getCollectionBySlug(client, slug, params, options = {}) {
     const {depth = DEFAULT_DEPTH} = options;
-    const storyFields = _.get(params, ["story-fields"], null);
+    const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
+
     return client
       .getCollectionBySlug(slug, params)
       .then(response => {

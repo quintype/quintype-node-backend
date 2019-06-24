@@ -2,15 +2,13 @@ const get = require("lodash/get");
 const flatMap = require("lodash/flatMap");
 const {DEFAULT_STORY_FIELDS} = require("./constants");
 
-function loadCollectionItems(client, collections, additionalStoryFields) {
-  const updatedStoryFields = DEFAULT_STORY_FIELDS + (additionalStoryFields ? `,${additionalStoryFields}` : "");
-
+function loadCollectionItems(client, collections, storyFields) {
   const bulkRequestBody = collections.reduce(
     (acc, collection) => Object.assign(acc, {
       [collection.slug]: {
         _type: "collection",
         slug: collection.slug,
-        "story-fields": updatedStoryFields}
+        "story-fields": storyFields}
     }), {});
 
   return client.getInBulk({requests: bulkRequestBody}).then(response => response.results);
