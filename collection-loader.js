@@ -33,9 +33,8 @@ function updateItemsInPlace(client, depth, items, storyFields) {
 }
 
 function loadNestedCollectionData(client, collection, {depth, storyFields}) {
-  const validItems = collection.items.filter(item => item && item.type);
-  return updateItemsInPlace(client, depth, validItems, storyFields)
-    .then(() => ({...collection, items: validItems}));
+  return updateItemsInPlace(client, depth, collection.items, storyFields)
+    .then(() => collection);
 }
 
 module.exports = {loadNestedCollectionData};
