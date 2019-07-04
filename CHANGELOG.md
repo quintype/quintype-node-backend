@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.20.3](https://github.com/quintype/quintype-backend-js/compare/v1.20.2...v1.20.3) (2019-07-04)
+
+
+### Bug Fixes
+
+* Does not crash if items are null or undefined ([3c24ccd](https://github.com/quintype/quintype-backend-js/commit/3c24ccd))
+
+
+
 ### [1.20.2](https://github.com/quintype/quintype-backend-js/compare/v1.20.1...v1.20.2) (2019-06-24)
 
 
