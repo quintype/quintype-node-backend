@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.20.4](https://github.com/quintype/quintype-backend-js/compare/v1.20.3...v1.20.4) (2019-07-05)
+
+
+### Bug Fixes
+
+* Pass storyFields to the recursing function, ([#33](https://github.com/quintype/quintype-backend-js/issues/33)) ([e1bddfd](https://github.com/quintype/quintype-backend-js/commit/e1bddfd))
+
+
+
 ### [1.20.3](https://github.com/quintype/quintype-backend-js/compare/v1.20.2...v1.20.3) (2019-07-04)
 
 
