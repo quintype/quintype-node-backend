@@ -174,16 +174,43 @@ class Author extends BaseAPI {
 }
 Author.upstream = "author";
 
+/**
+ * CustomPath is used for managing redirects and static pages via the editor. It corresponds to the
+ * /api/v1/custom-urls/:path.
+ *
+ * Example
+ * ```javascript
+ * import { CustomPath } from "@quintype/framework/server/api-client";
+ *
+ * async function loadCustomPath(client, path) {
+ *   const page = await CustomPath.getCustomPathData(client, path);
+ *   if(!page) {
+ *     return404();
+ *   } else if (page.type == 'redirect') {
+ *     redirectTo(page["destination-path"]);
+ *   } else if (page.type == 'static-page') {
+ *     renderPage(page);
+ *   }
+ * }
+ * ```
+ * @hideconstructor
+ */
 class CustomPath extends BaseAPI {
   constructor(page) {
     super();
     this.page = page;
   }
 
+  /** Use this to convert to a simple javascript object, suitable for JSON. */
   asJson() {
     return this.page;
   }
 
+  /**
+   * This function is used to get the page from the API. See {@link CustomPath}'s example for a usage example
+   * @param {Client} client Client
+   * @param {string} path The path which may be a redirect or static page
+   */
   static getCustomPathData(client, path) {
     return client
       .getCustomPathData(path.startsWith('/') ? path : "/" + path)
@@ -207,7 +234,7 @@ class Config extends BaseAPI {
     this._memoized_data = {};
   }
 
-  /** Use this to convert the config into a simple javascript object, suitable for JSON. */
+  /** Use this to convert to a simple javascript object, suitable for JSON. */
   asJson() {
     return this.config;
   }
@@ -325,6 +352,12 @@ function catch404(e, defaultValue) {
   throw e;
 }
 
+/**
+ * The client a low level wropper around API calls to the Quintype API. The client object is usually created for you
+ * by the malibu framework. The majority of functions on Client are not documented as they are not meant for external use.
+ * Instead, please use the higher level APIs on {@link Story}, {@link Collection} or other entity.
+ * @hideconstructor
+ */
 class Client {
   constructor(baseUrl, temporaryClient) {
     this.baseUrl = baseUrl;
@@ -336,10 +369,28 @@ class Client {
     this.hostname = baseUrl.replace(/https?:\/\//, "");
   }
 
+  /**
+   * Get the hostname this client is currently pointed to. Usually, http://xyz.internal.quintype.io
+   * @returns {string} Hostname
+   */
   getHostname() {
     return this.hostname;
   }
 
+  /**
+   * @external Response
+   * @see https://github.com/request/request-promise
+   */
+
+  /**
+   * Low level API for making a request to the backend. This will make the API
+   * @param {string} path The path of the API, usually starting /api/v1
+   * @param {Object} opts options that passed directly to request
+   * @param {string} opts.method The HTTP method to be called (default 'GET')
+   * @param {Object} opts.qs An object of query parameters to be passed to the backend
+   * @param {string} opts.body The body of the request (for POST requests only)
+   * @returns {Promise<Response>} A promise of the response
+   */
   request(path, opts) {
     const params = Object.assign({
       method: 'GET',
