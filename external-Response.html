@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Response</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -60,66 +60,107 @@
             <div class="column is-9-desktop">
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
-                        <p>Title</p>
-                        <h1>Home</h1>
+                        <p>External</p>
+                        <h1>Response</h1>
                     </header>
                     
                     
 
 
 
+
+<section>
+
+<header>
+    
+        <h2>Response</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
     
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
+    
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://github.com/request/request-promise">https://github.com/request/request-promise</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="index.js.html" class="button">View Source</a>
+            <span>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line380">line 380</a>
+            </span>
+        </p>
+    
+</dl>
 
 
+        
+    
+    </div>
 
-    <section>
-        <article><p>This library is used for making API calls to a Quintype backend for a <a href="https://github.com/quintype/malibu">malibu</a> based app. It is usually not required to add this directly to your application, instead the classes here are re exported by <code>@quintype/framework</code>.</p>
-<h2>How to use this library</h2>
-<p>This library provides types and functions for fetching data. These functions are meant to be called from the node server, typically from the <code>loadData</code> function of the malibu application. This is not suitable from use from the browser. All classes defined here are re exported by <code>@quintype/framework</code>, so this documentation will import from <code>@quintype/framework/server/api-client</code> in many examples.</p>
-<p>Most types expose static functions for fetching data, which return a promise of data. The returned value has all fields that is returned by the API, as well as functions to help you load more data. Finally, objects expose an <code>asJson()</code> to be called when the object is to be serialized. A sample workflow follows:</p>
-<pre class="prettyprint source lang-javascript"><code>import { Story } from &quot;@quintype/framework/server/api-client&quot;;
+    
 
-async function loadStoryPageData(client, slug) {
-  const story = await Story.getStoryBySlug(client, slug);
-  if(!story) {
-    return404();
-  }
-  const relatedStories = story.getRelatedStories(client);
-  return {
-    story: story.asJson(),
-    relatedStories: relatedStories.map(story => story.asJson())
-  }
-}
-</code></pre>
-<h2>Return Values</h2>
-<p>In cases where a 404 is possible (such as getting a story or a collection by slug), the following return types are possible (taking <code>Story.getStoryBySlug</code> as an example)</p>
-<ul>
-<li>In case of a success, the promise resolves to an object of the Story class</li>
-<li>In case of a 404, such as a not found slug, the promise resolves to null</li>
-<li>In case of a 5xx or any other status code, the promise is rejected with an exception</li>
-</ul>
-<h3>Memoizing Common Data</h3>
-<p>The config provides a way to memoize commonly used logic. This is stored in memory, and is never purged.</p>
-<pre class="prettyprint source"><code>config.memoize(&quot;key-to-memoize-against&quot;, () => complexSyncLogic());
-</code></pre></article>
-    </section>
+    
 
+    
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
