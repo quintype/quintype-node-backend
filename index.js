@@ -192,6 +192,14 @@ class CustomPath extends BaseAPI {
 }
 CustomPath.upstream = "page";
 
+/**
+ * Represents the configuration of the publisher. This represents the API call of /api/v1/config.
+ *
+ * In the malibu framework, this is loaded at page load, then updated periodically. An instance
+ * of the Config object will be injected into most malibu functions, and you should never need
+ * to create it manually.
+ * @hideconstructor
+ */
 class Config extends BaseAPI {
   constructor(config) {
     super();
@@ -199,23 +207,39 @@ class Config extends BaseAPI {
     this._memoized_data = {};
   }
 
+  /** Use this to convert the config into a simple javascript object, suitable for JSON. */
   asJson() {
     return this.config;
   }
 
+  /** @deprecated */
   getStack(heading) {
     return this.config.layout.stacks.find(stack => stack.heading == heading);
   }
 
+  /**
+   * This method can be used to get the configuration for a domain.
+   * @param {string} domainSlug
+   * @returns {object} Configuration for the domain
+   */
   getDomainConfig(domainSlug) {
     return (this.domains || []).find((domain => domain.slug === domainSlug)) || {};
   }
 
+  /**
+   * This method can be used to get the home collection's slug for a given domainSlug
+   * @param {string} domainSlug
+   * @returns {string} The slug of the home collection for a domain
+   */
   getHomeCollectionSlug(domainSlug) {
     return this.getDomainConfig(domainSlug)["home-collection-id"] || "home";
   }
 
-  // In case the client doesn't have the domainSlug loaded, just return all the domains
+  /**
+   * This method can be used to get the list of sections for a given domain
+   * @param {string} domainSlug
+   * @returns {array} A list of sections that are part of the domain
+   */
   getDomainSections(domainSlug) {
     if(domainSlug === undefined) {
       return this.sections;
@@ -223,6 +247,21 @@ class Config extends BaseAPI {
     return (this.sections || []).filter(section => section["domain-slug"] === undefined || section["domain-slug"] === domainSlug) || {};
   }
 
+  /**
+   * This can be used to memoize a synchronous function. The value of f() is stored against the given key
+   * until the config object is removed from memory. By default in malibu, the config object is replaced
+   * every five minutes. Typically, this is used to memoize the routes for fast subsequest requests.
+   *
+   * Example:
+   * ```javascript
+   * const routes = config.memoize("routes_all", () => [homePage, ...storyPages, ...sectionPages])
+   * ```
+   *
+   * @param {string} key The key to store the results against
+   * @param {function} f A function that is executed to get the results
+   * @returns The value of f() if it's called the first time, else the value against the key
+   *
+   */
   memoize(key, f) {
     this._memoized_data[key] = this._memoized_data[key] || {value: f()};
     return this._memoized_data[key].value;
