@@ -96,8 +96,7 @@ class Story extends BaseAPI {
    *
    * Example
    * ```javascript
-   * const story = await Story.getStoryBySlug(
-   , slug);
+   * const story = await Story.getStoryBySlug(client, slug);
    * if(!story) {
    *   render404();
    * } else {
