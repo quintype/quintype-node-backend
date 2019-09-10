@@ -4,6 +4,7 @@
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
+    "docs": "rimraf docs && jsdoc -c jsdoc.json",
     "prepublishOnly": "./bin-dev-scripts/standard-version-release.sh",
     "test": "jest"
   },
@@ -21,11 +22,15 @@
   },
   "homepage": "https://github.com/quintype/quintype-backend-js#readme",
   "dependencies": {
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "request": "^2.88.0",
     "request-promise": "^4.1.1"
   },
   "devDependencies": {
-    "jest": "^24.7.1"
+    "better-docs": "^1.2.2",
+    "gh-pages": "^2.1.1",
+    "jest": "^24.7.1",
+    "jsdoc": "^3.6.3",
+    "jslint": "^0.12.1"
   }
 }

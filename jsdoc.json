@@ -1,0 +1,41 @@
+{
+    "tags": {
+        "allowUnknownTags": ["category","component"]
+    },
+    "source": {
+        "include": ["."],
+        "includePattern": ".js$",
+        "excludePattern": "(node_modules/|docs)"
+    },
+    "plugins": [
+        "plugins/markdown",
+        "node_modules/better-docs/category",
+        "node_modules/better-docs/component"
+    ],
+    "opts": {
+        "encoding": "utf8",
+        "destination": "docs/",
+        "readme": "docs-src/home.md",
+        "recurse": true,
+        "verbose": true,
+        "tutorials": false,
+        "template": "./node_modules/better-docs"
+    },
+    "sourceType": "module",
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "default": {
+            "includeDate": false
+        },
+        "better-docs": {
+            "name": "Quintype Backend",
+            "navigation": [
+                {
+                    "label": "Github",
+                    "href": "https://github.com/quintype/quintype-node-backend"
+                }
+            ]
+        }
+    }
+}
