@@ -322,6 +322,28 @@ class Member extends BaseAPI {
 }
 Member.upstream = "member";
 
+/**
+ * An author represents a contributor to a story.
+ *
+ * Note: This class is typically needed only for an Author's page. For most usecases, the `authors` field on {@link Story} should be sufficient.
+ *
+ * ```javascript
+ * import { Author } from "@quintype/framework/server/api-client";
+ *
+ * function loadDataForAuthorPage(client, authorId) {
+ *   const [author, collection] = await Promise.all([
+ *     Author.getAuthor(client, authorId),
+ *     Author.getAuthorCollection(client, authorId)
+ *   ])
+ *   if(!author) {
+ *     render404();
+ *   } else {
+ *     renderAuthorPage(author.asJson(), collection);
+ *   }
+ * }
+ * ```
+ * @hideconstructor
+ */
 class Author extends BaseAPI {
   constructor(author) {
     super();
@@ -333,18 +355,45 @@ class Author extends BaseAPI {
     return this.author;
   }
 
+  /**
+   * This method fetches an author by Id. See the example on {@link Author} for usage.
+   *
+   * @param {Client} client
+   * @param {number} authorId
+   * @returns {(Promise<Author|null>)}
+   */
   static getAuthor(client, authorId) {
     return client
       .getAuthor(authorId)
       .then(response => response && this.build(response["author"]));
   }
 
+  /**
+   * This method can be used to fetch all authors across the site. Use of this API is highly discouraged
+   * as you will need to make multiple calls to fetch all authors, as authors grow.
+   *
+   * @param {Client} client
+   * @param {Object} params
+   * @param {number} params.limit Number of authors to be returned (default 20)
+   * @param {number} params.offset Number of authors to skip
+   * @deprecated This API is very slow if there are more than ~100 authors.
+   */
   static getAuthors(client, params) {
     return client
       .getAuthors(params)
       .then(authors => _.map(authors, author => this.build(author)));
   }
 
+  /**
+  * This method fetches the collection. See the example on {@link Author} for usage.
+  *
+  * Please note, this function does *not* return a {@link Collection} object, but a plain javascript object.
+  *
+  * @param {Client} client
+  * @param {number} authorId
+  * @returns {Object} Please see [API documentation]() (FIXME: Broken Link) for more details
+  * @deprecated This will be deprecated in favor of a method which returns a {@link Collection}.
+  */
   static getAuthorCollection(client, authorId, params){
     return client
     .getAuthorCollection(authorId, params)
@@ -476,6 +525,19 @@ class Config extends BaseAPI {
 
 Config.upstream = "config";
 
+/**
+ * Entities are the prefered way to store structured information about a topic. Entities are a
+ * very powerful concept in the Quintype eco system, and can be used to model many real world
+ * concepts such as Magazines, People, Organisations, or Cities.
+ *
+ * Stories and Collections can be associated with Entities, and Entities can also be associated
+ * with each other.
+ *
+ * ```javascript
+ * import { Entity } from "@quintype/framework/server/api-client";
+ * ```
+ * @hideconstructor
+ */
 class Entity extends BaseAPI {
   constructor(entity) {
     super();
@@ -487,18 +549,64 @@ class Entity extends BaseAPI {
     return this.entity;
   }
 
+  /**
+   * Fetches all entities that match a criteria
+   *
+   * All of the following params are optional.
+   *
+   * Example
+   * ```javascript
+   * const entities = await Entity.getEntities({
+   *   type: "magazine"
+   * })
+   * showEntities(entities.map(e => e.asJson()))
+   * ```
+   *
+   * @param {Client} client
+   * @param {Object} params Parameters which are directly passed to the API
+   * @param {string} params.ids A comma seperated list of ids
+   * @param {string} params.type The type of the entity (default to all)
+   * @param {string} params.limit The maximum number of entities to return
+   * @param {string} params.offset A pagination offset
+   * @returns {(Array<Entity>)}
+   */
   static getEntities(client, params) {
     return client
       .getEntities(params)
       .then(response => _.map(response["entities"], entity => this.build(entity)));
   }
 
+  /**
+   * Fetches an entity given it's Id.
+   *
+   * @param {Client} client
+   * @param {number} entityId
+   * @param {Object} params Parameters which are directly passed to the API
+   * @returns {(Promise<Entity|null>)}
+   */
   static getEntity(client, entityId, params) {
     return client
       .getEntity(entityId, params)
       .then(response => this.build(response));
   }
 
+  /**
+   * This method returns all collections associated with an entity.
+   *
+   * Example
+   * ```javascript
+   * const magazine = await Entity.getEntity(client, 42);
+   * const issues = await magazine.getCollections(client, {
+   *   limit: 6,
+   *   "sort-by": "collection-date",
+   *   "order": "desc"
+   * })
+   * ```
+   *
+   * @param {Client} client
+   * @param {Object} params Params to pass to the API
+   * @return {(Array<Collection>)}
+   */
   getCollections(client, params) {
     return client
       .getCollectionsByEntityId(this.entity.id, params)
