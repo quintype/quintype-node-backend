@@ -19,7 +19,8 @@
         "recurse": true,
         "verbose": true,
         "tutorials": false,
-        "template": "./node_modules/better-docs"
+        "template": "./docs-src",
+        "sitemapRoot": "https://quintype.github.io/quintype-node-backend"
     },
     "sourceType": "module",
     "templates": {
