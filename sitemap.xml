@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url><loc>https://quintype.github.io/quintype-node-backend/</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/global.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/Author.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/BulkResults.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/Client.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/Collection.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/Config.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/CustomPath.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/Entity.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/external-Response.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/Member.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/Story.html</loc></url>
+<url><loc>https://quintype.github.io/quintype-node-backend/Url.html</loc></url>
+</urlset>
