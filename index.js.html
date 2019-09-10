@@ -602,11 +602,14 @@ Config.upstream = "config";
 
 /**
  * Entities are the prefered way to store structured information about a topic. Entities are a
- * very powerful concept in the Quintype eco system, and can be used to model many real world
+ * very powerful concept in the Quintype eco-system, and can be used to model many real world
  * concepts such as Magazines, People, Organisations, or Cities.
  *
  * Stories and Collections can be associated with Entities, and Entities can also be associated
  * with each other.
+ *
+ * Most entities have a type, which represents the schema of that entity. As an example, an
+ * City may have a name, population, and be associated with a mayor (person).
  *
  * ```javascript
  * import { Entity } from "@quintype/framework/server/api-client";

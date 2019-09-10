@@ -76,10 +76,12 @@
         <h2><span class="attribs"><span class="type-signature"></span></span>Entity</h2>
         
             <div class="class-description"><p>Entities are the prefered way to store structured information about a topic. Entities are a
-very powerful concept in the Quintype eco system, and can be used to model many real world
+very powerful concept in the Quintype eco-system, and can be used to model many real world
 concepts such as Magazines, People, Organisations, or Cities.</p>
 <p>Stories and Collections can be associated with Entities, and Entities can also be associated
 with each other.</p>
+<p>Most entities have a type, which represents the schema of that entity. As an example, an
+City may have a name, population, and be associated with a mayor (person).</p>
 <pre class="prettyprint source lang-javascript"><code>import { Entity } from &quot;@quintype/framework/server/api-client&quot;;
 </code></pre></div>
         
@@ -141,7 +143,7 @@ with each other.</p>
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line542">line 542</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line545">line 545</a>
             </span>
         </p>
     
@@ -439,7 +441,7 @@ showEntities(entities.map(e => e.asJson()))
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line573">line 573</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line576">line 576</a>
             </span>
         </p>
     
@@ -661,7 +663,7 @@ showEntities(entities.map(e => e.asJson()))
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line587">line 587</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line590">line 590</a>
             </span>
         </p>
     
@@ -779,7 +781,7 @@ showEntities(entities.map(e => e.asJson()))
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line548">line 548</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line551">line 551</a>
             </span>
         </p>
     
@@ -957,7 +959,7 @@ const issues = await magazine.getCollections(client, {
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line610">line 610</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line613">line 613</a>
             </span>
         </p>
     
