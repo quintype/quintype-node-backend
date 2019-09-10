@@ -158,7 +158,7 @@ class Story extends BaseAPI {
    * @param {Client} client
    * @param {Object} params
    * @param {string} params.q The search string
-   * @returns {({stories: Array<Story>})} Please see [API documentation]() (FIXME: Broken Link) for more details. The returned object
+   * @returns {({stories: Array<Story>})} Please see [API documentation]() (FIXME: Broken Link) for more details.
    */
   static getSearch(client, params) {
     return client
@@ -208,6 +208,17 @@ class BulkResults extends BaseAPI {
 }
 BulkResults.upstream = "results";
 
+/**
+ * This corresponds to a collection in Quintype. Most groups of content are modelled with this class.
+ *
+ * See {@link Collection.getCollectionBySlug} for a simple example.
+ *
+ * ```javascript
+ * import { Collection } from "@quintype/framework/server/api-client";
+ * ```
+ *
+ * @hideconstructor
+ */
 class Collection extends BaseAPI {
   constructor(collection) {
     super();
@@ -219,6 +230,45 @@ class Collection extends BaseAPI {
     return this.collection;
   }
 
+  /**
+   * This method returns a collection, given a slug. If that collection contains other collections, then this function can recursively fetch
+   * those collections as well. This is typically used for home and story pages.
+   *
+   * Instead of handling all edge cases yourself, this object can be used with the [Collection Component](https://quintype.github.io/quintype-node-components/Collection.html)
+   *
+   * Example
+   * ```javascript
+   * const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3});
+   * if(!collection) {
+   *   render404();
+   * } else {
+   *   recursivelyDebugCollection(collection);
+   *   // <Collection ... collection={collection.asJsoo()} />
+   *   showOnTheUI(JSON.stringify(collection.asJson()))
+   * }
+   *
+   * function recursivelyDebugCollection(collection) {
+   *   const items = collection.items || [];
+   *   items.forEach(item => {
+   *     if(item.type === 'story') {
+   *       console.log(item.story.headline)
+   *     } else if(item.type === 'collection') {
+   *       console.log(item["associated-metadata"]["layout"]);
+   *       recursivelyDebugCollection(item);
+   *     }
+   *   })
+   * }
+   * ```
+   *
+   * @param {Client} client
+   * @param {string} slug
+   * @param {Object} params Parameters which are directly passed to the API
+   * @param {string} params.story-fields The fields for stories. See {@link DEFAULT_STORY_FIELDS} for the default
+   * @param {string} params.item-type Restrict the items returned to either "collection" or "story"
+   * @param {Object} options
+   * @param {number} options.depth The recursion depth to fetch collections. (default: 1)
+   * @return {(Promise<Collection|null>)}
+   */
   static getCollectionBySlug(client, slug, params, options = {}) {
     const {depth = DEFAULT_DEPTH} = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
@@ -233,6 +283,14 @@ class Collection extends BaseAPI {
 }
 Collection.upstream = "collection";
 
+/**
+ * This represents a logged in user. You probably do not need to use this class, it's better if
+ * member related authentication is handled directly via authenticated API calls from the browser
+ *
+ * Please see the tutorial on [Building Performant Apps]() [FIXME: Broken Link] for details
+ *
+ * @hideconstructor
+ */
 class Member extends BaseAPI {
   constructor(member) {
     super();
@@ -244,6 +302,15 @@ class Member extends BaseAPI {
     return this.member;
   }
 
+  /**
+   * This API will get the current member, given an auth token. You probably do not need to use this class,
+   * it's better if member related authentication is handled directly via authenticated API calls from the browser
+   * Please see the tutorial on [Building Performant Apps]() [FIXME: Broken Link] for details
+   *
+   * @param {Client} client
+   * @param {string} authToken
+   * @returns {(Promise<Member|null>)}
+   */
   static getCurrentMember(client, authToken) {
     if(!authToken || authToken == "")
       return new Promise((resolve, reject) => resolve(null));
