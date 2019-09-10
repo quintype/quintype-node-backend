@@ -648,7 +648,7 @@ function catch404(e, defaultValue) {
 }
 
 /**
- * The client a low level wropper around API calls to the Quintype API. The client object is usually created for you
+ * The client is a low level wrapper around API calls to the Quintype API. The client object is usually created for you
  * by the malibu framework. The majority of functions on Client are not documented as they are not meant for external use.
  * Instead, please use the higher level APIs on {@link Story}, {@link Collection} or other entity.
  *
