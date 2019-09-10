@@ -1,9 +1,11 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: constants.js</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -60,8 +62,8 @@
             <div class="column is-9-desktop">
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
-                        <p>Title</p>
-                        <h1>Home</h1>
+                        <p>Source</p>
+                        <h1>constants.js</h1>
                     </header>
                     
                     
@@ -69,55 +71,22 @@
 
 
     
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
     <section>
-        <article><p>This library is used for making API calls to a Quintype backend for a <a href="https://github.com/quintype/malibu">malibu</a> based app. It is usually not required to add this directly to your application, instead the classes here are re exported by <code>@quintype/framework</code>.</p>
-<h2>How to use this library</h2>
-<p>This library provides types and functions for fetching data. These functions are meant to be called from the node server, typically from the <code>loadData</code> function of the malibu application. This is not suitable from use from the browser. All classes defined here are re exported by <code>@quintype/framework</code>, so this documentation will import from <code>@quintype/framework/server/api-client</code> in many examples.</p>
-<p>Most types expose static functions for fetching data, which return a promise of data. The returned value has all fields that is returned by the API, as well as functions to help you load more data. Finally, objects expose an <code>asJson()</code> to be called when the object is to be serialized. A sample workflow follows:</p>
-<pre class="prettyprint source lang-javascript"><code>import { Story } from &quot;@quintype/framework/server/api-client&quot;;
+        <article>
+            <pre class="prettyprint source linenums"><code>const DEFAULT_LIMIT = '10';
 
-async function loadStoryPageData(client, slug) {
-  const story = await Story.getStoryBySlug(client, slug);
-  if(!story) {
-    return404();
-  }
-  const relatedStories = story.getRelatedStories(client);
-  return {
-    story: story.asJson(),
-    relatedStories: relatedStories.map(story => story.asJson())
-  }
-}
+const DEFAULT_DEPTH = 1;
+
+/**
+ * @package
+ * Default Fields for Most APIs which get stories in bulk
+ */
+const DEFAULT_STORY_FIELDS = "headline,subheadline,slug,url,hero-image-s3-key,hero-image-caption,hero-image-metadata,first-published-at,last-published-at,alternative,published-at,authors,author-name,author-id,sections,story-template,metadata,access,access-level-value";
+
+module.exports = {DEFAULT_DEPTH, DEFAULT_LIMIT, DEFAULT_STORY_FIELDS};
 </code></pre>
-<h2>Return Values</h2>
-<p>In cases where a 404 is possible (such as getting a story or a collection by slug), the following return types are possible (taking <a href="Story.html#.getStoryBySlug">Story.getStoryBySlug</a> as an example)</p>
-<ul>
-<li>In case of a success, the promise resolves to an object of the Story class</li>
-<li>In case of a 404, such as a not found slug, the promise resolves to null</li>
-<li>In case of a 5xx or any other status code, the promise is rejected with an exception</li>
-</ul>
-<h2>Performance</h2>
-<p>Do note that the config object can be used as a Key Value store that can memoize synchronous functions for 2 minutes. See <a href="Config.html#memoize">Config#memoize</a></p></article>
+        </article>
     </section>
-
-
 
 
 

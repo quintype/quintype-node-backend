@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>JSDoc: Global</title>
+    <title>JSDoc: Member</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -60,8 +60,8 @@
             <div class="column is-9-desktop">
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
-                        <p>Title</p>
-                        <h1>Global</h1>
+                        <p>Class</p>
+                        <h1>Member</h1>
                     </header>
                     
                     
@@ -73,7 +73,11 @@
 
 <header>
     
-        <h2></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Member</h2>
+        
+            <div class="class-description"><p>This represents a logged in user. You probably do not need to use this class, it's better if
+member related authentication is handled directly via authenticated API calls from the browser</p>
+<p>Please see the tutorial on <a href="">Building Performant Apps</a> [FIXME: Broken Link] for details</p></div>
         
     
 </header>
@@ -82,80 +86,14 @@
     <div class="container-overview">
     
         
-
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <div class='vertical-section'>
-            <h3 class="title"><span>Members</span></h3>
-            <div class="members">
             
-                <div class="member">
 
-<h4 class="name" id="DEFAULT_STORY_FIELDS">
-    
-        
-            <span class='tag'>package</span>
-        
-            <span class='tag'>constant</span>
-        
-    
-    <span class="code-name">
-        DEFAULT_STORY_FIELDS
-    </span>
-</h4>
+
+
+
+
+
+
 
 
 
@@ -197,9 +135,9 @@
 
     
         <p class="tag-source">
-            <a href="constants.js.html" class="button">View Source</a>
+            <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="constants.js.html">constants.js</a>, <a href="constants.js.html#line9">line 9</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line295">line 295</a>
             </span>
         </p>
     
@@ -209,10 +147,39 @@
 
 
 
-</div>
-            
-            </div>
-        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -223,10 +190,14 @@
                 <div class="member">
 
     
-    <h4 class="name" id="buildClient">
+    <h4 class="name" id=".getCurrentMember">
+        
+            
+                <span class='tag'>static</span>
+            
         
         <span class="code-name">
-            buildClient<span class="signature">(host, temporaryClient)</span><span class="type-signature"> &rarr; {<a href="Client.html">Client</a>}</span>
+            getCurrentMember<span class="signature">(client, authToken)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="Member.html">Member</a>|null)>}</span>
         </span>
     </h4>
     
@@ -234,7 +205,9 @@
     
     
     <div class="description">
-        <p>This low level function can be used to create an API <a href="Client.html">Client</a>. This should not be needed in most cases as <code>@quintype/framework</code> will do this for you.</p>
+        <p>This API will get the current member, given an auth token. You probably do not need to use this class,
+it's better if member related authentication is handled directly via authenticated API calls from the browser
+Please see the tutorial on <a href="">Building Performant Apps</a> [FIXME: Broken Link] for details</p>
     </div>
     
 
@@ -274,7 +247,32 @@
         
 <tr class="deep-level-0">
   
-      <td class="name"><code>host</code></td>
+      <td class="name"><code>client</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type"><a href="Client.html">Client</a></span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"></td>
+</tr>
+
+
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>authToken</code></td>
   
 
   <td class="type">
@@ -290,32 +288,7 @@
 
   
 
-  <td class="description last"><p>The API host</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>temporaryClient</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">boolean</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Controls whether the config is reloaded every 120 seconds. This should be false for clients intended to be used within a single request</p></td>
+  <td class="description last"></td>
 </tr>
 
 
@@ -362,7 +335,7 @@
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line866">line 866</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line314">line 314</a>
             </span>
         </p>
     
@@ -393,13 +366,11 @@
 
 <div class="columns">
     
-    <div class='param-desc column is-7'><p>A client connected to the API host</p></div>
-    
     
     <div class='column is-5 has-text-left'>
         <label>Type: </label>
         
-<span class="param-type"><a href="Client.html">Client</a></span>
+<span class="param-type">Promise.&lt;(<a href="Member.html">Member</a>|null)></span>
 
 
     </div>
@@ -409,6 +380,101 @@
                 
         </div>
     </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+    
+    <h4 class="name" id="asJson">
+        
+        <span class="code-name">
+            asJson<span class="signature">()</span><span class="type-signature"></span>
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Use this to convert to a simple javascript object, suitable for JSON.</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="index.js.html" class="button">View Source</a>
+            <span>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line301">line 301</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

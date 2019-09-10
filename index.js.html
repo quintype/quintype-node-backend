@@ -55,7 +55,7 @@
             <div class="column is-3" id="sidebarNav">
                 <div class="sidebar">
                     <nav>
-                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Externals</h3><ul><li><a href="external-Response.html">Response</a></li></ul><h3>Classes</h3><ul><li><a href="Client.html">Client</a></li><li><a href="Config.html">Config</a></li><li><a href="CustomPath.html">CustomPath</a></li><li><a href="Story.html">Story</a></li><li><a href="Url.html">Url</a></li></ul><h3>Global</h3><ul><li><a href="global.html#buildClient">buildClient</a></li></ul></div>
+                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Externals</h3><ul><li><a href="external-Response.html">Response</a></li></ul><h3>Classes</h3><ul><li><a href="Author.html">Author</a></li><li><a href="Client.html">Client</a></li><li><a href="Collection.html">Collection</a></li><li><a href="Config.html">Config</a></li><li><a href="CustomPath.html">CustomPath</a></li><li><a href="Entity.html">Entity</a></li><li><a href="Member.html">Member</a></li><li><a href="Story.html">Story</a></li><li><a href="Url.html">Url</a></li></ul><h3>Global</h3><ul><li><a href="global.html#buildClient">buildClient</a></li><li><a href="global.html#DEFAULT_STORY_FIELDS">DEFAULT_STORY_FIELDS</a></li></ul></div>
                     </nav>
                 </div>
             </div>
@@ -233,7 +233,7 @@ class Story extends BaseAPI {
    * @param {Client} client
    * @param {Object} params
    * @param {string} params.q The search string
-   * @returns {({stories: Array&lt;Story>})} Please see [API documentation]() (FIXME: Broken Link) for more details. The returned object
+   * @returns {({stories: Array&lt;Story>})} Please see [API documentation]() (FIXME: Broken Link) for more details.
    */
   static getSearch(client, params) {
     return client
@@ -283,6 +283,17 @@ class BulkResults extends BaseAPI {
 }
 BulkResults.upstream = "results";
 
+/**
+ * This corresponds to a collection in Quintype. Most groups of content are modelled with this class.
+ *
+ * See {@link Collection.getCollectionBySlug} for a simple example.
+ *
+ * ```javascript
+ * import { Collection } from "@quintype/framework/server/api-client";
+ * ```
+ *
+ * @hideconstructor
+ */
 class Collection extends BaseAPI {
   constructor(collection) {
     super();
@@ -294,6 +305,45 @@ class Collection extends BaseAPI {
     return this.collection;
   }
 
+  /**
+   * This method returns a collection, given a slug. If that collection contains other collections, then this function can recursively fetch
+   * those collections as well. This is typically used for home and story pages.
+   *
+   * Instead of handling all edge cases yourself, this object can be used with the [Collection Component](https://quintype.github.io/quintype-node-components/Collection.html)
+   *
+   * Example
+   * ```javascript
+   * const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3});
+   * if(!collection) {
+   *   render404();
+   * } else {
+   *   recursivelyDebugCollection(collection);
+   *   // &lt;Collection ... collection={collection.asJsoo()} />
+   *   showOnTheUI(JSON.stringify(collection.asJson()))
+   * }
+   *
+   * function recursivelyDebugCollection(collection) {
+   *   const items = collection.items || [];
+   *   items.forEach(item => {
+   *     if(item.type === 'story') {
+   *       console.log(item.story.headline)
+   *     } else if(item.type === 'collection') {
+   *       console.log(item["associated-metadata"]["layout"]);
+   *       recursivelyDebugCollection(item);
+   *     }
+   *   })
+   * }
+   * ```
+   *
+   * @param {Client} client
+   * @param {string} slug
+   * @param {Object} params Parameters which are directly passed to the API
+   * @param {string} params.story-fields The fields for stories. See {@link DEFAULT_STORY_FIELDS} for the default
+   * @param {string} params.item-type Restrict the items returned to either "collection" or "story"
+   * @param {Object} options
+   * @param {number} options.depth The recursion depth to fetch collections. (default: 1)
+   * @return {(Promise&lt;Collection|null>)}
+   */
   static getCollectionBySlug(client, slug, params, options = {}) {
     const {depth = DEFAULT_DEPTH} = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
@@ -308,6 +358,14 @@ class Collection extends BaseAPI {
 }
 Collection.upstream = "collection";
 
+/**
+ * This represents a logged in user. You probably do not need to use this class, it's better if
+ * member related authentication is handled directly via authenticated API calls from the browser
+ *
+ * Please see the tutorial on [Building Performant Apps]() [FIXME: Broken Link] for details
+ *
+ * @hideconstructor
+ */
 class Member extends BaseAPI {
   constructor(member) {
     super();
@@ -319,6 +377,15 @@ class Member extends BaseAPI {
     return this.member;
   }
 
+  /**
+   * This API will get the current member, given an auth token. You probably do not need to use this class,
+   * it's better if member related authentication is handled directly via authenticated API calls from the browser
+   * Please see the tutorial on [Building Performant Apps]() [FIXME: Broken Link] for details
+   *
+   * @param {Client} client
+   * @param {string} authToken
+   * @returns {(Promise&lt;Member|null>)}
+   */
   static getCurrentMember(client, authToken) {
     if(!authToken || authToken == "")
       return new Promise((resolve, reject) => resolve(null));
@@ -330,6 +397,28 @@ class Member extends BaseAPI {
 }
 Member.upstream = "member";
 
+/**
+ * An author represents a contributor to a story.
+ *
+ * Note: This class is typically needed only for an Author's page. For most usecases, the `authors` field on {@link Story} should be sufficient.
+ *
+ * ```javascript
+ * import { Author } from "@quintype/framework/server/api-client";
+ *
+ * function loadDataForAuthorPage(client, authorId) {
+ *   const [author, collection] = await Promise.all([
+ *     Author.getAuthor(client, authorId),
+ *     Author.getAuthorCollection(client, authorId)
+ *   ])
+ *   if(!author) {
+ *     render404();
+ *   } else {
+ *     renderAuthorPage(author.asJson(), collection);
+ *   }
+ * }
+ * ```
+ * @hideconstructor
+ */
 class Author extends BaseAPI {
   constructor(author) {
     super();
@@ -341,18 +430,45 @@ class Author extends BaseAPI {
     return this.author;
   }
 
+  /**
+   * This method fetches an author by Id. See the example on {@link Author} for usage.
+   *
+   * @param {Client} client
+   * @param {number} authorId
+   * @returns {(Promise&lt;Author|null>)}
+   */
   static getAuthor(client, authorId) {
     return client
       .getAuthor(authorId)
       .then(response => response &amp;&amp; this.build(response["author"]));
   }
 
+  /**
+   * This method can be used to fetch all authors across the site. Use of this API is highly discouraged
+   * as you will need to make multiple calls to fetch all authors, as authors grow.
+   *
+   * @param {Client} client
+   * @param {Object} params
+   * @param {number} params.limit Number of authors to be returned (default 20)
+   * @param {number} params.offset Number of authors to skip
+   * @deprecated This API is very slow if there are more than ~100 authors.
+   */
   static getAuthors(client, params) {
     return client
       .getAuthors(params)
       .then(authors => _.map(authors, author => this.build(author)));
   }
 
+  /**
+  * This method fetches the collection. See the example on {@link Author} for usage.
+  *
+  * Please note, this function does *not* return a {@link Collection} object, but a plain javascript object.
+  *
+  * @param {Client} client
+  * @param {number} authorId
+  * @returns {Object} Please see [API documentation]() (FIXME: Broken Link) for more details
+  * @deprecated This will be deprecated in favor of a method which returns a {@link Collection}.
+  */
   static getAuthorCollection(client, authorId, params){
     return client
     .getAuthorCollection(authorId, params)
@@ -484,6 +600,19 @@ class Config extends BaseAPI {
 
 Config.upstream = "config";
 
+/**
+ * Entities are the prefered way to store structured information about a topic. Entities are a
+ * very powerful concept in the Quintype eco system, and can be used to model many real world
+ * concepts such as Magazines, People, Organisations, or Cities.
+ *
+ * Stories and Collections can be associated with Entities, and Entities can also be associated
+ * with each other.
+ *
+ * ```javascript
+ * import { Entity } from "@quintype/framework/server/api-client";
+ * ```
+ * @hideconstructor
+ */
 class Entity extends BaseAPI {
   constructor(entity) {
     super();
@@ -495,18 +624,64 @@ class Entity extends BaseAPI {
     return this.entity;
   }
 
+  /**
+   * Fetches all entities that match a criteria
+   *
+   * All of the following params are optional.
+   *
+   * Example
+   * ```javascript
+   * const entities = await Entity.getEntities({
+   *   type: "magazine"
+   * })
+   * showEntities(entities.map(e => e.asJson()))
+   * ```
+   *
+   * @param {Client} client
+   * @param {Object} params Parameters which are directly passed to the API
+   * @param {string} params.ids A comma seperated list of ids
+   * @param {string} params.type The type of the entity (default to all)
+   * @param {string} params.limit The maximum number of entities to return
+   * @param {string} params.offset A pagination offset
+   * @returns {(Array&lt;Entity>)}
+   */
   static getEntities(client, params) {
     return client
       .getEntities(params)
       .then(response => _.map(response["entities"], entity => this.build(entity)));
   }
 
+  /**
+   * Fetches an entity given it's Id.
+   *
+   * @param {Client} client
+   * @param {number} entityId
+   * @param {Object} params Parameters which are directly passed to the API
+   * @returns {(Promise&lt;Entity|null>)}
+   */
   static getEntity(client, entityId, params) {
     return client
       .getEntity(entityId, params)
       .then(response => this.build(response));
   }
 
+  /**
+   * This method returns all collections associated with an entity.
+   *
+   * Example
+   * ```javascript
+   * const magazine = await Entity.getEntity(client, 42);
+   * const issues = await magazine.getCollections(client, {
+   *   limit: 6,
+   *   "sort-by": "collection-date",
+   *   "order": "desc"
+   * })
+   * ```
+   *
+   * @param {Client} client
+   * @param {Object} params Params to pass to the API
+   * @return {(Array&lt;Collection>)}
+   */
   getCollections(client, params) {
     return client
       .getCollectionsByEntityId(this.entity.id, params)
