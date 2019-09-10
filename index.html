@@ -53,7 +53,7 @@
             <div class="column is-3" id="sidebarNav">
                 <div class="sidebar">
                     <nav>
-                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Externals</h3><ul><li><a href="external-Response.html">Response</a></li></ul><h3>Classes</h3><ul><li><a href="Client.html">Client</a></li><li><a href="Config.html">Config</a></li><li><a href="CustomPath.html">CustomPath</a></li></ul></div>
+                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Externals</h3><ul><li><a href="external-Response.html">Response</a></li></ul><h3>Classes</h3><ul><li><a href="Client.html">Client</a></li><li><a href="Config.html">Config</a></li><li><a href="CustomPath.html">CustomPath</a></li><li><a href="Story.html">Story</a></li><li><a href="Url.html">Url</a></li></ul><h3>Global</h3><ul><li><a href="global.html#buildClient">buildClient</a></li></ul></div>
                     </nav>
                 </div>
             </div>
@@ -113,10 +113,8 @@ async function loadStoryPageData(client, slug) {
 <li>In case of a 404, such as a not found slug, the promise resolves to null</li>
 <li>In case of a 5xx or any other status code, the promise is rejected with an exception</li>
 </ul>
-<h3>Memoizing Common Data</h3>
-<p>The config provides a way to memoize commonly used logic. This is stored in memory, and is never purged.</p>
-<pre class="prettyprint source"><code>config.memoize(&quot;key-to-memoize-against&quot;, () => complexSyncLogic());
-</code></pre></article>
+<h2>Performance</h2>
+<p>Do note that the config object can be used as a Key Value store that can memoize synchronous functions for 2 minutes. See <a href="Config.html#memoize">Config#memoize</a></p></article>
     </section>
 
 
