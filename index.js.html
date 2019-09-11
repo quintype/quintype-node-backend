@@ -309,7 +309,7 @@ class Collection extends BaseAPI {
    * This method returns a collection, given a slug. If that collection contains other collections, then this function can recursively fetch
    * those collections as well. This is typically used for home and story pages.
    *
-   * Instead of handling all edge cases yourself, this object can be used with the [Collection Component](https://quintype.github.io/quintype-node-components/Collection.html)
+   * Instead of handling all edge cases yourself, this object can be used with the [Collection Component](https://developers.quintype.com/quintype-node-components/Collection.html)
    *
    * Example
    * ```javascript
@@ -723,7 +723,7 @@ function catch404(e, defaultValue) {
 }
 
 /**
- * The client a low level wropper around API calls to the Quintype API. The client object is usually created for you
+ * The client is a low level wrapper around API calls to the Quintype API. The client object is usually created for you
  * by the malibu framework. The majority of functions on Client are not documented as they are not meant for external use.
  * Instead, please use the higher level APIs on {@link Story}, {@link Collection} or other entity.
  *
