@@ -234,7 +234,7 @@ class Collection extends BaseAPI {
    * This method returns a collection, given a slug. If that collection contains other collections, then this function can recursively fetch
    * those collections as well. This is typically used for home and story pages.
    *
-   * Instead of handling all edge cases yourself, this object can be used with the [Collection Component](https://quintype.github.io/quintype-node-components/Collection.html)
+   * Instead of handling all edge cases yourself, this object can be used with the [Collection Component](https://developers.quintype.com/quintype-node-components/Collection.html)
    *
    * Example
    * ```javascript
