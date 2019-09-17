@@ -208,8 +208,8 @@
     
     
     <div class="description">
-        <p>This method returns a collection, given a slug. If that collection contains other collections, then this function can recursively fetch
-those collections as well. This is typically used for home and story pages.</p>
+        <p>This method returns a collection, given a slug. This is typically used for home and section pages.</p>
+<p>If the result collection contains other collections, then it will recursively fetch those collections as well, upto a maximum depth of <code>depth</code>.</p>
 <p>Instead of handling all edge cases yourself, this object can be used with the <a href="https://developers.quintype.com/quintype-node-components/Collection.html">Collection Component</a></p>
 <p>Example</p>
 <pre class="prettyprint source lang-javascript"><code>const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3});
@@ -485,7 +485,7 @@ function recursivelyDebugCollection(collection) {
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line272">line 272</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line273">line 273</a>
             </span>
         </p>
     
