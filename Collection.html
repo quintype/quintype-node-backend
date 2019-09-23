@@ -140,7 +140,7 @@
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line223">line 223</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line231">line 231</a>
             </span>
         </p>
     
@@ -209,7 +209,8 @@
     
     <div class="description">
         <p>This method returns a collection, given a slug. This is typically used for home and section pages.</p>
-<p>If the result collection contains other collections, then it will recursively fetch those collections as well, upto a maximum depth of <code>depth</code>.</p>
+<p>If the result collection contains other collections, then it will recursively fetch those collections as well, upto a maximum depth of <code>depth</code>.
+Items that are collections will have <code>item.story</code> set to a story map, and items that are collections will have the fields of that collection directly set on the item.</p>
 <p>Instead of handling all edge cases yourself, this object can be used with the <a href="https://developers.quintype.com/quintype-node-components/Collection.html">Collection Component</a></p>
 <p>Example</p>
 <pre class="prettyprint source lang-javascript"><code>const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3});
@@ -478,6 +479,13 @@ function recursivelyDebugCollection(collection) {
     
 
     
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_">GET ​/api​/v1​/collections/:slug</a> API documentation for a list of parameters and fields</li>
+        </ul>
+    </dd>
+    
 
     
 
@@ -485,7 +493,7 @@ function recursivelyDebugCollection(collection) {
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line273">line 273</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line283">line 283</a>
             </span>
         </p>
     
@@ -603,7 +611,7 @@ function recursivelyDebugCollection(collection) {
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line229">line 229</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line237">line 237</a>
             </span>
         </p>
     
