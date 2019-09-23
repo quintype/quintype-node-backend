@@ -52,6 +52,7 @@ class Story extends BaseAPI {
    * @param {Object} params
    * @deprecated Please use {@link Collection} and related functions instead
    * @returns {(Array<Story>)}
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories GET /api/v1/stories} API Documentation for a list of parameters accepted and fields returned
    */
   static getStories(client, storyGroup, params) {
     return client
@@ -69,6 +70,7 @@ class Story extends BaseAPI {
    * ```
    * @param {Client} client
    * @returns {(Array<Story>)}
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__related_stories GET ​/api​/v1​/stories​/:story-id​/related-stories} API Documentation for a list of fields returned
    */
   getRelatedStories(client) {
     const sectionId = _.get(this, ['sections', 0, 'id'], null);
@@ -82,7 +84,8 @@ class Story extends BaseAPI {
    * this API will also return all collections this story is a part of, along with collection metadata.
    *
    * @param {Client} client
-   * @returns {Object} Please see [API documentation]() (FIXME: Broken Link) for more details
+   * @returns {Object} Please see [API documentation](https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__attributes) for more details
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__attributes GET ​/api​/v1​/stories​/:story-id​/attributes} API Documentation for a list of fields returned
    */
   getStoryAttributes(client) {
     return client
@@ -107,6 +110,7 @@ class Story extends BaseAPI {
    * @param {string} slug
    * @param {Object} params Parameters that are passed directly as query paremeters to the API
    * @returns {(Promise<Story|null>)}
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories_by_slug GET ​/api​/v1​/stories-by-slug} API documentation for a list of parameters and fields
    */
   static getStoryBySlug(client, slug, params) {
     return client
@@ -123,6 +127,7 @@ class Story extends BaseAPI {
    * @param {Client} client
    * @param {string} publicPreviewKey
    * @returns {(Promise<Story|null>)}
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_preview_story__public_preview_key_ GET ​/api​/v1​/preview​/story​/:public-preview-key} API documentation for a list of parameters and fields
    */
   static getPublicPreviewStory(client, publicPreviewKey) {
     return client
@@ -137,6 +142,7 @@ class Story extends BaseAPI {
    * @param {Client} client
    * @param {string} id
    * @returns {(Promise<Story|null>)}
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id_ GET ​/api​/v1​/preview​/stories/:story-id} API documentation for a list of parameters and fields
    */
   static getStoryById(client, id) {
     return client
@@ -156,9 +162,10 @@ class Story extends BaseAPI {
    * ```
    *
    * @param {Client} client
-   * @param {Object} params
+   * @param {Object} params Please see the [Search API documentation](https://developers.quintype.com/swagger/#/story/get_api_v1_search) for more details.
    * @param {string} params.q The search string
-   * @returns {({stories: Array<Story>})} Please see [API documentation]() (FIXME: Broken Link) for more details.
+   * @returns {({stories: Array<Story>})} Please see [Search API documentation](https://developers.quintype.com/swagger/#/story/get_api_v1_search) for more details.
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_search GET ​/api​/v1​/search} API documentation for a list of parameters and fields
    */
   static getSearch(client, params) {
     return client
@@ -174,6 +181,7 @@ class Story extends BaseAPI {
    *
    * @param {Client} client
    * @param {Object} requests
+   * @see {@link https://developers.quintype.com/swagger/#/story/post_api_v1_bulk_request POST /api/v1/bulk-request} API documentation for a list of parameters and fields
    */
   static getInBulk(client, requests) {
     function wrapResult(result) {
@@ -234,6 +242,7 @@ class Collection extends BaseAPI {
    * This method returns a collection, given a slug. This is typically used for home and section pages.
    *
    * If the result collection contains other collections, then it will recursively fetch those collections as well, upto a maximum depth of `depth`.
+   * Items that are collections will have `item.story` set to a story map, and items that are collections will have the fields of that collection directly set on the item.
    *
    * Instead of handling all edge cases yourself, this object can be used with the [Collection Component](https://developers.quintype.com/quintype-node-components/Collection.html)
    *
@@ -269,6 +278,7 @@ class Collection extends BaseAPI {
    * @param {Object} options
    * @param {number} options.depth The recursion depth to fetch collections. (default: 1)
    * @return {(Promise<Collection|null>)}
+   * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET ​/api​/v1​/collections/:slug} API documentation for a list of parameters and fields
    */
   static getCollectionBySlug(client, slug, params, options = {}) {
     const {depth = DEFAULT_DEPTH} = options;
@@ -311,6 +321,7 @@ class Member extends BaseAPI {
    * @param {Client} client
    * @param {string} authToken
    * @returns {(Promise<Member|null>)}
+   * @see {@link https://developers.quintype.com/swagger/#/member/get_api_v1_members_me GET ​/api​/v1​/members/me} API documentation for a list of parameters and fields
    */
   static getCurrentMember(client, authToken) {
     if(!authToken || authToken == "")
@@ -362,6 +373,7 @@ class Author extends BaseAPI {
    * @param {Client} client
    * @param {number} authorId
    * @returns {(Promise<Author|null>)}
+   * @see {@link https://developers.quintype.com/swagger/#/author/get_api_v1_authors__author_id_ GET ​/api​/v1​/authors​/:author-id} API documentation for a list of parameters and fields
    */
   static getAuthor(client, authorId) {
     return client
@@ -392,7 +404,7 @@ class Author extends BaseAPI {
   *
   * @param {Client} client
   * @param {number} authorId
-  * @returns {Object} Please see [API documentation]() (FIXME: Broken Link) for more details
+  * @returns {Object} Please see [API documentation](https://developers.quintype.com/swagger) for more details
   * @deprecated This will be deprecated in favor of a method which returns a {@link Collection}.
   */
   static getAuthorCollection(client, authorId, params){
@@ -439,6 +451,7 @@ class CustomPath extends BaseAPI {
    * This function is used to get the page from the API. See {@link CustomPath}'s example for a usage example
    * @param {Client} client Client
    * @param {string} path The path which may be a redirect or static page
+   * @see {@link https://developers.quintype.com/swagger/#/custom-url/get_api_v1_custom_urls__path_ GET ​/api​/v1​/custom-urls​/:path} API documentation for a list of parameters and fields
    */
   static getCustomPathData(client, path) {
     return client
@@ -454,6 +467,9 @@ CustomPath.upstream = "page";
  * In the malibu framework, this is loaded at page load, then updated periodically. An instance
  * of the Config object will be injected into most malibu functions, and you should never need
  * to create it manually.
+ *
+ * See the [API Documentation](https://developers.quintype.com/swagger/#/config/get_api_v1_config) for a list of fields
+ *
  * @hideconstructor
  */
 class Config extends BaseAPI {
@@ -681,7 +697,7 @@ class Client {
    */
 
   /**
-   * Low level API for making a request to the backend. This will make the API
+   * Low level API for making a request to the backend. This API is not intended to be used by app developers.
    * @param {string} path The path of the API, usually starting /api/v1
    * @param {Object} opts options that passed directly to request
    * @param {string} opts.method The HTTP method to be called (default 'GET')
