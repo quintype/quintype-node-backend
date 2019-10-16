@@ -90,7 +90,8 @@
 
 
     <section>
-        <article><p>This library is used for making API calls to a Quintype backend for a <a href="https://github.com/quintype/malibu">malibu</a> based app. It is usually not required to add this directly to your application, instead the classes here are re exported by <code>@quintype/framework</code>.</p>
+        <article><p><em>This library is part of the <a href="https://developers.quintype.com/malibu">Malibu Framework</a></em>.</p>
+<p>This library is used for making API calls to a Quintype backend for a <a href="https://github.com/quintype/malibu">malibu</a> based app. It is usually not required to add this directly to your application, instead the classes here are re exported by <code>@quintype/framework</code>.</p>
 <h2>How to use this library</h2>
 <p>This library provides types and functions for fetching data. These functions are meant to be called from the node server, typically from the <code>loadData</code> function of the malibu application. This is not suitable from use from the browser. All classes defined here are re exported by <code>@quintype/framework</code>, so this documentation will import from <code>@quintype/framework/server/api-client</code> in many examples.</p>
 <p>Most types expose static functions for fetching data, which return a promise of data. The returned value has all fields that is returned by the API, as well as functions to help you load more data. Finally, objects expose an <code>asJson()</code> to be called when the object is to be serialized. A sample workflow follows:</p>
