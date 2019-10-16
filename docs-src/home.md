@@ -1,3 +1,5 @@
+*This library is part of the [Malibu Framework](https://developers.quintype.com/malibu)*.
+
 This library is used for making API calls to a Quintype backend for a [malibu](https://github.com/quintype/malibu) based app. It is usually not required to add this directly to your application, instead the classes here are re exported by `@quintype/framework`.
 
 ## How to use this library
