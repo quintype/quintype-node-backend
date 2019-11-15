@@ -736,14 +736,18 @@ class Client {
   }
 
   getStories(params) {
+    if(params["tag-slugs"]) {
+      params["tag-slugs"] = decodeURIComponent(params["tag-slugs"])
+    }
     return this.request("/api/v1/stories", {
       qs: params
     })
   }
 
   getStoryBySlug(slug, params) {
+    const decodedSlug = decodeURIComponent(slug);
     return this.request("/api/v1/stories-by-slug", {
-      qs: _.merge({slug: slug}, params)
+      qs: _.merge({slug: decodedSlug}, params)
     }).catch(e => catch404(e, {}))
   }
 
