@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.21.0](https://github.com/quintype/quintype-backend-js/compare/v1.20.5...v1.21.0) (2019-12-19)
+
+
+### Features
+
+* Adding an option for storyLimits on collection by slug ([#36](https://github.com/quintype/quintype-backend-js/issues/36)) ([d3d8cd0](https://github.com/quintype/quintype-backend-js/commit/d3d8cd0a543192ffe990bd259fe6670b79356080))
+
 ### [1.20.5](https://github.com/quintype/quintype-backend-js/compare/v1.20.4...v1.20.5) (2019-09-10)
 
 ### [1.20.4](https://github.com/quintype/quintype-backend-js/compare/v1.20.3...v1.20.4) (2019-07-05)
