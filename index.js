@@ -277,18 +277,19 @@ class Collection extends BaseAPI {
    * @param {string} params.item-type Restrict the items returned to either "collection" or "story"
    * @param {Object} options
    * @param {number} options.depth The recursion depth to fetch collections. (default: 1)
+   * @param {Object} options.storyLimits The limit of stories to fetch by collection template. This defaults to unlimited for templates that are not specified. (ex: {"FourColGrid": 12}) (default: {}).
    * @return {(Promise<Collection|null>)}
-   * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET ​/api​/v1​/collections/:slug} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
   static getCollectionBySlug(client, slug, params, options = {}) {
-    const {depth = DEFAULT_DEPTH} = options;
+    const {depth = DEFAULT_DEPTH, storyLimits = {}} = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
 
     return client
       .getCollectionBySlug(slug, params)
       .then(response => {
         const collection = response ? response["collection"] || response : null;
-        return collection && loadNestedCollectionData(client, collection, {depth, storyFields})
+        return collection && loadNestedCollectionData(client, collection, {depth, storyFields, storyLimits})
       }).then(collection => this.build(collection))
   }
 }
