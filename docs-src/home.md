@@ -34,4 +34,4 @@ In cases where a 404 is possible (such as getting a story or a collection by slu
 
 ## Performance
 
-Do note that the config object can be used as a Key Value store that can memoize synchronous functions for 2 minutes. See {@link Config#memoize}
+Do note that the config object can be used as a Key Value store that can memoize synchronous functions for 2 minutes. See {@link Config#memoize} and {@link Config#memoizeAsync}
