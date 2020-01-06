@@ -7,6 +7,7 @@ const {loadNestedCollectionData}  = require("./collection-loader");
 const { MenuGroups }  = require("./menu-groups");
 const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require('./base-api');
+const { asyncGate } = require("./async-gate");
 
 function mapValues(f, object) {
   return Object.entries(object)
@@ -478,7 +479,7 @@ class Config extends BaseAPI {
     super();
     this.config = config;
     this._memoized_data = {};
-    this._memoized_promises = {};
+    this._memoize_gate = asyncGate();
   }
 
   /** Use this to convert to a simple javascript object, suitable for JSON. */
@@ -570,18 +571,8 @@ class Config extends BaseAPI {
       return Promise.resolve(this._memoized_data[key].value);
     }
 
-    if (this._memoized_promises[key]) {
-      // Technically await is redundant here, but i'm including it to be clear
-      return await this._memoized_promises[key];
-    }
-
-    try {
-      this._memoized_promises[key] = f();
-      const result = await this._memoized_promises[key];
-      return this.memoize(key, () => result);
-    } finally {
-      delete this._memoized_promises[key];
-    }
+    const result = await this._memoize_gate(key, f);
+    return this.memoize(key, () => result);
   }
 }
 
