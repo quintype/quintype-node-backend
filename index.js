@@ -107,12 +107,16 @@ class Story extends BaseAPI {
    * }
    * ```
    * @param {Client} client
-   * @param {string} slug
+   * @param {string} slug The slug of the story.
    * @param {Object} params Parameters that are passed directly as query paremeters to the API
    * @returns {(Promise<Story|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories_by_slug GET ​/api​/v1​/stories-by-slug} API documentation for a list of parameters and fields
    */
   static getStoryBySlug(client, slug, params) {
+    if(!slug) {
+      return Promise.resolve(null);
+    }
+
     return client
       .getStoryBySlug(slug, params)
       .then(response => this.build(response["story"]));
@@ -271,7 +275,7 @@ class Collection extends BaseAPI {
    * ```
    *
    * @param {Client} client
-   * @param {string} slug
+   * @param {string} slug The slug of the collection
    * @param {Object} params Parameters which are directly passed to the API
    * @param {string} params.story-fields The fields for stories. See {@link DEFAULT_STORY_FIELDS} for the default
    * @param {string} params.item-type Restrict the items returned to either "collection" or "story"
@@ -284,6 +288,10 @@ class Collection extends BaseAPI {
   static getCollectionBySlug(client, slug, params, options = {}) {
     const {depth = DEFAULT_DEPTH, storyLimits = {}} = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
+
+    if (!slug) {
+      return Promise.resolve(null);
+    }
 
     return client
       .getCollectionBySlug(slug, params)

@@ -32,6 +32,8 @@ In cases where a 404 is possible (such as getting a story or a collection by slu
 * In case of a 404, such as a not found slug, the promise resolves to null
 * In case of a 5xx or any other status code, the promise is rejected with an exception
 
+If the slug is omitted (by passing null or undefined), then the promise resolves similar to a 404.
+
 ## Performance
 
 Do note that the config object can be used as a Key Value store that can memoize synchronous functions for 2 minutes. See {@link Config#memoize}
