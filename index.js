@@ -8,6 +8,7 @@ const { MenuGroups }  = require("./menu-groups");
 const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require('./base-api');
 const { asyncGate } = require("./async-gate");
+const hash = require("object-hash");
 
 function mapValues(f, object) {
   return Object.entries(object)
@@ -186,7 +187,7 @@ class Story extends BaseAPI {
    *
    * @param {Client} client
    * @param {Object} requests
-   * @see {@link https://developers.quintype.com/swagger/#/story/post_api_v1_bulk_request POST /api/v1/bulk-request} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/story/post_api_v1_c_request POST /api/v1/bulk-request} API documentation for a list of parameters and fields
    */
   static getInBulk(client, requests) {
     function wrapResult(result) {
@@ -725,6 +726,8 @@ class Client {
       this.initialUpdateConfig = this.updateConfig();
     }
     this.hostname = baseUrl.replace(/https?:\/\//, "");
+    this._cachedPostBulkLocations = {};
+    this._cachedPostBulkGate = asyncGate();
   }
 
   /**
@@ -864,15 +867,27 @@ class Client {
     })
   }
 
-  getInBulk(requests){
-    return this.request("/api/v1/bulk-request", {
-      method: 'POST',
-      body: requests,
-      headers: {
-        'content-type': 'application/json'
-      },
-      followAllRedirects: true
-    })
+  async getInBulk(requests){
+    const requestHash = hash(requests);
+    this._cachedPostBulkLocations[requestHash] = this._cachedPostBulkLocations[requestHash] || await this._cachedPostBulkGate(requestHash, getBulkLocation.bind(this));
+    return this.request(this._cachedPostBulkLocations[requestHash]);
+
+    async function getBulkLocation() {
+      const response = await this.request("/api/v1/bulk-request", {
+        method: 'POST',
+        body: requests,
+        headers: {
+          'content-type': 'application/json'
+        },
+        simple: false,
+        resolveWithFullResponse: true
+      })
+      if(response.statusCode === 303 && response.caseless.get("Location")) {
+        return response.caseless.get("Location");
+      } else {
+        throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`)
+      }
+    }
   }
 
   getAmpStoryBySlug(slug) {
