@@ -753,13 +753,17 @@ class Client {
    * @returns {Promise<Response>} A promise of the response
    */
   request(path, opts) {
+    const uri = this.baseUrl + path;
     const params = Object.assign({
       method: 'GET',
-      uri: this.baseUrl + path,
+      uri: uri,
       json: true,
       gzip: true
     }, opts);
-    return rp(params);
+    return rp(params).catch(e => {
+      console.error(`Error in API ${uri}: Status ${e.statusCode}`)
+      throw e;
+    });
   }
 
   getFromBulkApiManager(slug, params) {
