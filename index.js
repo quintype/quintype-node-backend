@@ -7,6 +7,7 @@ const {loadNestedCollectionData}  = require("./collection-loader");
 const { MenuGroups }  = require("./menu-groups");
 const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require('./base-api');
+const { asyncGate } = require("./async-gate");
 
 function mapValues(f, object) {
   return Object.entries(object)
@@ -486,6 +487,7 @@ class Config extends BaseAPI {
     super();
     this.config = config;
     this._memoized_data = {};
+    this._memoize_gate = asyncGate();
   }
 
   /** Use this to convert to a simple javascript object, suitable for JSON. */
@@ -533,6 +535,8 @@ class Config extends BaseAPI {
    * until the config object is removed from memory. By default in malibu, the config object is replaced
    * every two minutes. Typically, this is used to memoize the routes for fast subsequest requests.
    *
+   * This function shares a keyspace with {@link memoizeAsync}
+   *
    * Example:
    * ```javascript
    * const routes = config.memoize("routes_all", () => [homePage, ...storyPages, ...sectionPages])
@@ -546,6 +550,37 @@ class Config extends BaseAPI {
   memoize(key, f) {
     this._memoized_data[key] = this._memoized_data[key] || {value: f()};
     return this._memoized_data[key].value;
+  }
+
+  /**
+ * This can be used to memoize an asynchronous function. The value of await f() is stored against the given key
+ * until the config object is removed from memory. By default in malibu, the config object is replaced
+ * every two minutes. This can be used to memoize objects such as collections returned by this library
+ *
+ * This function can be used concurrently. The first call will cause other requests to block. If the promise resolves,
+ * then all calls (and future calls) will recieve that value. If the promise fails, then all waiting promises reject,
+ * but the next call will start afresh.
+ *
+ * This function shares a keyspace with {@link memoize}
+ *
+ * Example:
+ * ```javascript
+ * const collection = await config.memoizeAsync("collection-on-every-page", async () => await Collection.getCollectionBySlug("collection-on-every-page"))
+ * ```
+ *
+ * @param {string} key The key to store the results against
+ * @param {function} f An async function that is executed to get the results
+ * @returns The value of f() if it's called the first time, else the value against the key
+ *
+ */
+  async memoizeAsync(key, f) {
+    if (this._memoized_data[key]) {
+      // Technically resolve is redundant here, but i'm including it to be clear
+      return Promise.resolve(this._memoized_data[key].value);
+    }
+
+    const result = await this._memoize_gate(key, f);
+    return this.memoize(key, () => result);
   }
 }
 
