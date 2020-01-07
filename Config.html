@@ -141,7 +141,7 @@ to create it manually.</p>
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line477">line 477</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line487">line 487</a>
             </span>
         </p>
     
@@ -258,7 +258,7 @@ to create it manually.</p>
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line484">line 484</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line495">line 495</a>
             </span>
         </p>
     
@@ -403,7 +403,7 @@ to create it manually.</p>
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line498">line 498</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line509">line 509</a>
             </span>
         </p>
     
@@ -573,7 +573,7 @@ to create it manually.</p>
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line516">line 516</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line527">line 527</a>
             </span>
         </p>
     
@@ -743,7 +743,7 @@ to create it manually.</p>
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line507">line 507</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line518">line 518</a>
             </span>
         </p>
     
@@ -861,7 +861,7 @@ to create it manually.</p>
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line489">line 489</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line500">line 500</a>
             </span>
         </p>
     
@@ -906,6 +906,7 @@ to create it manually.</p>
         <p>This can be used to memoize a synchronous function. The value of f() is stored against the given key
 until the config object is removed from memory. By default in malibu, the config object is replaced
 every two minutes. Typically, this is used to memoize the routes for fast subsequest requests.</p>
+<p>This function shares a keyspace with memoizeAsync</p>
 <p>Example:</p>
 <pre class="prettyprint source lang-javascript"><code>const routes = config.memoize(&quot;routes_all&quot;, () => [homePage, ...storyPages, ...sectionPages])
 </code></pre>
@@ -1036,7 +1037,207 @@ every two minutes. Typically, this is used to memoize the routes for fast subseq
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line538">line 538</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line551">line 551</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>The value of f() if it's called the first time, else the value against the key</p></div>
+    
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+    
+    <h4 class="name" id="memoizeAsync">
+        
+            
+                <span class='tag'>async</span>
+            
+        
+        <span class="code-name">
+            memoizeAsync<span class="signature">(key, f)</span><span class="type-signature"></span>
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>This can be used to memoize an asynchronous function. The value of await f() is stored against the given key
+until the config object is removed from memory. By default in malibu, the config object is replaced
+every two minutes. This can be used to memoize objects such as collections returned by this library</p>
+<p>This function can be used concurrently. The first call will cause other requests to block. If the promise resolves,
+then all calls (and future calls) will recieve that value. If the promise fails, then all waiting promises reject,
+but the next call will start afresh.</p>
+<p>This function shares a keyspace with memoize</p>
+<p>Example:</p>
+<pre class="prettyprint source lang-javascript"><code>const collection = await config.memoizeAsync(&quot;collection-on-every-page&quot;, async () => await Collection.getCollectionBySlug(&quot;collection-on-every-page&quot;))
+</code></pre>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>key</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The key to store the results against</p></td>
+</tr>
+
+
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>f</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">function</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>An async function that is executed to get the results</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="index.js.html" class="button">View Source</a>
+            <span>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line577">line 577</a>
             </span>
         </p>
     

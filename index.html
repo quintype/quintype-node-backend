@@ -116,8 +116,9 @@ async function loadStoryPageData(client, slug) {
 <li>In case of a 404, such as a not found slug, the promise resolves to null</li>
 <li>In case of a 5xx or any other status code, the promise is rejected with an exception</li>
 </ul>
+<p>If the slug is omitted (by passing null or undefined), then the promise resolves similar to a 404.</p>
 <h2>Performance</h2>
-<p>Do note that the config object can be used as a Key Value store that can memoize synchronous functions for 2 minutes. See <a href="Config.html#memoize">Config#memoize</a></p></article>
+<p>Do note that the config object can be used as a Key Value store that can memoize synchronous functions for 2 minutes. See <a href="Config.html#memoize">Config#memoize</a> and <a href="Config.html#memoizeAsync">Config#memoizeAsync</a></p></article>
     </section>
 
 
