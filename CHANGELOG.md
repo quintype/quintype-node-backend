@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.22.0](https://github.com/quintype/quintype-backend-js/compare/v1.21.0...v1.22.0) (2020-01-07)
+
+
+### Features
+
+* Caching the location for POST bulk-requests ([#40](https://github.com/quintype/quintype-backend-js/issues/40)) ([b3a2fd7](https://github.com/quintype/quintype-backend-js/commit/b3a2fd79182b1a05e99a4bf2b003686010d44ffc))
+* Improving Logging of failures ([de42dac](https://github.com/quintype/quintype-backend-js/commit/de42daca2bf9c6281d0078c5b4bacd81172c0cae))
+* memoizeAsync can be used to memoize asynchronous functions ([#39](https://github.com/quintype/quintype-backend-js/issues/39)) ([9e9cd5c](https://github.com/quintype/quintype-backend-js/commit/9e9cd5cd2e5866d50745418a2db4a3a016617091))
+* Null / Undefined Slugs resolve to nulls ([#38](https://github.com/quintype/quintype-backend-js/issues/38)) ([c084f06](https://github.com/quintype/quintype-backend-js/commit/c084f06f09aae06904012959a3b50719be209034))
+
 ## [1.21.0](https://github.com/quintype/quintype-backend-js/compare/v1.20.5...v1.21.0) (2019-12-19)
 
 
