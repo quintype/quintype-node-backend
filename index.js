@@ -817,6 +817,10 @@ class Client {
     return this.initialUpdateConfig;
   }
 
+  getAmpConfig() {
+    return this.request("/api/v1/amp-config")
+  }
+
   getCurrentMember(authToken) {
     return this.request("/api/v1/members/me", {
       headers: {
