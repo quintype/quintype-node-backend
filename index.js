@@ -956,7 +956,7 @@ class AmpConfig {
     this.client = client;
     this.getAmpConfig = this.getAmpConfig.bind(this);
   }
-  getAmpConfig() {
+  getConfig() {
     return this.client.request("/api/v1/amp/config");
   }
 }
