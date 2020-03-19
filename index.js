@@ -952,12 +952,8 @@ function buildClient(host, temporaryClient) {
 }
 
 class AmpConfig {
-  constructor(client) {
-    this.client = client;
-    this.getAmpConfig = this.getAmpConfig.bind(this);
-  }
-  getConfig() {
-    return this.client.request("/api/v1/amp/config");
+  getConfig(client) {
+    return client.request("/api/v1/amp/config");
   }
 }
 
