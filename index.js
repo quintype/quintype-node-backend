@@ -817,10 +817,6 @@ class Client {
     return this.initialUpdateConfig;
   }
 
-  getAmpConfig() {
-    return this.request("/api/amp/config")
-  }
-
   getCurrentMember(authToken) {
     return this.request("/api/v1/members/me", {
       headers: {
@@ -955,8 +951,19 @@ function buildClient(host, temporaryClient) {
   return client.config().then(_ => client);
 }
 
+class AmpConfig {
+  constructor(client) {
+    this.client = client;
+    this.getAmpConfig = this.getAmpConfig.bind(this);
+  }
+  getAmpConfig() {
+    return this.client.request("/api/v1/amp/config");
+  }
+}
+
 module.exports = {
   Config: Config,
+  AmpConfig,
   Story: Story,
   Client: Client,
   Member: Member,
