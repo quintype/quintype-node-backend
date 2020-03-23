@@ -207,7 +207,7 @@
     
     <div class="description">
         <p>This method returns the amp config. You might want to memoize this, similar to the below</p>
-<pre class="prettyprint source lang-javascript"><code>const ampConfig = client.memoizeAsync(&quot;amp-config&quot;, async () => await AmpConfig.getAmpConfig(client))
+<pre class="prettyprint source lang-javascript"><code>const ampConfig = config.memoizeAsync(&quot;amp-config&quot;, async () => await AmpConfig.getAmpConfig(client))
 </code></pre>
     </div>
     

@@ -1053,7 +1053,7 @@ class AmpConfig extends BaseAPI {
    * This method returns the amp config. You might want to memoize this, similar to the below
    *
    * ```javascript
-   * const ampConfig = client.memoizeAsync("amp-config", async () => await AmpConfig.getAmpConfig(client))
+   * const ampConfig = config.memoizeAsync("amp-config", async () => await AmpConfig.getAmpConfig(client))
    * ```
    * @param {Client} client
    * @returns {(Promise&lt;AmpConfig>)} A Promise that returns an instance of {@link AmpConfig}
