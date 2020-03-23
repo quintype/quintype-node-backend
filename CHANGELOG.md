@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.23.0](https://github.com/quintype/quintype-backend-js/compare/v1.22.0...v1.23.0) (2020-03-23)
+
+
+### Features
+
+* added method getAmpConfig on client ([a140f9b](https://github.com/quintype/quintype-backend-js/commit/a140f9b553755aa648f50c0259f3f16e5825f9a9))
+
 ## [1.22.0](https://github.com/quintype/quintype-backend-js/compare/v1.21.0...v1.22.0) (2020-01-07)
 
 
