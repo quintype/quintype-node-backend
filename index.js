@@ -792,6 +792,10 @@ class Client {
     })
   }
 
+  getAmpConfig() {
+    return request("/api/v1/amp/config");
+  }
+
   getStoryBySlug(slug, params) {
     return this.request("/api/v1/stories-by-slug", {
       qs: _.merge({slug: slug}, params)
@@ -951,11 +955,38 @@ function buildClient(host, temporaryClient) {
   return client.config().then(_ => client);
 }
 
-class AmpConfig {
-  getConfig(client) {
-    return client.request("/api/v1/amp/config");
+/**
+ * This corresponds to the publisher's AMP configuration.
+ *
+ * See {@link AmpConfig.getAmpConfig}.
+ * @hideconstructor
+ */
+class AmpConfig extends BaseAPI {
+  constructor(ampConfig) {
+    super();
+    this.ampConfig = ampConfig;
+  }
+
+  /** Use this to convert to a simple javascript object, suitable for JSON. */
+  asJson() {
+    return this.ampConfig;
+  }
+
+  /**
+   * This method returns the amp config. You might want to memoize this, similar to the below
+   *
+   * ```javascript
+   * const ampConfig = client.memoizeAsync("amp-config", async () => await AmpConfig.getAmpConfig(client))
+   * ```
+   * @param {Client} client
+   * @returns {(Promise<AmpConfig>)} A Promise that returns an instance of {@link AmpConfig}
+   */
+  static getAmpConfig(client) {
+    return client.getAmpConfig()
+      .then(config => config && this.build(config));
   }
 }
+AmpConfig.upstream = "ampConfig";
 
 module.exports = {
   Config: Config,
