@@ -793,7 +793,7 @@ class Client {
   }
 
   getAmpConfig() {
-    return request("/api/v1/amp/config");
+    return this.request("/api/v1/amp/config");
   }
 
   getStoryBySlug(slug, params) {
