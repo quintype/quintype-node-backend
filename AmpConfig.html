@@ -3,7 +3,7 @@
 <head>
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
     <meta charset="utf-8">
-    <title>JSDoc: Author</title>
+    <title>JSDoc: AmpConfig</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -63,7 +63,7 @@
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
                         <p>Class</p>
-                        <h1>Author</h1>
+                        <h1>AmpConfig</h1>
                     </header>
                     
                     
@@ -75,24 +75,10 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Author</h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>AmpConfig</h2>
         
-            <div class="class-description"><p>An author represents a contributor to a story.</p>
-<p>Note: This class is typically needed only for an Author's page. For most usecases, the <code>authors</code> field on <a href="Story.html">Story</a> should be sufficient.</p>
-<pre class="prettyprint source lang-javascript"><code>import { Author } from &quot;@quintype/framework/server/api-client&quot;;
-
-function loadDataForAuthorPage(client, authorId) {
-  const [author, collection] = await Promise.all([
-    Author.getAuthor(client, authorId),
-    Author.getAuthorCollection(client, authorId)
-  ])
-  if(!author) {
-    render404();
-  } else {
-    renderAuthorPage(author.asJson(), collection);
-  }
-}
-</code></pre></div>
+            <div class="class-description"><p>This corresponds to the publisher's AMP configuration.</p>
+<p>See <a href="AmpConfig.html#.getAmpConfig">AmpConfig.getAmpConfig</a>.</p></div>
         
     
 </header>
@@ -152,7 +138,7 @@ function loadDataForAuthorPage(client, authorId) {
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line371">line 371</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line965">line 965</a>
             </span>
         </p>
     
@@ -205,14 +191,14 @@ function loadDataForAuthorPage(client, authorId) {
                 <div class="member">
 
     
-    <h4 class="name" id=".getAuthor">
+    <h4 class="name" id=".getAmpConfig">
         
             
                 <span class='tag'>static</span>
             
         
         <span class="code-name">
-            getAuthor<span class="signature">(client, authorId)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="Author.html">Author</a>|null)>}</span>
+            getAmpConfig<span class="signature">(client)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="AmpConfig.html">AmpConfig</a>>}</span>
         </span>
     </h4>
     
@@ -220,7 +206,9 @@ function loadDataForAuthorPage(client, authorId) {
     
     
     <div class="description">
-        <p>This method fetches an author by Id. See the example on <a href="Author.html">Author</a> for usage.</p>
+        <p>This method returns the amp config. You might want to memoize this, similar to the below</p>
+<pre class="prettyprint source lang-javascript"><code>const ampConfig = client.memoizeAsync(&quot;amp-config&quot;, async () => await AmpConfig.getAmpConfig(client))
+</code></pre>
     </div>
     
 
@@ -281,31 +269,6 @@ function loadDataForAuthorPage(client, authorId) {
 
 
     
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>authorId</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">number</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"></td>
-</tr>
-
-
-    
     </tbody>
 </table>
 
@@ -341,13 +304,6 @@ function loadDataForAuthorPage(client, authorId) {
     
 
     
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="https://developers.quintype.com/swagger/#/author/get_api_v1_authors__author_id_">GET ​/api​/v1​/authors​/:author-id</a> API documentation for a list of parameters and fields</li>
-        </ul>
-    </dd>
-    
 
     
 
@@ -355,7 +311,7 @@ function loadDataForAuthorPage(client, authorId) {
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line389">line 389</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line984">line 984</a>
             </span>
         </p>
     
@@ -386,11 +342,13 @@ function loadDataForAuthorPage(client, authorId) {
 
 <div class="columns">
     
+    <div class='param-desc column is-7'><p>A Promise that returns an instance of <a href="AmpConfig.html">AmpConfig</a></p></div>
+    
     
     <div class='column is-5 has-text-left'>
         <label>Type: </label>
         
-<span class="param-type">Promise.&lt;(<a href="Author.html">Author</a>|null)></span>
+<span class="param-type">Promise.&lt;<a href="AmpConfig.html">AmpConfig</a>></span>
 
 
     </div>
@@ -400,434 +358,6 @@ function loadDataForAuthorPage(client, authorId) {
                 
         </div>
     </div>
-
-
-
-
-</div>
-            
-                <div class="member">
-
-    
-    <h4 class="name" id=".getAuthorCollection">
-        
-            
-                <span class='tag'>static</span>
-            
-        
-        <span class="code-name">
-            getAuthorCollection<span class="signature">(client, authorId)</span><span class="type-signature"> &rarr; {Object}</span>
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>This method fetches the collection. See the example on <a href="Author.html">Author</a> for usage.</p>
-<p>Please note, this function does <em>not</em> return a <a href="Collection.html">Collection</a> object, but a plain javascript object.</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>client</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type"><a href="Client.html">Client</a></span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>authorId</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">number</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"></td>
-</tr>
-
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This will be deprecated in favor of a method which returns a <a href="Collection.html">Collection</a>.</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="index.js.html" class="button">View Source</a>
-            <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line421">line 421</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
-            
-                    
-
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>Please see <a href="https://developers.quintype.com/swagger">API documentation</a> for more details</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
-        
-<span class="param-type">Object</span>
-
-
-    </div>
-    
-</div>
-
-                
-        </div>
-    </div>
-
-
-
-
-</div>
-            
-                <div class="member">
-
-    
-    <h4 class="name" id=".getAuthors">
-        
-            
-                <span class='tag'>static</span>
-            
-        
-        <span class="code-name">
-            getAuthors<span class="signature">(client, params)</span><span class="type-signature"></span>
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>This method can be used to fetch all authors across the site. Use of this API is highly discouraged
-as you will need to make multiple calls to fetch all authors, as authors grow.</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>client</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type"><a href="Client.html">Client</a></span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>params</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Object</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"></td>
-</tr>
-
-  
-  
-    
-<tr class="deep-level-1">
-  
-      <td class="name"><code>limit</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">number</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Number of authors to be returned (default 20)</p></td>
-</tr>
-
-  
-    
-<tr class="deep-level-1">
-  
-      <td class="name"><code>offset</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">number</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Number of authors to skip</p></td>
-</tr>
-
-  
-
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This API is very slow if there are more than ~100 authors.</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="index.js.html" class="button">View Source</a>
-            <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line405">line 405</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -901,7 +431,7 @@ as you will need to make multiple calls to fetch all authors, as authors grow.</
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line377">line 377</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line971">line 971</a>
             </span>
         </p>
     

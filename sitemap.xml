@@ -2,6 +2,7 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>https://developers.quintype.com/quintype-node-backend/</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-backend/global.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-backend/AmpConfig.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-backend/Author.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-backend/BulkResults.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-backend/Client.html</loc></url>

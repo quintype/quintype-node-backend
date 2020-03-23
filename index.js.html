@@ -57,7 +57,7 @@
             <div class="column is-3" id="sidebarNav">
                 <div class="sidebar">
                     <nav>
-                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Externals</h3><ul><li><a href="external-Response.html">Response</a></li></ul><h3>Classes</h3><ul><li><a href="Author.html">Author</a></li><li><a href="Client.html">Client</a></li><li><a href="Collection.html">Collection</a></li><li><a href="Config.html">Config</a></li><li><a href="CustomPath.html">CustomPath</a></li><li><a href="Entity.html">Entity</a></li><li><a href="Member.html">Member</a></li><li><a href="Story.html">Story</a></li><li><a href="Url.html">Url</a></li></ul><h3>Global</h3><ul><li><a href="global.html#buildClient">buildClient</a></li><li><a href="global.html#DEFAULT_STORY_FIELDS">DEFAULT_STORY_FIELDS</a></li></ul></div>
+                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Externals</h3><ul><li><a href="external-Response.html">Response</a></li></ul><h3>Classes</h3><ul><li><a href="AmpConfig.html">AmpConfig</a></li><li><a href="Author.html">Author</a></li><li><a href="Client.html">Client</a></li><li><a href="Collection.html">Collection</a></li><li><a href="Config.html">Config</a></li><li><a href="CustomPath.html">CustomPath</a></li><li><a href="Entity.html">Entity</a></li><li><a href="Member.html">Member</a></li><li><a href="Story.html">Story</a></li><li><a href="Url.html">Url</a></li></ul><h3>Global</h3><ul><li><a href="global.html#buildClient">buildClient</a></li><li><a href="global.html#DEFAULT_STORY_FIELDS">DEFAULT_STORY_FIELDS</a></li></ul></div>
                     </nav>
                 </div>
             </div>
@@ -869,6 +869,10 @@ class Client {
     })
   }
 
+  getAmpConfig() {
+    return request("/api/v1/amp/config");
+  }
+
   getStoryBySlug(slug, params) {
     return this.request("/api/v1/stories-by-slug", {
       qs: _.merge({slug: slug}, params)
@@ -1028,8 +1032,42 @@ function buildClient(host, temporaryClient) {
   return client.config().then(_ => client);
 }
 
+/**
+ * This corresponds to the publisher's AMP configuration.
+ *
+ * See {@link AmpConfig.getAmpConfig}.
+ * @hideconstructor
+ */
+class AmpConfig extends BaseAPI {
+  constructor(ampConfig) {
+    super();
+    this.ampConfig = ampConfig;
+  }
+
+  /** Use this to convert to a simple javascript object, suitable for JSON. */
+  asJson() {
+    return this.ampConfig;
+  }
+
+  /**
+   * This method returns the amp config. You might want to memoize this, similar to the below
+   *
+   * ```javascript
+   * const ampConfig = client.memoizeAsync("amp-config", async () => await AmpConfig.getAmpConfig(client))
+   * ```
+   * @param {Client} client
+   * @returns {(Promise&lt;AmpConfig>)} A Promise that returns an instance of {@link AmpConfig}
+   */
+  static getAmpConfig(client) {
+    return client.getAmpConfig()
+      .then(config => config &amp;&amp; this.build(config));
+  }
+}
+AmpConfig.upstream = "ampConfig";
+
 module.exports = {
   Config: Config,
+  AmpConfig,
   Story: Story,
   Client: Client,
   Member: Member,
