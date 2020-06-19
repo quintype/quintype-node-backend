@@ -797,9 +797,12 @@ class Client {
   }
 
   getStoryBySlug(slug, params) {
-    return this.request("/api/v1/stories-by-slug", {
-      qs: _.merge({slug: slug}, params)
-    }).catch(e => catch404(e, {}))
+    // handle unicode slugs for vernacular story titles
+    const queryString = decodeURI(new URLSearchParams(_.merge({slug: slug}, params)).toString());
+
+    const uri = `/api/v1/stories-by-slug?${queryString}`;
+
+    return this.request(uri).catch(e => catch404(e, {}))
   }
 
   getStoryById(id) {
