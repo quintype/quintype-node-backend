@@ -761,7 +761,9 @@ class Client {
       gzip: true
     }, opts);
     return rp(params).catch(e => {
-      console.error(`Error in API ${uri}: Status ${e.statusCode}`)
+      process.env && 
+        process.env.NODE_ENV !== 'production' && 
+        console.error(`Error in API ${uri}: Status ${e.statusCode}`)
       throw e;
     });
   }
