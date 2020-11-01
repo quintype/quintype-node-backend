@@ -56,7 +56,13 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
 function loadNestedCollectionData(
   client,
   collection,
-  {depth, storyFields, storyLimits, nestedCollectionStoryLimits}
+  {
+    depth,
+    storyFields,
+    storyLimits,
+    nestedCollectionStoryLimits,
+    defaultNestedCollectionStoryLimits,
+  }
 ) {
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
@@ -83,7 +89,10 @@ function loadNestedCollectionData(
       } else {
         item.items.map(nestedItem => {
           if (nestedItem.type === 'collection') {
-            nestedItem.items = nestedItem.items.splice(0, 15);
+            nestedItem.items = nestedItem.items.splice(
+              0,
+              defaultNestedCollectionStoryLimits
+            );
           }
         });
       }

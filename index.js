@@ -1,18 +1,20 @@
 'use strict';
 
 const rp = require('request-promise');
-const Promise = require("bluebird");
-const _ = require("lodash");
-const {loadNestedCollectionData}  = require("./collection-loader");
-const { MenuGroups }  = require("./menu-groups");
-const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
-const { BaseAPI } = require('./base-api');
-const { asyncGate } = require("./async-gate");
-const hash = require("object-hash");
+const Promise = require('bluebird');
+const _ = require('lodash');
+const {loadNestedCollectionData} = require('./collection-loader');
+const {MenuGroups} = require('./menu-groups');
+const {DEFAULT_DEPTH, DEFAULT_STORY_FIELDS} = require('./constants');
+const {BaseAPI} = require('./base-api');
+const {asyncGate} = require('./async-gate');
+const hash = require('object-hash');
 
 function mapValues(f, object) {
-  return Object.entries(object)
-    .reduce((acc, [key, value]) => { acc[key] = f(value, key); return acc}, {})
+  return Object.entries(object).reduce((acc, [key, value]) => {
+    acc[key] = f(value, key);
+    return acc;
+  }, {});
 }
 
 /**
@@ -59,7 +61,7 @@ class Story extends BaseAPI {
   static getStories(client, storyGroup, params) {
     return client
       .getStories(_.extend({'story-group': storyGroup}, params))
-      .then(response => _.map(response["stories"], story => this.build(story)));
+      .then(response => _.map(response['stories'], story => this.build(story)));
   }
 
   /**
@@ -78,7 +80,11 @@ class Story extends BaseAPI {
     const sectionId = _.get(this, ['sections', 0, 'id'], null);
     return client
       .getRelatedStories(this.id, sectionId)
-      .then(response => _.map(response["related-stories"], story => this.constructor.build(story)));
+      .then(response =>
+        _.map(response['related-stories'], story =>
+          this.constructor.build(story)
+        )
+      );
   }
 
   /**
@@ -90,8 +96,7 @@ class Story extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__attributes GET ​/api​/v1​/stories​/:story-id​/attributes} API Documentation for a list of fields returned
    */
   getStoryAttributes(client) {
-    return client
-      .getStoryAttributes(this.id)
+    return client.getStoryAttributes(this.id);
   }
 
   /**
@@ -115,13 +120,13 @@ class Story extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories_by_slug GET ​/api​/v1​/stories-by-slug} API documentation for a list of parameters and fields
    */
   static getStoryBySlug(client, slug, params) {
-    if(!slug) {
+    if (!slug) {
       return Promise.resolve(null);
     }
 
     return client
       .getStoryBySlug(slug, params)
-      .then(response => this.build(response["story"]));
+      .then(response => this.build(response['story']));
   }
 
   /**
@@ -138,7 +143,7 @@ class Story extends BaseAPI {
   static getPublicPreviewStory(client, publicPreviewKey) {
     return client
       .getPublicPreviewStory(publicPreviewKey)
-      .then(response => this.build(response["story"]));
+      .then(response => this.build(response['story']));
   }
 
   /**
@@ -153,7 +158,7 @@ class Story extends BaseAPI {
   static getStoryById(client, id) {
     return client
       .getStoryById(id)
-      .then(response => this.build(response["story"]));
+      .then(response => this.build(response['story']));
   }
 
   /**
@@ -177,8 +182,12 @@ class Story extends BaseAPI {
     return client
       .getSearch(params)
       .then(response =>
-        _.merge(response["results"],
-          {'stories': _.map(response["results"]["stories"], story => this.build(story))}));
+        _.merge(response['results'], {
+          stories: _.map(response['results']['stories'], story =>
+            this.build(story)
+          ),
+        })
+      );
   }
 
   /**
@@ -191,17 +200,27 @@ class Story extends BaseAPI {
    */
   static getInBulk(client, requests) {
     function wrapResult(result) {
-      if(!result.stories)
-        return result;
-      return Object.assign({}, result, {stories: result.stories.map(this.build)})
+      if (!result.stories) return result;
+      return Object.assign({}, result, {
+        stories: result.stories.map(this.build),
+      });
     }
 
     return client
-      .getInBulk({requests: mapValues(r => Object.assign({_type: "stories"}, r), requests)})
-      .then(response => BulkResults.build(mapValues(result => wrapResult(result), response["results"])));
+      .getInBulk({
+        requests: mapValues(
+          r => Object.assign({_type: 'stories'}, r),
+          requests
+        ),
+      })
+      .then(response =>
+        BulkResults.build(
+          mapValues(result => wrapResult(result), response['results'])
+        )
+      );
   }
 }
-Story.upstream = "story";
+Story.upstream = 'story';
 
 class BulkResults extends BaseAPI {
   constructor(results) {
@@ -212,15 +231,17 @@ class BulkResults extends BaseAPI {
   /** Use this to convert to a simple javascript object, suitable for JSON. */
   asJson() {
     return mapValues(response => {
-      if(response.stories) {
-        return Object.assign({}, response, {stories: response.stories.map(story => story.asJson())})
+      if (response.stories) {
+        return Object.assign({}, response, {
+          stories: response.stories.map(story => story.asJson()),
+        });
       } else {
         return response;
       }
     }, this.results);
   }
 }
-BulkResults.upstream = "results";
+BulkResults.upstream = 'results';
 
 /**
  * This corresponds to a collection in Quintype. Most groups of content are modelled with this class.
@@ -288,8 +309,13 @@ class Collection extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
   static getCollectionBySlug(client, slug, params, options = {}) {
-    const {depth = DEFAULT_DEPTH, storyLimits = {}, nestedCollectionStoryLimits={}} = options;
-    const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
+    const {
+      depth = DEFAULT_DEPTH,
+      storyLimits = {},
+      nestedCollectionStoryLimits = {},
+      defaultNestedCollectionStoryLimits = 3,
+    } = options;
+    const storyFields = _.get(params, ['story-fields'], DEFAULT_STORY_FIELDS);
 
     if (!slug) {
       return Promise.resolve(null);
@@ -298,12 +324,22 @@ class Collection extends BaseAPI {
     return client
       .getCollectionBySlug(slug, params)
       .then(response => {
-        const collection = response ? response["collection"] || response : null;
-        return collection && loadNestedCollectionData(client, collection, {depth, storyFields, storyLimits, nestedCollectionStoryLimits})
-      }).then(collection => this.build(collection))
+        const collection = response ? response['collection'] || response : null;
+        return (
+          collection &&
+          loadNestedCollectionData(client, collection, {
+            depth,
+            storyFields,
+            storyLimits,
+            nestedCollectionStoryLimits,
+            defaultNestedCollectionStoryLimits,
+          })
+        );
+      })
+      .then(collection => this.build(collection));
   }
 }
-Collection.upstream = "collection";
+Collection.upstream = 'collection';
 
 /**
  * This represents a logged in user. You probably do not need to use this class, it's better if
@@ -335,15 +371,15 @@ class Member extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/member/get_api_v1_members_me GET ​/api​/v1​/members/me} API documentation for a list of parameters and fields
    */
   static getCurrentMember(client, authToken) {
-    if(!authToken || authToken == "")
+    if (!authToken || authToken == '')
       return new Promise((resolve, reject) => resolve(null));
     return client
       .getCurrentMember(authToken)
-      .then(response => response && this.build(response["member"]))
+      .then(response => response && this.build(response['member']))
       .catch(() => null);
   }
 }
-Member.upstream = "member";
+Member.upstream = 'member';
 
 /**
  * An author represents a contributor to a story.
@@ -389,7 +425,7 @@ class Author extends BaseAPI {
   static getAuthor(client, authorId) {
     return client
       .getAuthor(authorId)
-      .then(response => response && this.build(response["author"]));
+      .then(response => response && this.build(response['author']));
   }
 
   /**
@@ -409,22 +445,22 @@ class Author extends BaseAPI {
   }
 
   /**
-  * This method fetches the collection. See the example on {@link Author} for usage.
-  *
-  * Please note, this function does *not* return a {@link Collection} object, but a plain javascript object.
-  *
-  * @param {Client} client
-  * @param {number} authorId
-  * @returns {Object} Please see [API documentation](https://developers.quintype.com/swagger) for more details
-  * @deprecated This will be deprecated in favor of a method which returns a {@link Collection}.
-  */
-  static getAuthorCollection(client, authorId, params){
+   * This method fetches the collection. See the example on {@link Author} for usage.
+   *
+   * Please note, this function does *not* return a {@link Collection} object, but a plain javascript object.
+   *
+   * @param {Client} client
+   * @param {number} authorId
+   * @returns {Object} Please see [API documentation](https://developers.quintype.com/swagger) for more details
+   * @deprecated This will be deprecated in favor of a method which returns a {@link Collection}.
+   */
+  static getAuthorCollection(client, authorId, params) {
     return client
-    .getAuthorCollection(authorId, params)
-    .catch(e => catch404(e, null))
+      .getAuthorCollection(authorId, params)
+      .catch(e => catch404(e, null));
   }
 }
-Author.upstream = "author";
+Author.upstream = 'author';
 
 /**
  * CustomPath is used for managing redirects and static pages via the editor. It corresponds to the
@@ -466,11 +502,11 @@ class CustomPath extends BaseAPI {
    */
   static getCustomPathData(client, path) {
     return client
-      .getCustomPathData(path.startsWith('/') ? path : "/" + path)
-      .then(response => response["page"] && this.build(response["page"]));
+      .getCustomPathData(path.startsWith('/') ? path : '/' + path)
+      .then(response => response['page'] && this.build(response['page']));
   }
 }
-CustomPath.upstream = "page";
+CustomPath.upstream = 'page';
 
 /**
  * Represents the configuration of the publisher. This represents the API call of /api/v1/config.
@@ -507,7 +543,9 @@ class Config extends BaseAPI {
    * @returns {object} Configuration for the domain
    */
   getDomainConfig(domainSlug) {
-    return (this.domains || []).find((domain => domain.slug === domainSlug)) || {};
+    return (
+      (this.domains || []).find(domain => domain.slug === domainSlug) || {}
+    );
   }
 
   /**
@@ -516,7 +554,7 @@ class Config extends BaseAPI {
    * @returns {string} The slug of the home collection for a domain
    */
   getHomeCollectionSlug(domainSlug) {
-    return this.getDomainConfig(domainSlug)["home-collection-id"] || "home";
+    return this.getDomainConfig(domainSlug)['home-collection-id'] || 'home';
   }
 
   /**
@@ -525,10 +563,16 @@ class Config extends BaseAPI {
    * @returns {array} A list of sections that are part of the domain
    */
   getDomainSections(domainSlug) {
-    if(domainSlug === undefined) {
+    if (domainSlug === undefined) {
       return this.sections;
     }
-    return (this.sections || []).filter(section => section["domain-slug"] === undefined || section["domain-slug"] === domainSlug) || {};
+    return (
+      (this.sections || []).filter(
+        section =>
+          section['domain-slug'] === undefined ||
+          section['domain-slug'] === domainSlug
+      ) || {}
+    );
   }
 
   /**
@@ -554,26 +598,26 @@ class Config extends BaseAPI {
   }
 
   /**
- * This can be used to memoize an asynchronous function. The value of await f() is stored against the given key
- * until the config object is removed from memory. By default in malibu, the config object is replaced
- * every two minutes. This can be used to memoize objects such as collections returned by this library
- *
- * This function can be used concurrently. The first call will cause other requests to block. If the promise resolves,
- * then all calls (and future calls) will recieve that value. If the promise fails, then all waiting promises reject,
- * but the next call will start afresh.
- *
- * This function shares a keyspace with {@link memoize}
- *
- * Example:
- * ```javascript
- * const collection = await config.memoizeAsync("collection-on-every-page", async () => await Collection.getCollectionBySlug("collection-on-every-page"))
- * ```
- *
- * @param {string} key The key to store the results against
- * @param {function} f An async function that is executed to get the results
- * @returns The value of f() if it's called the first time, else the value against the key
- *
- */
+   * This can be used to memoize an asynchronous function. The value of await f() is stored against the given key
+   * until the config object is removed from memory. By default in malibu, the config object is replaced
+   * every two minutes. This can be used to memoize objects such as collections returned by this library
+   *
+   * This function can be used concurrently. The first call will cause other requests to block. If the promise resolves,
+   * then all calls (and future calls) will recieve that value. If the promise fails, then all waiting promises reject,
+   * but the next call will start afresh.
+   *
+   * This function shares a keyspace with {@link memoize}
+   *
+   * Example:
+   * ```javascript
+   * const collection = await config.memoizeAsync("collection-on-every-page", async () => await Collection.getCollectionBySlug("collection-on-every-page"))
+   * ```
+   *
+   * @param {string} key The key to store the results against
+   * @param {function} f An async function that is executed to get the results
+   * @returns The value of f() if it's called the first time, else the value against the key
+   *
+   */
   async memoizeAsync(key, f) {
     if (this._memoized_data[key]) {
       // Technically resolve is redundant here, but i'm including it to be clear
@@ -585,7 +629,7 @@ class Config extends BaseAPI {
   }
 }
 
-Config.upstream = "config";
+Config.upstream = 'config';
 
 /**
  * Entities are the prefered way to store structured information about a topic. Entities are a
@@ -638,7 +682,9 @@ class Entity extends BaseAPI {
   static getEntities(client, params) {
     return client
       .getEntities(params)
-      .then(response => _.map(response["entities"], entity => this.build(entity)));
+      .then(response =>
+        _.map(response['entities'], entity => this.build(entity))
+      );
   }
 
   /**
@@ -675,11 +721,13 @@ class Entity extends BaseAPI {
   getCollections(client, params) {
     return client
       .getCollectionsByEntityId(this.entity.id, params)
-      .then(response => response["collections"].map(collection => Collection.build(collection)));
+      .then(response =>
+        response['collections'].map(collection => Collection.build(collection))
+      );
   }
 }
 
-Entity.upstream = "entity";
+Entity.upstream = 'entity';
 
 /**
  * @deprecated Please use {@link CustomPath} instead
@@ -696,16 +744,13 @@ class Url extends BaseAPI {
   }
 
   static getCustomURL(client, slug) {
-    return client
-      .getCustomURL(slug)
-        .then(url => this.build(url))
+    return client.getCustomURL(slug).then(url => this.build(url));
   }
 }
-Url.upstream = "url";
+Url.upstream = 'url';
 
 function catch404(e, defaultValue) {
-  if(e && e.statusCode == 404)
-    return defaultValue;
+  if (e && e.statusCode == 404) return defaultValue;
   throw e;
 }
 
@@ -721,11 +766,17 @@ class Client {
   constructor(baseUrl, temporaryClient) {
     this.baseUrl = baseUrl;
     this.config = null;
-    if(!temporaryClient) {
-      this.interval = setInterval(() => this.updateConfig().catch(e => console.error("Unable to update config")), 120000);
+    if (!temporaryClient) {
+      this.interval = setInterval(
+        () =>
+          this.updateConfig().catch(e =>
+            console.error('Unable to update config')
+          ),
+        120000
+      );
       this.initialUpdateConfig = this.updateConfig();
     }
-    this.hostname = baseUrl.replace(/https?:\/\//, "");
+    this.hostname = baseUrl.replace(/https?:\/\//, '');
     this._cachedPostBulkLocations = {};
     this._cachedPostBulkGate = asyncGate();
   }
@@ -754,56 +805,61 @@ class Client {
    */
   request(path, opts) {
     const uri = this.baseUrl + path;
-    const params = Object.assign({
-      method: 'GET',
-      uri: uri,
-      json: true,
-      gzip: true
-    }, opts);
+    const params = Object.assign(
+      {
+        method: 'GET',
+        uri: uri,
+        json: true,
+        gzip: true,
+      },
+      opts
+    );
     return rp(params).catch(e => {
-      console.error(`Error in API ${uri}: Status ${e.statusCode}`)
+      console.error(`Error in API ${uri}: Status ${e.statusCode}`);
       throw e;
     });
   }
 
   getFromBulkApiManager(slug, params) {
-    return this.request("/api/v1/bulk/" + slug,{
-      qs: params
-    })
+    return this.request('/api/v1/bulk/' + slug, {
+      qs: params,
+    });
   }
 
   getTags(slug) {
-    return this.request("/api/v1/tags/" + slug)
+    return this.request('/api/v1/tags/' + slug);
   }
 
   getPublicPreviewStory(publicPreviewKey) {
-    return this.request("/api/v1/preview/story/" + publicPreviewKey).catch(e => catch404(e, {}))
+    return this.request('/api/v1/preview/story/' + publicPreviewKey).catch(e =>
+      catch404(e, {})
+    );
   }
 
   getCollectionBySlug(slug, params) {
-    return this.request("/api/v1/collections/" + slug, {
-      qs: params
-    }).catch(e => catch404(e, null))
+    return this.request('/api/v1/collections/' + slug, {
+      qs: params,
+    }).catch(e => catch404(e, null));
   }
 
   getStories(params) {
-    return this.request("/api/v1/stories", {
-      qs: params
-    })
+    return this.request('/api/v1/stories', {
+      qs: params,
+    });
   }
 
   getAmpConfig() {
-    return this.request("/api/v1/amp/config");
+    return this.request('/api/v1/amp/config');
   }
 
   getStoryBySlug(slug, params) {
-    return this.request("/api/v1/stories-by-slug", {
-      qs: _.merge({slug: slug}, params)
-    }).catch(e => catch404(e, {}))
+    return this.request('/api/v1/stories-by-slug', {
+      qs: _.merge({slug: slug}, params),
+    }).catch(e => catch404(e, {}));
   }
 
   getStoryById(id) {
-    return this.request("/api/v1/stories/" + id).catch(e => catch404(e, {}))
+    return this.request('/api/v1/stories/' + id).catch(e => catch404(e, {}));
   }
 
   /**
@@ -813,8 +869,7 @@ class Client {
    * @returns {(Promise<Config>)} A Promise that returns an instance of {@link Config}
    */
   getConfig() {
-    if(this.config)
-      return Promise.resolve(this.config);
+    if (this.config) return Promise.resolve(this.config);
 
     this.initialUpdateConfig = this.initialUpdateConfig || this.updateConfig();
 
@@ -822,123 +877,133 @@ class Client {
   }
 
   getCurrentMember(authToken) {
-    return this.request("/api/v1/members/me", {
+    return this.request('/api/v1/members/me', {
       headers: {
-        "X-QT-AUTH": authToken
-      }
-    })
+        'X-QT-AUTH': authToken,
+      },
+    });
   }
 
   getAuthor(authorId) {
-    return this.request("/api/v1/authors/" + authorId).catch(e => catch404(e, {}))
+    return this.request('/api/v1/authors/' + authorId).catch(e =>
+      catch404(e, {})
+    );
   }
 
   getAuthors(params) {
-    return this.request("/api/authors", {
-      qs: params
-    })
+    return this.request('/api/authors', {
+      qs: params,
+    });
   }
 
   getSearch(params) {
-    return this.request("/api/v1/search", {
-      qs: params
-    })
+    return this.request('/api/v1/search', {
+      qs: params,
+    });
   }
 
   getAdvancedSearch(params) {
-    return this.request("/api/v1/advanced-search", {
-      qs: params
-    })
+    return this.request('/api/v1/advanced-search', {
+      qs: params,
+    });
   }
 
   getRelatedStories(storyId = null, sectionId = null) {
-    return this.request("/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId)
+    return this.request(
+      '/api/v1/stories/' + storyId + '/related-stories?section-id=' + sectionId
+    );
   }
 
   getStoryAttributes(storyId) {
-    return this.request("/api/v1/stories/" + storyId + "/attributes")
+    return this.request('/api/v1/stories/' + storyId + '/attributes');
   }
 
   updateConfig() {
-    return this.request("/api/v1/config")
-    .then(config => this.config = Config.build(config))
+    return this.request('/api/v1/config').then(
+      config => (this.config = Config.build(config))
+    );
   }
 
-  postComments(params, authToken){
-    return this.request("/api/v1/comments", {
+  postComments(params, authToken) {
+    return this.request('/api/v1/comments', {
       method: 'POST',
       body: params,
       headers: {
-        "X-QT-AUTH": authToken,
-        'content-type': 'application/json'
-      }
-    })
+        'X-QT-AUTH': authToken,
+        'content-type': 'application/json',
+      },
+    });
   }
 
-  async getInBulk(requests){
+  async getInBulk(requests) {
     const requestHash = hash(requests);
-    this._cachedPostBulkLocations[requestHash] = this._cachedPostBulkLocations[requestHash] || await this._cachedPostBulkGate(requestHash, getBulkLocation.bind(this));
+    this._cachedPostBulkLocations[requestHash] =
+      this._cachedPostBulkLocations[requestHash] ||
+      (await this._cachedPostBulkGate(requestHash, getBulkLocation.bind(this)));
     return this.request(this._cachedPostBulkLocations[requestHash]);
 
     async function getBulkLocation() {
-      const response = await this.request("/api/v1/bulk-request", {
+      const response = await this.request('/api/v1/bulk-request', {
         method: 'POST',
         body: requests,
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
         simple: false,
-        resolveWithFullResponse: true
-      })
-      if(response.statusCode === 303 && response.caseless.get("Location")) {
-        return response.caseless.get("Location");
+        resolveWithFullResponse: true,
+      });
+      if (response.statusCode === 303 && response.caseless.get('Location')) {
+        return response.caseless.get('Location');
       } else {
-        throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`)
+        throw new Error(
+          `Could Not Convert POST bulk to a get, got status ${response.statusCode}`
+        );
       }
     }
   }
 
   getAmpStoryBySlug(slug) {
-    return this.request("/api/v1/amp/story", {
-      qs: {slug}
-    })
+    return this.request('/api/v1/amp/story', {
+      qs: {slug},
+    });
   }
 
   getEntities(params) {
-    return this.request("/api/v1/entities", {
-      qs: params
-    })
+    return this.request('/api/v1/entities', {
+      qs: params,
+    });
   }
 
   getEntity(entityId, params) {
-    return this.request("/api/v1/entity/"+entityId, {
-      qs: params
-    })
+    return this.request('/api/v1/entity/' + entityId, {
+      qs: params,
+    });
   }
 
   getCollectionsByEntityId(entityId, params) {
-    return this.request("/api/v1/entity/" + entityId + "/collections", {
-      qs: params
-    })
+    return this.request('/api/v1/entity/' + entityId + '/collections', {
+      qs: params,
+    });
   }
 
   getCustomURL(slug) {
-    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path))
+    return this.request('/api/v1/custom-urls/' + encodeURIComponent(path));
   }
 
   getCustomPathData(path) {
-    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path))
-               .catch(e => catch404(e, {}));
+    return this.request(
+      '/api/v1/custom-urls/' + encodeURIComponent(path)
+    ).catch(e => catch404(e, {}));
   }
-  getAuthorCollection(authorId, params){
+  getAuthorCollection(authorId, params) {
     return this.request(`/api/v1/authors/${authorId}/collection`, {
-      qs: params
-    })
+      qs: params,
+    });
   }
 
   getMenuGroups(params = {}) {
     return this.request(`/api/v1/menu-groups`, {
-      qs: params
+      qs: params,
     });
   }
 }
@@ -982,11 +1047,10 @@ class AmpConfig extends BaseAPI {
    * @returns {(Promise<AmpConfig>)} A Promise that returns an instance of {@link AmpConfig}
    */
   static getAmpConfig(client) {
-    return client.getAmpConfig()
-      .then(config => config && this.build(config));
+    return client.getAmpConfig().then(config => config && this.build(config));
   }
 }
-AmpConfig.upstream = "ampConfig";
+AmpConfig.upstream = 'ampConfig';
 
 module.exports = {
   Config: Config,
@@ -1000,5 +1064,5 @@ module.exports = {
   Entity: Entity,
   Url: Url,
   MenuGroups: MenuGroups,
-  buildClient: buildClient
+  buildClient: buildClient,
 };
