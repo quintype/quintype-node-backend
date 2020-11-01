@@ -64,6 +64,8 @@ function loadNestedCollectionData(
     defaultNestedCollectionStoryLimits,
   }
 ) {
+  console.log('fooooooooo4');
+
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
     storyLimits,
@@ -71,12 +73,14 @@ function loadNestedCollectionData(
     const nestedCollectionStoryLimitKeys = Object.keys(
       nestedCollectionStoryLimits
     );
+    console.log('collection=====', collection);
     collection.items.map(item => {
       if (
         nestedCollectionStoryLimitKeys.includes(
           get(item, ['associated-metadata', 'layout'])
         )
       ) {
+        console.log('inside if=====');
         item.items.map(
           nestedItem =>
             (nestedItem.items = nestedItem.items.splice(
@@ -88,6 +92,7 @@ function loadNestedCollectionData(
         );
       } else {
         item.items.map(nestedItem => {
+          console.log('inside if=====', nestedItem.type);
           if (nestedItem.type === 'collection') {
             nestedItem.items = nestedItem.items.splice(
               0,
@@ -97,6 +102,7 @@ function loadNestedCollectionData(
         });
       }
     });
+    console.log('collection2====', collection);
     return collection;
   });
 }
