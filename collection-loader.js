@@ -35,6 +35,7 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
 }
 
 function loadNestedCollectionData(client, collection, {depth, storyFields, storyLimits}) {
+  console.log("fooooo4")
   return updateItemsInPlace(client, depth, collection.items, {storyFields, storyLimits})
     .then(() => collection);
 }
