@@ -179,15 +179,13 @@ class Story extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_search GET ​/api​/v1​/search} API documentation for a list of parameters and fields
    */
   static getSearch(client, params) {
-    return client
-      .getSearch(params)
-      .then(response =>
-        _.merge(response['results'], {
-          stories: _.map(response['results']['stories'], story =>
-            this.build(story)
-          ),
-        })
-      );
+    return client.getSearch(params).then(response =>
+      _.merge(response['results'], {
+        stories: _.map(response['results']['stories'], story =>
+          this.build(story)
+        ),
+      })
+    );
   }
 
   /**
@@ -309,7 +307,6 @@ class Collection extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
   static getCollectionBySlug(client, slug, params, options = {}) {
-    console.log("fooooooooooo1");
     const {
       depth = DEFAULT_DEPTH,
       storyLimits = {},
@@ -317,12 +314,10 @@ class Collection extends BaseAPI {
       defaultNestedCollectionStoryLimits = 3,
     } = options;
     const storyFields = _.get(params, ['story-fields'], DEFAULT_STORY_FIELDS);
-    console.log("fooooooooooo3");
 
     if (!slug) {
       return Promise.resolve(null);
     }
-    console.log("fooooooooooo3");
 
     return client
       .getCollectionBySlug(slug, params)
