@@ -3,6 +3,7 @@ const flatMap = require("lodash/flatMap");
 const {DEFAULT_STORY_FIELDS} = require("./constants");
 
 function loadCollectionItems(client, collections, {storyFields, storyLimits}) {
+  console.log('inside this here---------------')
   const bulkRequestBody = collections.reduce(
     (acc, collection) => Object.assign(acc, {
       [collection.slug]: {
