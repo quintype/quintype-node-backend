@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "1.23.2-beta.0",
+  "version": "1.23.2-nested-backend.0",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
