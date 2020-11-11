@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "1.23.2-nested-collection-limit.1",
+  "version": "1.23.1",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
