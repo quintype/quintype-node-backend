@@ -2,13 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [1.24.0](https://github.com/quintype/quintype-backend-js/compare/v1.23.1...v1.24.0) (2020-11-11)
-
-
-### Features
-
-* provide provision to set the story limit for nested collection ([#45](https://github.com/quintype/quintype-backend-js/issues/45)) ([b00c48e](https://github.com/quintype/quintype-backend-js/commit/b00c48e414e46dcacc5b6ac87c63da1de7995e93))
-
 ### [1.23.1](https://github.com/quintype/quintype-backend-js/compare/v1.23.0...v1.23.1) (2020-03-23)
 
 
