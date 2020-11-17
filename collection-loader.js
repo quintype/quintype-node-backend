@@ -72,36 +72,38 @@ function loadNestedCollectionData(
       nestedCollectionStoryLimits
     );
     collection.items.map(item => {
-      if (
-        nestedCollectionStoryLimitKeys.includes(
-          get(item, ['associated-metadata', 'layout'])
-        )
-      ) {
-        item.items.map(nestedItem => {
-          const nestedCollectionItem = get(nestedItem, ['items'], []);
-          if (nestedCollectionItem.length > 0) {
-            nestedItem.items = nestedCollectionItem.splice(
-              0,
-              nestedCollectionStoryLimits[
-                get(item, ['associated-metadata', 'layout'])
-              ]
-            );
-          }
-        });
-      } else {
-        console.log('fooooooo', item);
-        console.log('fooooooo11111', item.items);
-        item.items.map(nestedItem => {
-          if (nestedItem.type === 'collection') {
+      if (item.type !== 'story') {
+        if (
+          nestedCollectionStoryLimitKeys.includes(
+            get(item, ['associated-metadata', 'layout'])
+          )
+        ) {
+          item.items.map(nestedItem => {
             const nestedCollectionItem = get(nestedItem, ['items'], []);
             if (nestedCollectionItem.length > 0) {
               nestedItem.items = nestedCollectionItem.splice(
                 0,
-                defaultNestedCollectionStoryLimits
+                nestedCollectionStoryLimits[
+                  get(item, ['associated-metadata', 'layout'])
+                ]
               );
             }
-          }
-        });
+          });
+        } else {
+          console.log('fooooooo', item);
+          console.log('fooooooo11111', item.items);
+          item.items.map(nestedItem => {
+            if (nestedItem.type === 'collection') {
+              const nestedCollectionItem = get(nestedItem, ['items'], []);
+              if (nestedCollectionItem.length > 0) {
+                nestedItem.items = nestedCollectionItem.splice(
+                  0,
+                  defaultNestedCollectionStoryLimits
+                );
+              }
+            }
+          });
+        }
       }
     });
     return collection;
