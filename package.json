@@ -1,11 +1,10 @@
 {
   "name": "@quintype/backend",
-  "version": "1.23.2",
+  "version": "1.23.3",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
     "docs": "rimraf docs && jsdoc -c jsdoc.json",
-    "prepublishOnly": "./bin-dev-scripts/standard-version-release.sh",
     "test": "jest"
   },
   "repository": {
