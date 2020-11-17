@@ -72,6 +72,8 @@ function loadNestedCollectionData(
       nestedCollectionStoryLimits
     );
     collection.items.map(item => {
+      console.log('fooooooo', item);
+      console.log('fooooooo11111', item.items);
       if (item.type !== 'story') {
         if (
           nestedCollectionStoryLimitKeys.includes(
@@ -90,8 +92,6 @@ function loadNestedCollectionData(
             }
           });
         } else {
-          console.log('fooooooo', item);
-          console.log('fooooooo11111', item.items);
           item.items.map(nestedItem => {
             if (nestedItem.type === 'collection') {
               const nestedCollectionItem = get(nestedItem, ['items'], []);
