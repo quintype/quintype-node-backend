@@ -73,6 +73,7 @@ function loadNestedCollectionData(
     );
 
     const updateNestedItems = (nestedItem, sliceCount) => {
+      // function modifies the level 3 collection items count based on the slice count generated below
       if (nestedItem.type === 'collection') {
         const nestedCollectionItem = get(nestedItem, ['items'], []);
 
@@ -82,18 +83,24 @@ function loadNestedCollectionData(
       }
     };
 
-    const getSliceCount = nestedCollectionStoryLimitKeys.includes(
-      get(item, ['associated-metadata', 'layout'])
-    )
-      ? nestedCollectionStoryLimits[
+    const getSliceCount = item => {
+      // function returns the slice count, if template is available or else returns default slice count .i.e 3
+      if (
+        nestedCollectionStoryLimitKeys.includes(
           get(item, ['associated-metadata', 'layout'])
-        ]
-      : defaultNestedCollectionStoryLimits;
+        )
+      ) {
+        return nestedCollectionStoryLimits[
+          get(item, ['associated-metadata', 'layout'])
+        ];
+      }
+      return defaultNestedCollectionStoryLimits;
+    };
 
     collection.items.map(item => {
       if (item.type !== 'story') {
         item.items.map(nestedItem => {
-          updateNestedItems(nestedItem, getSliceCount);
+          updateNestedItems(nestedItem, getSliceCount(item));
         });
       }
     });
