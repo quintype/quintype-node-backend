@@ -90,32 +90,16 @@ function loadNestedCollectionData(
           )
         ) {
           item.items.map(nestedItem => {
-            if (nestedItem.type === 'collection') {
-              const nestedCollectionItem = get(nestedItem, ['items'], []);
-
-              if (nestedCollectionItem.length > 0) {
-                nestedItem.items = nestedCollectionItem.splice(
-                  0,
-                  nestedCollectionStoryLimits[
-                    get(item, ['associated-metadata', 'layout'])
-                  ]
-                );
-              }
-            }
+            foo(
+              nestedItem,
+              nestedCollectionStoryLimits[
+                get(item, ['associated-metadata', 'layout'])
+              ]
+            );
           });
         } else {
           item.items.map(nestedItem => {
             foo(nestedItem, defaultNestedCollectionStoryLimits);
-            // if (nestedItem.type === 'collection') {
-            //   const nestedCollectionItem = get(nestedItem, ['items'], []);
-
-            //   if (nestedCollectionItem.length > 0) {
-            //     nestedItem.items = nestedCollectionItem.splice(
-            //       0,
-            //       defaultNestedCollectionStoryLimits
-            //     );
-            //   }
-            // }
           });
         }
       }
