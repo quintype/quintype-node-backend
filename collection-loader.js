@@ -72,15 +72,15 @@ function loadNestedCollectionData(
       nestedCollectionStoryLimits
     );
 
-    // const foo = (nestedItem, sliceCount) => {
-    //   if (nestedItem.type === 'collection') {
-    //     const nestedCollectionItem = get(nestedItem, ['items'], []);
+    const foo = (nestedItem, sliceCount) => {
+      if (nestedItem.type === 'collection') {
+        const nestedCollectionItem = get(nestedItem, ['items'], []);
 
-    //     if (nestedCollectionItem.length > 0) {
-    //       nestedItem.items = nestedCollectionItem.splice(0, sliceCount);
-    //     }
-    //   }
-    // };
+        if (nestedCollectionItem.length > 0) {
+          nestedItem.items = nestedCollectionItem.splice(0, sliceCount);
+        }
+      }
+    };
 
     collection.items.map(item => {
       if (item.type !== 'story') {
