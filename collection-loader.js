@@ -71,13 +71,17 @@ function loadNestedCollectionData(
     const nestedCollectionStoryLimitKeys = Object.keys(
       nestedCollectionStoryLimits
     );
-    const foo = (nestedItem, sliceCount) => {
-      const nestedCollectionItem = get(nestedItem, ['items'], []);
 
-      if (nestedCollectionItem.length > 0) {
-        nestedItem.items = nestedCollectionItem.splice(0, sliceCount);
+    const foo = (nestedItem, sliceCount) => {
+      if (nestedItem.type === 'collection') {
+        const nestedCollectionItem = get(nestedItem, ['items'], []);
+
+        if (nestedCollectionItem.length > 0) {
+          nestedItem.items = nestedCollectionItem.splice(0, sliceCount);
+        }
       }
     };
+
     collection.items.map(item => {
       if (item.type !== 'story') {
         if (
@@ -86,35 +90,31 @@ function loadNestedCollectionData(
           )
         ) {
           item.items.map(nestedItem => {
-            foo(
-              nestedItem,
-              nestedCollectionStoryLimits[
-                get(item, ['associated-metadata', 'layout'])
-              ]
-            );
-            // const nestedCollectionItem = get(nestedItem, ['items'], []);
+            if (nestedItem.type === 'collection') {
+              const nestedCollectionItem = get(nestedItem, ['items'], []);
 
-            // if (nestedCollectionItem.length > 0) {
-            //   nestedItem.items = nestedCollectionItem.splice(
-            //     0,
-            //     nestedCollectionStoryLimits[
-            //       get(item, ['associated-metadata', 'layout'])
-            //     ]
-            //   );
-            // }
+              if (nestedCollectionItem.length > 0) {
+                nestedItem.items = nestedCollectionItem.splice(
+                  0,
+                  nestedCollectionStoryLimits[
+                    get(item, ['associated-metadata', 'layout'])
+                  ]
+                );
+              }
+            }
           });
         } else {
           item.items.map(nestedItem => {
+            foo(nestedItem, defaultNestedCollectionStoryLimits);
             if (nestedItem.type === 'collection') {
-              foo(nestedItem, defaultNestedCollectionStoryLimits);
-              // const nestedCollectionItem = get(nestedItem, ['items'], []);
+              const nestedCollectionItem = get(nestedItem, ['items'], []);
 
-              // if (nestedCollectionItem.length > 0) {
-              //   nestedItem.items = nestedCollectionItem.splice(
-              //     0,
-              //     defaultNestedCollectionStoryLimits
-              //   );
-              // }
+              if (nestedCollectionItem.length > 0) {
+                nestedItem.items = nestedCollectionItem.splice(
+                  0,
+                  defaultNestedCollectionStoryLimits
+                );
+              }
             }
           });
         }
