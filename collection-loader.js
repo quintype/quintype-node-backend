@@ -105,17 +105,17 @@ function loadNestedCollectionData(
           });
         } else {
           item.items.map(nestedItem => {
-            // foo(nestedItem, defaultNestedCollectionStoryLimits);
-            if (nestedItem.type === 'collection') {
-              const nestedCollectionItem = get(nestedItem, ['items'], []);
+            foo(nestedItem, defaultNestedCollectionStoryLimits);
+            // if (nestedItem.type === 'collection') {
+            //   const nestedCollectionItem = get(nestedItem, ['items'], []);
 
-              if (nestedCollectionItem.length > 0) {
-                nestedItem.items = nestedCollectionItem.splice(
-                  0,
-                  defaultNestedCollectionStoryLimits
-                );
-              }
-            }
+            //   if (nestedCollectionItem.length > 0) {
+            //     nestedItem.items = nestedCollectionItem.splice(
+            //       0,
+            //       defaultNestedCollectionStoryLimits
+            //     );
+            //   }
+            // }
           });
         }
       }
