@@ -72,7 +72,7 @@ function loadNestedCollectionData(
       nestedCollectionStoryLimits
     );
 
-    const foo = (nestedItem, sliceCount) => {
+    const updateNestedItems = (nestedItem, sliceCount) => {
       if (nestedItem.type === 'collection') {
         const nestedCollectionItem = get(nestedItem, ['items'], []);
 
@@ -82,34 +82,24 @@ function loadNestedCollectionData(
       }
     };
 
+    const getSliceCount = nestedCollectionStoryLimitKeys.includes(
+      get(item, ['associated-metadata', 'layout'])
+    )
+      ? nestedCollectionStoryLimits[
+          get(item, ['associated-metadata', 'layout'])
+        ]
+      : defaultNestedCollectionStoryLimits;
+
     collection.items.map(item => {
       if (item.type !== 'story') {
-        if (
-          nestedCollectionStoryLimitKeys.includes(
-            get(item, ['associated-metadata', 'layout'])
-          )
-        ) {
-          item.items.map(nestedItem => {
-            foo(
-              nestedItem,
-              nestedCollectionStoryLimits[
-                get(item, ['associated-metadata', 'layout'])
-              ]
-            );
-          });
-        } else {
-          item.items.map(nestedItem => {
-            foo(nestedItem, defaultNestedCollectionStoryLimits);
-          });
-        }
+        item.items.map(nestedItem => {
+          updateNestedItems(nestedItem, getSliceCount);
+        });
       }
     });
+
     return collection;
   });
-  // return updateItemsInPlace(client, depth, collection.items, {
-  //   storyFields,
-  //   storyLimits,
-  // }).then(() => collection);
 }
 
 module.exports = {loadNestedCollectionData};
