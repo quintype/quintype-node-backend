@@ -73,7 +73,7 @@ function loadNestedCollectionData(
     );
     collection.items.map(item => {
       console.log('fooooooo', item);
-      console.log('fooooooo11111', item.items);
+      console.log('fooooooo11111', item.type);
       if (item.type !== 'story') {
         if (
           nestedCollectionStoryLimitKeys.includes(
