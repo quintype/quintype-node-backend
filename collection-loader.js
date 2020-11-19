@@ -20,6 +20,7 @@ function loadCollectionItems(client, collections, {storyFields, storyLimits}) {
 // However, this is way more readable than a pure version
 function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
   const collections = items.filter(item => item && item.type == "collection");
+  console.log("updateitemsinplace----------------", collections)
 
   if(depth == 0 || collections.length == 0)
     return Promise.resolve();
@@ -35,6 +36,7 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
 }
 
 function loadNestedCollectionData(client, collection, {depth, storyFields, storyLimits}) {
+  console.log("inside loadnestedcoll---------------------", client, collection, depth, storyFields, storyLimits)
   return updateItemsInPlace(client, depth, collection.items, {storyFields, storyLimits})
     .then(() => collection);
 }

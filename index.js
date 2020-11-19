@@ -288,6 +288,7 @@ class Collection extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
   static getCollectionBySlug(client, slug, params, options = {}) {
+    console.log('inside this--------------------', slug, options)
     const {depth = DEFAULT_DEPTH, storyLimits = {}} = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
 
@@ -299,6 +300,7 @@ class Collection extends BaseAPI {
       .getCollectionBySlug(slug, params)
       .then(response => {
         const collection = response ? response["collection"] || response : null;
+        console.log("response-----------", collection);
         return collection && loadNestedCollectionData(client, collection, {depth, storyFields, storyLimits})
       }).then(collection => this.build(collection))
   }
@@ -781,6 +783,7 @@ class Client {
   }
 
   getCollectionBySlug(slug, params) {
+    console.log("inside get collection by slug-----------------", slug, params)
     return this.request("/api/v1/collections/" + slug, {
       qs: params
     }).catch(e => catch404(e, null))
