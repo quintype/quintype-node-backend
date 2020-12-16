@@ -7,18 +7,44 @@ function loadCollectionItems(
   collections,
   depthValue,
   depth,
-  {storyFields, storyLimits},
+  {storyFields, storyLimits}
 ) {
-  const bulkRequestBody = collections.reduce((acc, collection) => {
-    if(depth === 1 && depthValue === 2) {
-      console.log("fooooooooo====", collection.slug)
+  const bulkRequestBody = collections.reduce((acc, collection, index) => {
+    let itemsLimit =
+      storyLimits[get(collection, ['associated-metadata', 'layout'])];
+
+    if (depth === 1 && depthValue === 2) {
+      const itemsLimitType =
+        storyLimits[get(collection, ['associated-metadata', 'layout'])];
+      console.log(
+        collection.slug,
+        typeof itemsLimitType === 'object',
+        get(itemsLimitType, ['childCount', index], 3)
+      );
+      if (typeof itemsLimitType === 'object') {
+        itemsLimit = get(itemsLimitType, ['childCount', index], 3);
+      }
     }
+
+    if (depth === 2 && depthValue === 2) {
+      const itemsLimitType =
+        storyLimits[get(collection, ['associated-metadata', 'layout'])];
+      console.log(
+        collection.slug,
+        typeof itemsLimitType === 'object',
+        get(itemsLimitType, ['count', index], 3)
+      );
+      if (typeof itemsLimitType === 'object') {
+        itemsLimit = get(itemsLimitType, ['count', index], 3);
+      }
+    }
+
     return Object.assign(acc, {
       [collection.slug]: {
         _type: 'collection',
         slug: collection.slug,
         'story-fields': storyFields,
-        limit: storyLimits[get(collection, ['associated-metadata', 'layout'])],
+        limit: itemsLimit,
       },
     });
   }, {});
@@ -30,18 +56,21 @@ function loadCollectionItems(
 
 // Ugly. This function updates all the items in place.
 // However, this is way more readable than a pure version
-function updateItemsInPlace(client, depth, items, depthValue, {storyFields, storyLimits}) {
+function updateItemsInPlace(
+  client,
+  depth,
+  items,
+  depthValue,
+  {storyFields, storyLimits}
+) {
   const collections = items.filter(item => item && item.type == 'collection');
 
   if (depth == 0 || collections.length == 0) return Promise.resolve();
 
-  return loadCollectionItems(
-    client,
-    collections,
-    depthValue,
-    depth,
-    {storyFields, storyLimits},
-  ).then(collectionSlugToCollection => {
+  return loadCollectionItems(client, collections, depthValue, depth, {
+    storyFields,
+    storyLimits,
+  }).then(collectionSlugToCollection => {
     collections.forEach(collection => {
       collection.summary = get(
         collectionSlugToCollection,
