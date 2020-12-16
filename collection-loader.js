@@ -9,7 +9,7 @@ function loadCollectionItems(
   depth
 ) {
   const bulkRequestBody = collections.reduce((acc, collection) => {
-    if(depth === 2) {
+    if(depth === 1) {
       console.log("fooooooooo====", collection.slug)
     }
     return Object.assign(acc, {
