@@ -13,6 +13,10 @@ function loadCollectionItems(
     let itemsLimit =
       storyLimits[get(collection, ['associated-metadata', 'layout'])];
 
+      if(get(collection, ['associated-metadata', 'layout']) === "FourCollection12Stories1Ad") {
+        console.log("fooooo", collection)
+      }
+
       if(depth === 1) {
         console.log(collection)
       }
