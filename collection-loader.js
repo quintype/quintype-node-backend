@@ -6,6 +6,7 @@ function loadCollectionItems(
   client,
   collections,
   depthValue,
+  depth,
   {storyFields, storyLimits},
 ) {
   const bulkRequestBody = collections.reduce((acc, collection) => {
@@ -38,6 +39,7 @@ function updateItemsInPlace(client, depth, items, depthValue, {storyFields, stor
     client,
     collections,
     depthValue,
+    depth,
     {storyFields, storyLimits},
   ).then(collectionSlugToCollection => {
     collections.forEach(collection => {
