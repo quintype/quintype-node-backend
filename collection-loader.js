@@ -13,31 +13,31 @@ function loadCollectionItems(
     let itemsLimit =
       storyLimits[get(collection, ['associated-metadata', 'layout'])];
 
-    if (depth === 1 && depthValue === 2) {
-      const itemsLimitType =
-        storyLimits[get(collection, ['associated-metadata', 'layout'])];
-      console.log(
-        collection.slug,
-        typeof itemsLimitType === 'object',
-        get(itemsLimitType, ['childCount', index], 3)
-      );
-      if (typeof itemsLimitType === 'object') {
-        itemsLimit = get(itemsLimitType, ['childCount', index], 3);
-      }
-    }
+    // if (depth === 1 && depthValue === 2) {
+    //   const itemsLimitType =
+    //     storyLimits[get(collection, ['associated-metadata', 'layout'])];
+    //   console.log(
+    //     collection.slug,
+    //     typeof itemsLimitType === 'object',
+    //     get(itemsLimitType, ['childCount', index], 3)
+    //   );
+    //   if (typeof itemsLimitType === 'object') {
+    //     itemsLimit = get(itemsLimitType, ['childCount', index], 3);
+    //   }
+    // }
 
-    if (depth === 2 && depthValue === 2) {
-      const itemsLimitType =
-        storyLimits[get(collection, ['associated-metadata', 'layout'])];
-      console.log(
-        collection.slug,
-        typeof itemsLimitType === 'object',
-        get(itemsLimitType, ['count', index], 3)
-      );
-      if (typeof itemsLimitType === 'object') {
-        itemsLimit = get(itemsLimitType, ['count', index], 3);
-      }
-    }
+    // if (depth === 2 && depthValue === 2) {
+    //   const itemsLimitType =
+    //     storyLimits[get(collection, ['associated-metadata', 'layout'])];
+    //   console.log(
+    //     collection.slug,
+    //     typeof itemsLimitType === 'object',
+    //     get(itemsLimitType, ['count', index], 3)
+    //   );
+    //   if (typeof itemsLimitType === 'object') {
+    //     itemsLimit = get(itemsLimitType, ['count', index], 3);
+    //   }
+    // }
 
     return Object.assign(acc, {
       [collection.slug]: {
@@ -82,6 +82,7 @@ function updateItemsInPlace(
         'items',
       ]);
     });
+    console.log("fooooo====", flatMap(collections, collection => collection.items))
     return updateItemsInPlace(
       client,
       depth - 1,
