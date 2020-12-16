@@ -71,10 +71,6 @@ function updateItemsInPlace(
 
   if (depth == 0 || collections.length == 0) return Promise.resolve();
 
-  [forcol, threcol]
-
-  [forcol, threcol, childofFourcol, ]
-
   return loadCollectionItems(client, collections, depthValue, depth, {
     storyFields,
     storyLimits,
