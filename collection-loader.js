@@ -5,11 +5,11 @@ const {DEFAULT_STORY_FIELDS} = require('./constants');
 function loadCollectionItems(
   client,
   collections,
+  depthValue,
   {storyFields, storyLimits},
-  depth
 ) {
   const bulkRequestBody = collections.reduce((acc, collection) => {
-    if(depth === 1) {
+    if(depth === 1 && depthValue === 2) {
       console.log("fooooooooo====", collection.slug)
     }
     return Object.assign(acc, {
@@ -29,7 +29,7 @@ function loadCollectionItems(
 
 // Ugly. This function updates all the items in place.
 // However, this is way more readable than a pure version
-function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
+function updateItemsInPlace(client, depth, items, depthValue, {storyFields, storyLimits}) {
   const collections = items.filter(item => item && item.type == 'collection');
 
   if (depth == 0 || collections.length == 0) return Promise.resolve();
@@ -37,8 +37,8 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
   return loadCollectionItems(
     client,
     collections,
+    depthValue,
     {storyFields, storyLimits},
-    depth
   ).then(collectionSlugToCollection => {
     collections.forEach(collection => {
       collection.summary = get(
@@ -55,6 +55,7 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
       client,
       depth - 1,
       flatMap(collections, collection => collection.items),
+      depthValue,
       {storyFields, storyLimits}
     );
   });
@@ -65,7 +66,7 @@ function loadNestedCollectionData(
   collection,
   {depth, storyFields, storyLimits}
 ) {
-  return updateItemsInPlace(client, depth, collection.items, {
+  return updateItemsInPlace(client, depth, collection.items, depth, {
     storyFields,
     storyLimits,
   }).then(() => collection);
