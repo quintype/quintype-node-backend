@@ -13,6 +13,10 @@ function loadCollectionItems(
     let itemsLimit =
       storyLimits[get(collection, ['associated-metadata', 'layout'])];
 
+      if(depth === 1) {
+        console.log(collection)
+      }
+
     // if (depth === 1 && depthValue === 2) {
     //   const itemsLimitType =
     //     storyLimits[get(collection, ['associated-metadata', 'layout'])];
@@ -67,6 +71,10 @@ function updateItemsInPlace(
 
   if (depth == 0 || collections.length == 0) return Promise.resolve();
 
+  [forcol, threcol]
+
+  [forcol, threcol, childofFourcol, ]
+
   return loadCollectionItems(client, collections, depthValue, depth, {
     storyFields,
     storyLimits,
@@ -82,7 +90,6 @@ function updateItemsInPlace(
         'items',
       ]);
     });
-    console.log("fooooo====", flatMap(collections, collection => collection.items))
     return updateItemsInPlace(
       client,
       depth - 1,
