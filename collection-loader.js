@@ -14,7 +14,6 @@ function loadCollectionItems(client, collections, {storyFields, storyLimits}) {
     }), {});
 
   return client.getInBulk({requests: bulkRequestBody}).then(response => {
-    console.log("=========================", response.results)
     return response.results
   });
 }

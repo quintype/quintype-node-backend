@@ -299,6 +299,7 @@ class Collection extends BaseAPI {
       .getCollectionBySlug(slug, params)
       .then(response => {
         const collection = response ? response["collection"] || response : null;
+        console.log("+++++++++++++++++++++++++", collection)
         return collection && loadNestedCollectionData(client, collection, {depth, storyFields, storyLimits})
       }).then(collection => this.build(collection))
   }
