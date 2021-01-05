@@ -47,7 +47,7 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
       return updateItemsInPlace(
         client,
         depth - 1,
-        flatMap(collections, collection => collection.items),
+        collection.items,
         {storyFields, storyLimits}
       );
     });
