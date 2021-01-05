@@ -45,6 +45,8 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
         'items',
       ]);
 
+      console.log("foooo1",collection)
+
       if (depth === 2) {
         console.log("inside depth logic")
         const foo = collection.items.filter(
