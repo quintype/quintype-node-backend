@@ -44,16 +44,11 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
         collection.slug,
         'items',
       ]);
-
-      console.log('foooo1', collection);
-
       if (depth === 2) {
         console.log('inside depth logic');
         const foo = collection.items.filter(item => {
-          console.log(item);
           return item.type == 'collection';
         });
-        console.log('foooo2', foo);
         return loadCollectionItems(client, foo, {
           storyFields,
           storyLimits,
@@ -68,11 +63,10 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
               collection.slug,
               'items',
             ]);
+            console.log('foooo', collection);
           });
         });
       }
-
-      console.log('fooooo', collection.slug, collection.items);
     });
 
     if (depth === 2) {
