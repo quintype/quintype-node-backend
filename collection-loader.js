@@ -63,7 +63,7 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
               collection.slug,
               'items',
             ]);
-            console.log('foooo', collection);
+            console.log('foooo', collection, collectionSlugToCollection);
           });
         });
       }
