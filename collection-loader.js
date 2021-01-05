@@ -17,6 +17,7 @@ function loadCollectionItems(client, collections, {storyFields, storyLimits}) {
     {}
   );
 
+  console.log('foooo', bulkRequestBody);
   return client
     .getInBulk({requests: bulkRequestBody})
     .then(response => response.results);
@@ -45,7 +46,6 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
         'items',
       ]);
       if (depth === 2) {
-        console.log('inside depth logic');
         const foo = collection.items.filter(item => {
           return item.type == 'collection';
         });
@@ -63,7 +63,6 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
               collection.slug,
               'items',
             ]);
-            console.log('foooo', collection, collectionSlugToCollection);
           });
         });
       }
