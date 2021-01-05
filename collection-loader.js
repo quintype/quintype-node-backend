@@ -27,7 +27,8 @@ function loadCollectionItems(client, collections, {storyFields, storyLimits}) {
 function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
   const collections = items.filter(item => item && item.type == 'collection');
 
-  if (depth == 0 || collections.length == 0) return Promise.resolve();
+  if (depth !== 2 && (depth == 0 || collections.length == 0))
+    return Promise.resolve();
 
   return loadCollectionItems(client, collections, {
     storyFields,
@@ -43,14 +44,46 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
         collection.slug,
         'items',
       ]);
-      console.log('fooooo', depth, collection.slug);
-      return updateItemsInPlace(
-        client,
-        depth - 1,
-        collection.items,
-        {storyFields, storyLimits}
-      );
+
+      if (depth === 2) {
+        console.log("inside depth logic")
+        const foo = collection.items.filter(
+          item => item && item.type == 'collection'
+        );
+        return loadCollectionItems(client, foo, {
+          storyFields,
+          storyLimits,
+        }).then(collectionSlugToCollection => {
+          collections.forEach(collection => {
+            collection.summary = get(
+              collectionSlugToCollection,
+              [collection.slug, 'summary'],
+              ''
+            );
+            collection.items = get(collectionSlugToCollection, [
+              collection.slug,
+              'items',
+            ]);
+          });
+        });
+      }
+
+      console.log("fooooo", collection.slug, collection.items)
     });
+
+    if (depth === 2) {
+      return Promise.resolve();
+    }
+
+    return updateItemsInPlace(
+      client,
+      depth - 1,
+      flatMap(collections, collection => collection.items),
+      {
+        storyFields,
+        storyLimits,
+      }
+    );
   });
 }
 
