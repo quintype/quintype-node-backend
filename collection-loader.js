@@ -43,14 +43,14 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
         collection.slug,
         'items',
       ]);
-      console.log('fooooo', depth, collection);
+      console.log('fooooo', depth, collection.slug);
+      return updateItemsInPlace(
+        client,
+        depth - 1,
+        flatMap(collections, collection => collection.items),
+        {storyFields, storyLimits}
+      );
     });
-    return updateItemsInPlace(
-      client,
-      depth - 1,
-      flatMap(collections, collection => collection.items),
-      {storyFields, storyLimits}
-    );
   });
 }
 
