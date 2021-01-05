@@ -48,10 +48,11 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
       console.log('foooo1', collection);
 
       if (depth === 2) {
-        console.log('inside depth logic', collection.items);
-        const foo = collection.items.filter(
-          item => item && item.type == 'collection'
-        );
+        console.log('inside depth logic');
+        const foo = collection.items.filter(item => {
+          console.log(item);
+          return item.type == 'collection';
+        });
         console.log('foooo2', foo);
         return loadCollectionItems(client, foo, {
           storyFields,
