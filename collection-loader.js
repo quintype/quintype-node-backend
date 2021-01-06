@@ -11,13 +11,21 @@ function loadCollectionItems(client, collections, {storyFields, storyLimits}) {
           slug: collection.slug,
           'story-fields': storyFields,
           limit:
-            storyLimits[get(collection, ['associated-metadata', 'layout'])],
+            storyLimits[
+              (get(collection, ['associated-metadata', 'layout']), 3)
+            ],
         },
       }),
     {}
   );
 
   console.log('foooo', bulkRequestBody);
+  console.log(
+    'foooo2',
+    client
+      .getInBulk({requests: bulkRequestBody})
+      .then(response => response.results)
+  );
   return client
     .getInBulk({requests: bulkRequestBody})
     .then(response => response.results);
