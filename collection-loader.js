@@ -20,15 +20,11 @@ function loadCollectionItems(client, collections, {storyFields, storyLimits}) {
   );
 
   console.log('foooo', bulkRequestBody);
-  console.log(
-    'foooo2',
-    client
-      .getInBulk({requests: bulkRequestBody})
-      .then(response => response.results)
-  );
-  return client
-    .getInBulk({requests: bulkRequestBody})
-    .then(response => response.results);
+
+  return client.getInBulk({requests: bulkRequestBody}).then(response => {
+    console.log('foooo2', response.results);
+    return response.results;
+  });
 }
 
 // Ugly. This function updates all the items in place.
