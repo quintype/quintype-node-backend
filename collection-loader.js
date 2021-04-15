@@ -18,13 +18,16 @@ function loadCollectionItems(client, collections, {storyFields, storyLimits}) {
 
 // Ugly. This function updates all the items in place.
 // However, this is way more readable than a pure version
-function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
+function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}, initialDepth) {
   const collections = items.filter(item => item && item.type == "collection");
 
   if(depth == 0 || collections.length == 0)
     return Promise.resolve();
+  console.log("initialDepth------------", initialDepth);
+  console.log("depth---------", depth);
+  console.log("depth-----1111", initialdepth === 2 && depth === 1)
 
-  return loadCollectionItems(client, collections, {storyFields, storyLimits})
+  return loadCollectionItems(client, collections, {storyFields, storyLimits}, initialDepth)
     .then(collectionSlugToCollection => {
       collections.forEach(collection => {
         collection.summary = get(collectionSlugToCollection, [collection.slug, "summary"], '')
@@ -35,7 +38,7 @@ function updateItemsInPlace(client, depth, items, {storyFields, storyLimits}) {
 }
 
 function loadNestedCollectionData(client, collection, {depth, storyFields, storyLimits}) {
-  return updateItemsInPlace(client, depth, collection.items, {storyFields, storyLimits})
+  return updateItemsInPlace(client, depth, collection.items, {storyFields, storyLimits}, depth)
     .then(() => collection);
 }
 
