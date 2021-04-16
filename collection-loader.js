@@ -28,8 +28,7 @@ function updateItemsInPlace(
   client,
   depth,
   items,
-  {storyFields, storyLimits},
-  itemsDepth
+  {storyFields, storyLimits, itemsDepth}
 ) {
   const collections = items.filter((item) => item && item.type == 'collection');
 
@@ -58,8 +57,7 @@ function updateItemsInPlace(
       client,
       depth - 1,
       flatMap(collections, (collection) => collection.items),
-      {storyFields, storyLimits},
-      itemsDepth
+      {storyFields, storyLimits, itemsDepth}
     );
   });
 }
@@ -69,13 +67,11 @@ function loadNestedCollectionData(
   collection,
   {depth, storyFields, storyLimits}
 ) {
-  return updateItemsInPlace(
-    client,
-    depth,
-    collection.items,
-    {storyFields, storyLimits},
-    2
-  ).then(() => collection);
+  return updateItemsInPlace(client, depth, collection.items, {
+    storyFields,
+    storyLimits,
+    itemsDepth: 2,
+  }).then(() => collection);
 }
 
 module.exports = {loadNestedCollectionData};
