@@ -74,7 +74,7 @@ function loadNestedCollectionData(
     depth,
     collection.items,
     {storyFields, storyLimits},
-    depth
+    2
   ).then(() => collection);
 }
 
