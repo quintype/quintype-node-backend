@@ -1,8 +1,6 @@
 const get = require('lodash/get');
 const flatMap = require('lodash/flatMap');
 
-threecolgrid: parent;
-
 function loadCollectionItems(
   client,
   collections,
