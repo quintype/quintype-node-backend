@@ -4,12 +4,12 @@ const flatMap = require('lodash/flatMap');
 function loadCollectionItems(
   client,
   collections,
-  {storyFields, storyLimits, setNestedCollectionLimit, defaultNestedLimit}
+  {storyFields, storyLimits, defaultNestedLimit}
 ) {
   const bulkRequestBody = collections.reduce((acc, collection) => {
     let limit = storyLimits[get(collection, ['associated-metadata', 'layout'])];
 
-    if (!limit && setNestedCollectionLimit) {
+    if (!limit && defaultNestedLimit) {
       limit = defaultNestedLimit;
     }
 
@@ -34,18 +34,15 @@ function updateItemsInPlace(
   client,
   depth,
   items,
-  {storyFields, storyLimits, itemsDepth, defaultNestedLimit}
+  {storyFields, storyLimits, defaultNestedLimit}
 ) {
   const collections = items.filter((item) => item && item.type == 'collection');
 
   if (depth == 0 || collections.length == 0) return Promise.resolve();
 
-  const setNestedCollectionLimit = itemsDepth > depth;
-
   return loadCollectionItems(client, collections, {
     storyFields,
     storyLimits,
-    setNestedCollectionLimit,
     defaultNestedLimit,
   }).then((collectionSlugToCollection) => {
     collections.forEach((collection) => {
@@ -63,7 +60,7 @@ function updateItemsInPlace(
       client,
       depth - 1,
       flatMap(collections, (collection) => collection.items),
-      {storyFields, storyLimits, itemsDepth, defaultNestedLimit}
+      {storyFields, storyLimits, defaultNestedLimit}
     );
   });
 }
@@ -76,7 +73,6 @@ function loadNestedCollectionData(
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
     storyLimits,
-    itemsDepth: depth,
     defaultNestedLimit,
   }).then(() => collection);
 }
