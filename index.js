@@ -313,6 +313,7 @@ class Collection extends BaseAPI {
       depth = DEFAULT_DEPTH,
       storyLimits = {},
       defaultNestedLimit = null,
+      nestedCollectionLimit = {},
     } = options;
     const storyFields = _.get(params, ['story-fields'], DEFAULT_STORY_FIELDS);
 
@@ -331,6 +332,7 @@ class Collection extends BaseAPI {
             storyFields,
             storyLimits,
             defaultNestedLimit,
+            nestedCollectionLimit,
           })
         );
       })

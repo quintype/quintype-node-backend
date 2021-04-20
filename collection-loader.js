@@ -9,6 +9,10 @@ function loadCollectionItems(
   const bulkRequestBody = collections.reduce((acc, collection) => {
     let limit = storyLimits[get(collection, ['associated-metadata', 'layout'])];
 
+    if (!limit && get(collection, ['childCollectionLimit'])) {
+      limit = get(collection, ['childCollectionLimit']);
+    }
+
     if (!limit && defaultNestedLimit) {
       limit = defaultNestedLimit;
     }
@@ -34,7 +38,7 @@ function updateItemsInPlace(
   client,
   depth,
   items,
-  {storyFields, storyLimits, defaultNestedLimit}
+  {storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
 ) {
   const collections = items.filter((item) => item && item.type == 'collection');
 
@@ -56,6 +60,25 @@ function updateItemsInPlace(
         'items',
       ]);
     });
+
+    collections.forEach((collection) =>
+      collection.items
+        .filter((item) => item && item.type === 'collection')
+        .forEach((nestedChildCollection, index) => {
+          console.log(nestedCollectionLimit);
+          if (
+            nestedCollectionLimit[
+              get(collection, ['associated-metadata', 'layout'])
+            ]
+          ) {
+            nestedChildCollection.childCollectionLimit =
+              nestedCollectionLimit[
+                get(collection, ['associated-metadata', 'layout'])
+              ][index];
+          }
+        })
+    );
+
     return updateItemsInPlace(
       client,
       depth - 1,
@@ -68,12 +91,13 @@ function updateItemsInPlace(
 function loadNestedCollectionData(
   client,
   collection,
-  {depth, storyFields, storyLimits, defaultNestedLimit}
+  {depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
 ) {
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
     storyLimits,
     defaultNestedLimit,
+    nestedCollectionLimit,
   }).then(() => collection);
 }
 
