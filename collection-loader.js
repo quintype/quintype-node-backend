@@ -59,14 +59,13 @@ function updateItemsInPlace(
         collection.slug,
         'items',
       ]);
-    });
 
-    collections.forEach((collection) =>
       collection.items
         .filter((item) => item && item.type === 'collection')
         .forEach((nestedChildCollection, index) => {
-          console.log(nestedCollectionLimit);
+          console.log('fooooo', nestedCollectionLimit);
           if (
+            nestedCollectionLimit &&
             nestedCollectionLimit[
               get(collection, ['associated-metadata', 'layout'])
             ]
@@ -76,8 +75,8 @@ function updateItemsInPlace(
                 get(collection, ['associated-metadata', 'layout'])
               ][index];
           }
-        })
-    );
+        });
+    });
 
     return updateItemsInPlace(
       client,
