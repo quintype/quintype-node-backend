@@ -140,7 +140,7 @@
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line237">line 237</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line258">line 258</a>
             </span>
         </p>
     
@@ -213,7 +213,7 @@
 Items that are collections will have <code>item.story</code> set to a story map, and items that are collections will have the fields of that collection directly set on the item.</p>
 <p>Instead of handling all edge cases yourself, this object can be used with the <a href="https://developers.quintype.com/quintype-node-components/Collection.html">Collection Component</a></p>
 <p>Example</p>
-<pre class="prettyprint source lang-javascript"><code>const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3});
+<pre class="prettyprint source lang-javascript"><code>const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3, defaultNestedLimit: 4});
 if(!collection) {
   render404();
 } else {
@@ -464,6 +464,29 @@ function recursivelyDebugCollection(collection) {
 </tr>
 
   
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>defaultNestedLimit</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The default limit of stories to fetch by each collection.</p></td>
+</tr>
+
+  
 
 
     
@@ -516,7 +539,7 @@ function recursivelyDebugCollection(collection) {
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line290">line 290</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line312">line 312</a>
             </span>
         </p>
     
@@ -634,7 +657,7 @@ function recursivelyDebugCollection(collection) {
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line243">line 243</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line264">line 264</a>
             </span>
         </p>
     
