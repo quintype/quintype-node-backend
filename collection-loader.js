@@ -1,5 +1,6 @@
 const get = require('lodash/get');
 const flatMap = require('lodash/flatMap');
+const {performance} = require('perf_hooks');
 
 function loadCollectionItems(
   client,
@@ -41,6 +42,10 @@ function updateItemsInPlace(
   {storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
 ) {
   const collections = items.filter((item) => item && item.type == 'collection');
+
+  if (depth === 0) {
+    console.log('End time:', performance.now());
+  }
 
   if (depth == 0 || collections.length == 0) return Promise.resolve();
 
@@ -92,6 +97,7 @@ function loadNestedCollectionData(
   collection,
   {depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
 ) {
+  console.log('start time:', performance.now());
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
     storyLimits,
