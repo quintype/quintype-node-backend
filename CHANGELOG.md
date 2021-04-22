@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/quintype/quintype-backend-js/compare/v1.3.2...v1.4.0) (2021-04-22)
+
+
+### Features
+
+* set default item limit for nested collections ([#50](https://github.com/quintype/quintype-backend-js/issues/50)) ([84d6dae](https://github.com/quintype/quintype-backend-js/commit/84d6dae9ddea31b9c1373c2ff6a58fe231146299))
+
 ### [1.3.2](https://github.com/quintype/quintype-backend-js/compare/v1.23.3...v1.3.2) (2021-03-08)
 
 ### [1.23.3](https://github.com/quintype/quintype-backend-js/compare/v1.23.2...v1.23.3) (2021-02-01)
