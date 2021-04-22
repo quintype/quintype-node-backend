@@ -42,6 +42,11 @@ function updateItemsInPlace(
 ) {
   const collections = items.filter((item) => item && item.type == 'collection');
 
+  if (depth === 0) {
+    var end = Date.now();
+    console.log(`Execution time: ${end} ms`);
+  }
+
   if (depth == 0 || collections.length == 0) return Promise.resolve();
 
   return loadCollectionItems(client, collections, {
@@ -60,22 +65,23 @@ function updateItemsInPlace(
         'items',
       ]);
 
-      collection.items
-        .filter((item) => item && item.type === 'collection')
-        .forEach((nestedChildCollection, index) => {
-          console.log('fooooo', nestedCollectionLimit);
-          if (
-            nestedCollectionLimit &&
-            nestedCollectionLimit[
-              get(collection, ['associated-metadata', 'layout'])
-            ]
-          ) {
-            nestedChildCollection.childCollectionLimit =
+      if (nestedCollectionLimit) {
+        collection.items
+          .filter((item) => item && item.type === 'collection')
+          .forEach((nestedChildCollection, index) => {
+            console.log('fooooo', nestedCollectionLimit);
+            if (
               nestedCollectionLimit[
                 get(collection, ['associated-metadata', 'layout'])
-              ][index];
-          }
-        });
+              ]
+            ) {
+              nestedChildCollection.childCollectionLimit =
+                nestedCollectionLimit[
+                  get(collection, ['associated-metadata', 'layout'])
+                ][index];
+            }
+          });
+      }
     });
 
     return updateItemsInPlace(
@@ -92,6 +98,8 @@ function loadNestedCollectionData(
   collection,
   {depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
 ) {
+  var start = Date.now();
+  console.log(`Start time: ${start} ms`);
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
     storyLimits,
