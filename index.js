@@ -275,7 +275,7 @@ class Collection extends BaseAPI {
    *
    * Example
    * ```javascript
-   * const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3});
+   * const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3, defaultNestedLimit: 4});
    * if(!collection) {
    *   render404();
    * } else {
@@ -305,6 +305,7 @@ class Collection extends BaseAPI {
    * @param {Object} options
    * @param {number} options.depth The recursion depth to fetch collections. (default: 1)
    * @param {Object} options.storyLimits The limit of stories to fetch by collection template. This defaults to unlimited for templates that are not specified. (ex: {"FourColGrid": 12}) (default: {}).
+   * @param {Object} options.defaultNestedLimit The default limit of stories to fetch by each collection.
    * @return {(Promise<Collection|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
