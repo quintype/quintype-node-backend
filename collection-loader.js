@@ -66,20 +66,20 @@ function updateItemsInPlace(
       ]);
 
       if (nestedCollectionLimit) {
-        collection.items
-          .filter((item) => item && item.type === 'collection')
-          .forEach((nestedChildCollection, index) => {
-            if (
+        collection.items.forEach((item, index) => {
+          console.log('foooooo', item, nestedCollectionLimit);
+          if (
+            item.type === 'collection' &&
+            nestedCollectionLimit[
+              get(collection, ['associated-metadata', 'layout'])
+            ]
+          ) {
+            item.childCollectionLimit =
               nestedCollectionLimit[
                 get(collection, ['associated-metadata', 'layout'])
-              ]
-            ) {
-              nestedChildCollection.childCollectionLimit =
-                nestedCollectionLimit[
-                  get(collection, ['associated-metadata', 'layout'])
-                ][index];
-            }
-          });
+              ][index];
+          }
+        });
       }
     });
 
