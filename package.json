@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "docs": "rimraf docs && jsdoc -c jsdoc.json",
+    "prepublishOnly": "./bin-dev-scripts/standard-version-release.sh",
     "test": "jest"
   },
   "repository": {
