@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.24.2](https://github.com/quintype/quintype-backend-js/compare/v1.24.1...v1.24.2) (2021-04-22)
+
+
+### Bug Fixes
+
+* add missing prepublish script ([32cfa7b](https://github.com/quintype/quintype-backend-js/commit/32cfa7baec6e1932aa178ca35577024ff2c34c60))
+
 ## [1.24.0](https://github.com/quintype/quintype-backend-js/compare/v1.23.2...v1.24.0) (2021-04-22)
 
 
