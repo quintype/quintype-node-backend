@@ -1,17 +1,17 @@
-const get = require('lodash/get');
-const flatMap = require('lodash/flatMap');
-const {performance} = require('perf_hooks');
+const get = require("lodash/get");
+const flatMap = require("lodash/flatMap");
+const { performance } = require("perf_hooks");
 
 function loadCollectionItems(
   client,
   collections,
-  {storyFields, storyLimits, defaultNestedLimit}
+  { storyFields, storyLimits, defaultNestedLimit }
 ) {
   const bulkRequestBody = collections.reduce((acc, collection) => {
-    let limit = storyLimits[get(collection, ['associated-metadata', 'layout'])];
+    let limit = storyLimits[get(collection, ["associated-metadata", "layout"])];
 
-    if (!limit && get(collection, ['childCollectionLimit'])) {
-      limit = get(collection, ['childCollectionLimit']);
+    if (!limit && get(collection, ["childCollectionLimit"])) {
+      limit = get(collection, ["childCollectionLimit"]);
     }
 
     if (!limit && defaultNestedLimit) {
@@ -20,16 +20,16 @@ function loadCollectionItems(
 
     return Object.assign(acc, {
       [collection.slug]: {
-        _type: 'collection',
+        _type: "collection",
         slug: collection.slug,
-        'story-fields': storyFields,
+        "story-fields": storyFields,
         limit: limit,
       },
     });
   }, {});
 
   return client
-    .getInBulk({requests: bulkRequestBody})
+    .getInBulk({ requests: bulkRequestBody })
     .then((response) => response.results);
 }
 
@@ -39,13 +39,9 @@ function updateItemsInPlace(
   client,
   depth,
   items,
-  {storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
+  { storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit }
 ) {
-  const collections = items.filter((item) => item && item.type == 'collection');
-
-  if (depth === 0) {
-    console.log('End time:', performance.now());
-  }
+  const collections = items.filter((item) => item && item.type == "collection");
 
   if (depth == 0 || collections.length == 0) return Promise.resolve();
 
@@ -57,26 +53,25 @@ function updateItemsInPlace(
     collections.forEach((collection) => {
       collection.summary = get(
         collectionSlugToCollection,
-        [collection.slug, 'summary'],
-        ''
+        [collection.slug, "summary"],
+        ""
       );
       collection.items = get(collectionSlugToCollection, [
         collection.slug,
-        'items',
+        "items",
       ]);
 
       if (nestedCollectionLimit) {
         collection.items.forEach((item, index) => {
-          console.log('foooooo', item, nestedCollectionLimit);
           if (
-            item.type === 'collection' &&
+            item.type === "collection" &&
             nestedCollectionLimit[
-              get(collection, ['associated-metadata', 'layout'])
+              get(collection, ["associated-metadata", "layout"])
             ]
           ) {
             item.childCollectionLimit =
               nestedCollectionLimit[
-                get(collection, ['associated-metadata', 'layout'])
+                get(collection, ["associated-metadata", "layout"])
               ][index];
           }
         });
@@ -87,7 +82,7 @@ function updateItemsInPlace(
       client,
       depth - 1,
       flatMap(collections, (collection) => collection.items),
-      {storyFields, storyLimits, defaultNestedLimit}
+      { storyFields, storyLimits, defaultNestedLimit }
     );
   });
 }
@@ -95,9 +90,8 @@ function updateItemsInPlace(
 function loadNestedCollectionData(
   client,
   collection,
-  {depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
+  { depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit }
 ) {
-  console.log('start time:', performance.now());
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
     storyLimits,
@@ -106,4 +100,4 @@ function loadNestedCollectionData(
   }).then(() => collection);
 }
 
-module.exports = {loadNestedCollectionData};
+module.exports = { loadNestedCollectionData };
