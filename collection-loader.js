@@ -1,6 +1,5 @@
 const get = require("lodash/get");
 const flatMap = require("lodash/flatMap");
-const { performance } = require("perf_hooks");
 
 function loadCollectionItems(
   client,
