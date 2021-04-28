@@ -1,11 +1,12 @@
 {
   "name": "@quintype/backend",
-  "version": "1.24.2",
+  "version": "1.24.2-collection-cache.1",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
     "docs": "rimraf docs && jsdoc -c jsdoc.json",
     "prepublishOnly": "./bin-dev-scripts/standard-version-release.sh",
+    "sync-files-to": "npx onchange --verbose --wait --await-write-finish '**/*.js' -- ./bin-dev-scripts/sync-to.sh ",
     "test": "jest"
   },
   "repository": {
@@ -31,6 +32,7 @@
     "better-docs": "^1.2.2",
     "gh-pages": "^2.1.1",
     "jest": "^24.7.1",
+    "onchange": "^4.1.0",
     "jsdoc": "^3.6.3"
   }
 }
