@@ -51,7 +51,7 @@ function updateItemsInPlace(
       );
       collection.items = get(collectionSlugToCollection, [collection.slug, 'items'], []);
       collection.automated = get(collectionSlugToCollection, [collection.slug, 'automated']);
-      collection["collection-cache-keys"] = get(collectionSlugToCollection, [collection.slug, 'collection-cache-keys'], []);
+      collection['collection-cache-keys'] = get(collectionSlugToCollection, [collection.slug, 'collection-cache-keys'], []);
     });
     return updateItemsInPlace(
       client,
