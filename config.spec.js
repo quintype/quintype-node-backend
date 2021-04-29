@@ -1,4 +1,120 @@
-const { Config } = require('./index');
+const { Config, Collection } = require('./index');
+
+function getClientStub({
+  getStoryBySlug = (slug, params) =>
+    Promise.resolve({
+      story: getTextStory({ "story-content-id": 111 }),
+    }),
+  getCollectionBySlug = (slug) => {
+    return Promise.resolve({
+      slug: 'home',
+      name: 'Home',
+      automated: false,
+      template: 'default',
+      summary: null,
+      id: 109114,
+      'total-count': 7,
+      'collection-date': null,
+      items: [
+        {
+          id: 146801,
+          'associated-metadata': [Object],
+          type: 'collection',
+          name: 'Arrow collection',
+          slug: 'arrow-collection',
+          template: 'default',
+          metadata: [Object],
+          'collection-date': null
+        },
+        {
+          id: 145411,
+          'associated-metadata': [Object],
+          type: 'collection',
+          name: 'Ads Automation- Do not reposition this!',
+          slug: 'ads-automation',
+          template: 'default',
+          metadata: [Object],
+          'collection-date': null
+        },
+      ],
+    });
+  },
+  // getInBulk = (request)=> {
+  //   console.log("request----", request.requests["arrow-collection"])
+  //   getCollectionBySlug().then((res)=> {
+  //     return res.items.map((i)=>{
+  //       i.items= [];
+  //       for(let j= 0; j<i.limit; j++){
+  //         i.items.push[{
+  //           id: 145411,
+  //           'associated-metadata': [Object],
+  //           type: 'collection',
+  //           name: 'Ads Automation- Do not reposition this!',
+  //           slug: 'ads-automation',
+  //           template: 'default',
+  //           metadata: [Object],
+  //           'collection-date': null
+  //         }]
+  //       }
+
+  //     })
+  //   })
+  //   return Promise.resolve({
+
+  //   })
+  // }
+  getInBulk = jest.fn().mockResolvedValue({
+    "results": {
+      "potter-more": {
+        "updated-at": 1619675928521,
+        "collection-cache-keys": [
+          "c/1088/147009",
+          "e/1088/195845",
+          "e/1088/198144"
+        ],
+        "slug": "potter-more",
+        "name": "potter more",
+        "data-source": "automated",
+        "automated": true,
+        "template": "default",
+        "rules": {
+          "fields": "author-id,content-type,q,message,story-template,updated-at,id",
+          "content-type": "story",
+          "sort": "updated-at",
+          "collection-id": 147009,
+          "entity-id": "195845,198144",
+        },
+        "summary": null,
+        "id": 147009,
+        "items": [
+          {
+            "id": "353b4f32-5fae-4165-9b67-50e0c73902ee",
+            "type": "story"
+          }
+        ],
+        "created-at": 1619029886576,
+      }
+    }
+  })
+} = {}) {
+  const clientObj = {
+    getStoryBySlug,
+    getCollectionBySlug,
+    getInBulk
+  };
+  return clientObj;
+}
+
+
+describe("Collection", function() {
+  describe("Returns Home Collection based on defaultNestedLimit" , function() {
+    it("Returns home-collection id provided a hostname", async function(){
+      const homeCollectionData  = await Collection.getCollectionBySlug( getClientStub(), "home", {}, {depth: 2, defaultNestedLimit: 4})
+      console.log("homeCollectionData---------", homeCollectionData.collection.items[1]);
+      expect(homeCollectionData).toBeTruthy();
+    });
+  })  
+}),
 
 describe("Config", function() {
   describe("Returns Home Collection Slug Given a Domain" , function() {
