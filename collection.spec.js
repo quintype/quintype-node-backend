@@ -239,6 +239,7 @@ describe('Collection', function () {
           nestedCollectionLimit: {ArrowFourColTwelveStories: [1, 2, 3, 5]},
         }
       );
+      expect(homeCollectionData.collection.items[0].items.length).toBe(4);
       expect(homeCollectionData.collection.items[0].items[0].items.length).toBe(
         1
       );
@@ -252,5 +253,30 @@ describe('Collection', function () {
         5
       );
     });
+    it('Returns home-collection with depth of 2 and defaultlimit for the last nested collection ', async function () {
+        const homeCollectionData = await Collection.getCollectionBySlug(
+          getClient(),
+          'home',
+          {},
+          {
+            depth: 2,
+            defaultNestedLimit: 4,
+            nestedCollectionLimit: {ArrowFourColTwelveStories: [6, 7, 8]},
+          }
+        );
+        expect(homeCollectionData.collection.items[0].items.length).toBe(4);
+        expect(homeCollectionData.collection.items[0].items[0].items.length).toBe(
+          6
+        );
+        expect(homeCollectionData.collection.items[0].items[1].items.length).toBe(
+          7
+        );
+        expect(homeCollectionData.collection.items[0].items[2].items.length).toBe(
+          8
+        );
+        expect(homeCollectionData.collection.items[0].items[3].items.length).toBe(
+          4
+        );
+      });
   });
 });
