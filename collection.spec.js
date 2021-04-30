@@ -9,8 +9,6 @@ function getClient({
       template: 'default',
       summary: null,
       id: 109114,
-      'total-count': 7,
-      'collection-date': null,
       items: [
         {
           id: 146801,
@@ -19,8 +17,6 @@ function getClient({
           name: 'Arrow collection',
           slug: 'arrow-collection',
           template: 'default',
-          metadata: {'cover-image': null},
-          'collection-date': null,
         },
       ],
     });
@@ -62,44 +58,22 @@ function getClient({
 
     let collectionItem =  {
         'football-sports': {
-          'updated-at': 1619698289776,
-          'collection-cache-keys': ['c/1363/146801'],
           slug: 'football-sports',
-          fallback: false,
           name: 'Arrow collection',
-          'data-source': 'manual',
-          automated: false,
-          template: 'default',
-          rules: {},
           summary: null,
           id: 146801,
-          'total-count': 10,
-          'collection-date': null,
           items: items,
-          'created-at': 1618817988238,
-          metadata: {'cover-image': null},
         },
       };
 
     if(request.requests['arrow-collection']) {
         collectionItem = {
             'arrow-collection': {
-              'updated-at': 1619698289776,
-              'collection-cache-keys': ['c/1363/146801'],
               slug: 'arrow-collection',
-              fallback: false,
               name: 'Arrow collection',
-              'data-source': 'manual',
-              automated: false,
-              template: 'default',
-              rules: {},
               summary: null,
               id: 146801,
-              'total-count': 10,
-              'collection-date': null,
               items: items,
-              'created-at': 1618817988238,
-              metadata: {'cover-image': null},
             },
           };
     }
