@@ -17,35 +17,18 @@ function getClient({
 
   getInBulk = (request) => {
     let collectionItem = {};
+    const requestKeys = Object.keys(request.requests);
 
-    if (request.requests['arrow-collection']) {
-      let items = [];
-      const limit = request.requests['arrow-collection'].limit || 40;
-      for (let j = 0; j < limit; j++) {
-        items.push({
-          'associated-metadata': {},
-          type: 'collection',
-          slug: `football-sports-${j}`,
-        });
-      }
-
-      collectionItem = {
-        'arrow-collection': {
-          slug: 'arrow-collection',
-          items: items,
-        },
-      };
-    }
-
-    if (Object.keys(request.requests).length > 1) {
-      Object.keys(request.requests).map((req) => {
+    if (requestKeys.length > 0) {
+      requestKeys.map((req) => {
         let items = [];
         const limit = request.requests[req].limit || 40;
-        for (let j = 0; j < limit; j++) {
+
+        for (let i = 0; i < limit; i++) {
           items.push({
             'associated-metadata': {},
             type: 'collection',
-            slug: 'hello',
+            slug: `football-sports-${i}`,
           });
         }
 
