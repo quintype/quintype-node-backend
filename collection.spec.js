@@ -1,11 +1,6 @@
 const {Collection} = require('./index');
 
-function getClientStub({
-  getStoryBySlug = (slug, params) =>
-    Promise.resolve({
-      story: getTextStory({'story-content-id': 111}),
-    }),
-
+function getClient({
   getCollectionBySlug = (slug) => {
     return Promise.resolve({
       slug: 'home',
@@ -30,7 +25,7 @@ function getClientStub({
       ],
     });
   },
-  
+
   getInBulk = (request) => {
     let items = [];
     for (let j = 0; j < request.requests['arrow-collection'].limit; j++) {
@@ -46,7 +41,7 @@ function getClientStub({
       });
     }
 
-    const a = {
+    const collectionItem = {
       'arrow-collection': {
         'updated-at': 1619698289776,
         'collection-cache-keys': ['c/1363/146801'],
@@ -66,13 +61,13 @@ function getClientStub({
         metadata: {'cover-image': null},
       },
     };
+
     return Promise.resolve({
-      results: a,
+      results: collectionItem,
     });
   },
 } = {}) {
   const clientObj = {
-    getStoryBySlug,
     getCollectionBySlug,
     getInBulk,
   };
@@ -83,7 +78,7 @@ describe('Collection', function () {
   describe('Returns Home Collection based on defaultNestedLimit', function () {
     it('Returns home-collection with depth of 1', async function () {
       const homeCollectionData = await Collection.getCollectionBySlug(
-        getClientStub(),
+        getClient(),
         'home',
         {},
         {depth: 1, defaultNestedLimit: 3}
