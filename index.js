@@ -306,7 +306,7 @@ class Collection extends BaseAPI {
    * @param {number} options.depth The recursion depth to fetch collections. (default: 1)
    * @param {Object} options.storyLimits The limit of stories to fetch by collection template. This defaults to unlimited for templates that are not specified. (ex: {"FourColGrid": 12}) (default: {}).
    * @param {number} options.defaultNestedLimit The default limit of stories to fetch by each collection. (default: 40)
-   * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from a nested collection. (Ex: nestedCollectionLimit: { ArrowThreeColGrid: [2, 2, 2, 2, 2]} ) (default: defaultNestedLimit )
+   * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4, 2, 5], FullScreenSlider: [1, 2, 3, 4, 5] } ) (default: defaultNestedLimit ).
    * @return {(Promise<Collection|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
