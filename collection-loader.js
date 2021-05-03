@@ -6,7 +6,7 @@ function loadCollectionItems(
   collections,
   {storyFields, storyLimits, defaultNestedLimit}
 ) {
-  const bulkRequestBody = collections.reduce((acc, collection) => {
+  const bulkRequestBody = collections.reduce((acc, collection, index) => {
     let limit = storyLimits[get(collection, ['associated-metadata', 'layout'])];
 
     if (!limit && get(collection, ['childCollectionLimit'])) {
@@ -18,7 +18,7 @@ function loadCollectionItems(
     }
 
     return Object.assign(acc, {
-      [collection.slug]: {
+      [`${collection.slug}-${index}`]: {
         _type: 'collection',
         slug: collection.slug,
         'story-fields': storyFields,
@@ -49,14 +49,14 @@ function updateItemsInPlace(
     storyLimits,
     defaultNestedLimit,
   }).then((collectionSlugToCollection) => {
-    collections.forEach((collection) => {
+    collections.forEach((collection, index) => {
       collection.summary = get(
         collectionSlugToCollection,
         [collection.slug, 'summary'],
         ''
       );
       collection.items = get(collectionSlugToCollection, [
-        collection.slug,
+        `${collection.slug}-${index}`,
         'items',
       ]);
 
