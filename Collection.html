@@ -213,7 +213,7 @@
 Items that are collections will have <code>item.story</code> set to a story map, and items that are collections will have the fields of that collection directly set on the item.</p>
 <p>Instead of handling all edge cases yourself, this object can be used with the <a href="https://developers.quintype.com/quintype-node-components/Collection.html">Collection Component</a></p>
 <p>Example</p>
-<pre class="prettyprint source lang-javascript"><code>const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3, defaultNestedLimit: 4});
+<pre class="prettyprint source lang-javascript"><code>const collection = await Collection.getCollectionBySlug(client, slug, {}, {depth: 3, defaultNestedLimit: 4, nestedCollectionLimit: {ThreeColGrid: [2, 3, 4, 2, 5], FullScreenSlider: [1, 2, 3, 4, 5]}});
 if(!collection) {
   render404();
 } else {
@@ -487,6 +487,36 @@ function recursivelyDebugCollection(collection) {
 </tr>
 
   
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>nestedCollectionLimit</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}).
+eg:
+- Home <code>(Level 1)</code>
+- Sports Row <code>(Level 2)</code> <code>(template- ThreeColGrid)</code>
+- Cricket <code>(Level 3)</code>
+- Football <code>(Level 3)</code>
+- Tennis <code>(Level 3)</code></p>
+<pre><code>In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)</code></pre></td>
+</tr>
+
+  
 
 
     
@@ -539,7 +569,7 @@ function recursivelyDebugCollection(collection) {
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line312">line 312</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line321">line 321</a>
             </span>
         </p>
     
