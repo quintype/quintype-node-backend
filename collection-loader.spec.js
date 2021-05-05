@@ -54,10 +54,48 @@ describe('Collection Loader', function () {
 
     expect(collectionDetails.items.length).toBe(1);
     expect(collectionDetails.items[0].automated).toBe(true);
+    expect(collectionDetails.items[0].items.length).toBe(1);
     expect(collectionDetails.items[0]['collection-cache-keys']).toEqual([
       "c/1088/147009",
       "e/1088/195845",
       "e/1088/198144"
     ]);
+  });
+  it('should load child collection items default values for required fields when api does not have values', async () => {
+    const collection = {
+      items: [{
+        "id": 147009,
+        "type": "collection",
+        "name": "Potter More",
+        "slug": "potter-more",
+      }]
+    };
+    let client = {
+      getInBulk: jest.fn().mockResolvedValue({
+        "results": {
+          "potter-more": {
+            "updated-at": 1619675928521,
+            "slug": "potter-more",
+            "name": "potter more",
+            "data-source": "automated",
+            "template": "default",
+            "summary": null,
+            "id": 147009,
+            "created-at": 1619029886576,
+          }
+        }
+      })
+    };
+
+    let collectionDetails = await loadNestedCollectionData(client, collection, {
+      depth: 1,
+      defaultNestedLimit: 1,
+      storyLimits: {}
+    });
+
+    expect(collectionDetails.items.length).toBe(1);
+    expect(collectionDetails.items[0].automated).not.toBeDefined();
+    expect(collectionDetails.items[0]['collection-cache-keys']).toEqual([]);
+    expect(collectionDetails.items[0].items.length).toBe(0);
   });
 });
