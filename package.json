@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "1.24.3-collection-cache.2",
+  "version": "1.24.3-collection-cache.3",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
