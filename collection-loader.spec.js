@@ -3,17 +3,22 @@ const {loadNestedCollectionData} = require('./collection-loader');
 describe('Collection Loader', function () {
   it('should load child collection items with required fields', async () => {
     const collection = {
+      "slug": "dumbledore-army",
+      "name": "Dumbledore Army",
+      "data-source": "automated",
+      id: 147,
       items: [{
         "id": 147009,
         "type": "collection",
         "name": "Potter More",
         "slug": "potter-more",
-      }]
+      }],
+      "collection-cache-keys": ["c/1088/147"]
     };
     let client = {
       getInBulk: jest.fn().mockResolvedValue({
         "results": {
-          "potter-more": {
+          "potter-more-0": {
             "updated-at": 1619675928521,
             "collection-cache-keys": [
               "c/1088/147009",
@@ -55,12 +60,14 @@ describe('Collection Loader', function () {
     expect(collectionDetails.items.length).toBe(1);
     expect(collectionDetails.items[0].automated).toBe(true);
     expect(collectionDetails.items[0].items.length).toBe(1);
+    expect(collectionDetails['collection-cache-keys']).toEqual(["c/1088/147"]);
     expect(collectionDetails.items[0]['collection-cache-keys']).toEqual([
       "c/1088/147009",
       "e/1088/195845",
       "e/1088/198144"
     ]);
   });
+
   it('should load child collection items default values for required fields when api does not have values', async () => {
     const collection = {
       items: [{
@@ -73,7 +80,7 @@ describe('Collection Loader', function () {
     let client = {
       getInBulk: jest.fn().mockResolvedValue({
         "results": {
-          "potter-more": {
+          "potter-more-0": {
             "updated-at": 1619675928521,
             "slug": "potter-more",
             "name": "potter more",

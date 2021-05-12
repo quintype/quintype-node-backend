@@ -6,13 +6,19 @@ function loadCollectionItems(
   collections,
   {storyFields, storyLimits, defaultNestedLimit}
 ) {
-  const bulkRequestBody = collections.reduce((acc, collection) => {
-    const limit =
-      storyLimits[get(collection, ['associated-metadata', 'layout'])] ||
-      defaultNestedLimit;
+  const bulkRequestBody = collections.reduce((acc, collection, index) => {
+    let limit = storyLimits[get(collection, ['associated-metadata', 'layout'])];
+
+    if (!limit && get(collection, ['childCollectionLimit'])) {
+      limit = get(collection, ['childCollectionLimit']);
+    }
+
+    if (!limit && defaultNestedLimit) {
+      limit = defaultNestedLimit;
+    }
 
     return Object.assign(acc, {
-      [collection.slug]: {
+      [`${collection.slug}-${index}`]: {
         _type: 'collection',
         slug: collection.slug,
         'story-fields': storyFields,
@@ -32,7 +38,7 @@ function updateItemsInPlace(
   client,
   depth,
   items,
-  {storyFields, storyLimits, defaultNestedLimit}
+  {storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
 ) {
   const collections = items.filter((item) => item && item.type == 'collection');
 
@@ -43,16 +49,34 @@ function updateItemsInPlace(
     storyLimits,
     defaultNestedLimit,
   }).then((collectionSlugToCollection) => {
-    collections.forEach((collection) => {
+    collections.forEach((collection, index) => {
       collection.summary = get(
         collectionSlugToCollection,
         [collection.slug, 'summary'],
         ''
       );
-      collection.items = get(collectionSlugToCollection, [collection.slug, 'items'], []);
-      collection.automated = get(collectionSlugToCollection, [collection.slug, 'automated']);
-      collection['collection-cache-keys'] = get(collectionSlugToCollection, [collection.slug, 'collection-cache-keys'], []);
+      const slugWithIndex = `${collection.slug}-${index}`;
+      collection.automated = get(collectionSlugToCollection, [slugWithIndex, 'automated']);
+      collection['collection-cache-keys'] = get(collectionSlugToCollection, [slugWithIndex, 'collection-cache-keys'], []);
+      collection.items = get(collectionSlugToCollection, [slugWithIndex, 'items'], []);
+
+      if (nestedCollectionLimit && collection.items) {
+        collection.items.forEach((item, index) => {
+          if (
+            item.type === 'collection' &&
+            nestedCollectionLimit[
+              get(collection, ['associated-metadata', 'layout'])
+              ]
+          ) {
+            item.childCollectionLimit =
+              nestedCollectionLimit[
+                get(collection, ['associated-metadata', 'layout'])
+                ][index];
+          }
+        });
+      }
     });
+
     return updateItemsInPlace(
       client,
       depth - 1,
@@ -65,12 +89,13 @@ function updateItemsInPlace(
 function loadNestedCollectionData(
   client,
   collection,
-  {depth, storyFields, storyLimits, defaultNestedLimit}
+  {depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
 ) {
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
     storyLimits,
     defaultNestedLimit,
+    nestedCollectionLimit,
   }).then(() => collection);
 }
 
