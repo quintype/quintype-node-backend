@@ -50,12 +50,8 @@ function updateItemsInPlace(
     defaultNestedLimit,
   }).then((collectionSlugToCollection) => {
     collections.forEach((collection, index) => {
-      collection.summary = get(
-        collectionSlugToCollection,
-        [collection.slug, 'summary'],
-        ''
-      );
       const slugWithIndex = `${collection.slug}-${index}`;
+      collection.summary = get(collectionSlugToCollection,[slugWithIndex, 'summary'], '');
       collection.automated = get(collectionSlugToCollection, [slugWithIndex, 'automated']);
       collection['collection-cache-keys'] = get(collectionSlugToCollection, [slugWithIndex, 'collection-cache-keys'], []);
       collection.items = get(collectionSlugToCollection, [slugWithIndex, 'items'], []);

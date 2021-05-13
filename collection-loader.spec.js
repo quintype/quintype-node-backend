@@ -37,7 +37,7 @@ describe('Collection Loader', function () {
               "collection-id": 147009,
               "entity-id": "195845,198144",
             },
-            "summary": null,
+            "summary": "boy who lived",
             "id": 147009,
             "items": [
               {
@@ -59,6 +59,7 @@ describe('Collection Loader', function () {
 
     expect(collectionDetails.items.length).toBe(1);
     expect(collectionDetails.items[0].automated).toBe(true);
+    expect(collectionDetails.items[0].summary).toBe("boy who lived");
     expect(collectionDetails.items[0].items.length).toBe(1);
     expect(collectionDetails['collection-cache-keys']).toEqual(["c/1088/147"]);
     expect(collectionDetails.items[0]['collection-cache-keys']).toEqual([
@@ -86,7 +87,6 @@ describe('Collection Loader', function () {
             "name": "potter more",
             "data-source": "automated",
             "template": "default",
-            "summary": null,
             "id": 147009,
             "created-at": 1619029886576,
           }
@@ -102,6 +102,7 @@ describe('Collection Loader', function () {
 
     expect(collectionDetails.items.length).toBe(1);
     expect(collectionDetails.items[0].automated).not.toBeDefined();
+    expect(collectionDetails.items[0].summary).toEqual("");
     expect(collectionDetails.items[0]['collection-cache-keys']).toEqual([]);
     expect(collectionDetails.items[0].items.length).toBe(0);
   });
