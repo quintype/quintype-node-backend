@@ -50,15 +50,11 @@ function updateItemsInPlace(
     defaultNestedLimit,
   }).then((collectionSlugToCollection) => {
     collections.forEach((collection, index) => {
-      collection.summary = get(
-        collectionSlugToCollection,
-        [collection.slug, 'summary'],
-        ''
-      );
-      collection.items = get(collectionSlugToCollection, [
-        `${collection.slug}-${index}`,
-        'items',
-      ]);
+      const slugWithIndex = `${collection.slug}-${index}`;
+      collection.summary = get(collectionSlugToCollection,[slugWithIndex, 'summary'], '');
+      collection.automated = get(collectionSlugToCollection, [slugWithIndex, 'automated']);
+      collection['collection-cache-keys'] = get(collectionSlugToCollection, [slugWithIndex, 'collection-cache-keys'], []);
+      collection.items = get(collectionSlugToCollection, [slugWithIndex, 'items'], []);
 
       if (nestedCollectionLimit && collection.items) {
         collection.items.forEach((item, index) => {
@@ -66,12 +62,12 @@ function updateItemsInPlace(
             item.type === 'collection' &&
             nestedCollectionLimit[
               get(collection, ['associated-metadata', 'layout'])
-            ]
+              ]
           ) {
             item.childCollectionLimit =
               nestedCollectionLimit[
                 get(collection, ['associated-metadata', 'layout'])
-              ][index];
+                ][index];
           }
         });
       }
