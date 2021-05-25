@@ -821,16 +821,19 @@ class Client {
     const uri = this.baseUrl + path;
     const params = Object.assign(
       {
-        uri,
+        method: "get",
         json: true,
         gzip: true,
+        timeout: 1000,
       },
       opts
     );
-    axios
-      .get(uri, {
-        params,
-      })
+
+    axios({
+      method: params.method,
+      uri: uri,
+      params: params,
+    })
       .then(function (response) {
         return response;
       })
