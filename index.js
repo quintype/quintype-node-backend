@@ -1,14 +1,15 @@
-'use strict';
+"use strict";
 
-const rp = require('request-promise');
-const Promise = require('bluebird');
-const _ = require('lodash');
-const {loadNestedCollectionData} = require('./collection-loader');
-const {MenuGroups} = require('./menu-groups');
-const {DEFAULT_DEPTH, DEFAULT_STORY_FIELDS} = require('./constants');
-const {BaseAPI} = require('./base-api');
-const {asyncGate} = require('./async-gate');
-const hash = require('object-hash');
+const axios = require("axios");
+const rp = require("request-promise");
+const Promise = require("bluebird");
+const _ = require("lodash");
+const { loadNestedCollectionData } = require("./collection-loader");
+const { MenuGroups } = require("./menu-groups");
+const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
+const { BaseAPI } = require("./base-api");
+const { asyncGate } = require("./async-gate");
+const hash = require("object-hash");
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -60,9 +61,9 @@ class Story extends BaseAPI {
    */
   static getStories(client, storyGroup, params) {
     return client
-      .getStories(_.extend({'story-group': storyGroup}, params))
+      .getStories(_.extend({ "story-group": storyGroup }, params))
       .then((response) =>
-        _.map(response['stories'], (story) => this.build(story))
+        _.map(response["stories"], (story) => this.build(story))
       );
   }
 
@@ -79,11 +80,11 @@ class Story extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__related_stories GET ​/api​/v1​/stories​/:story-id​/related-stories} API Documentation for a list of fields returned
    */
   getRelatedStories(client) {
-    const sectionId = _.get(this, ['sections', 0, 'id'], null);
+    const sectionId = _.get(this, ["sections", 0, "id"], null);
     return client
       .getRelatedStories(this.id, sectionId)
       .then((response) =>
-        _.map(response['related-stories'], (story) =>
+        _.map(response["related-stories"], (story) =>
           this.constructor.build(story)
         )
       );
@@ -128,7 +129,7 @@ class Story extends BaseAPI {
 
     return client
       .getStoryBySlug(slug, params)
-      .then((response) => this.build(response['story']));
+      .then((response) => this.build(response["story"]));
   }
 
   /**
@@ -145,7 +146,7 @@ class Story extends BaseAPI {
   static getPublicPreviewStory(client, publicPreviewKey) {
     return client
       .getPublicPreviewStory(publicPreviewKey)
-      .then((response) => this.build(response['story']));
+      .then((response) => this.build(response["story"]));
   }
 
   /**
@@ -160,7 +161,7 @@ class Story extends BaseAPI {
   static getStoryById(client, id) {
     return client
       .getStoryById(id)
-      .then((response) => this.build(response['story']));
+      .then((response) => this.build(response["story"]));
   }
 
   /**
@@ -182,8 +183,8 @@ class Story extends BaseAPI {
    */
   static getSearch(client, params) {
     return client.getSearch(params).then((response) =>
-      _.merge(response['results'], {
-        stories: _.map(response['results']['stories'], (story) =>
+      _.merge(response["results"], {
+        stories: _.map(response["results"]["stories"], (story) =>
           this.build(story)
         ),
       })
@@ -209,18 +210,18 @@ class Story extends BaseAPI {
     return client
       .getInBulk({
         requests: mapValues(
-          (r) => Object.assign({_type: 'stories'}, r),
+          (r) => Object.assign({ _type: "stories" }, r),
           requests
         ),
       })
       .then((response) =>
         BulkResults.build(
-          mapValues((result) => wrapResult(result), response['results'])
+          mapValues((result) => wrapResult(result), response["results"])
         )
       );
   }
 }
-Story.upstream = 'story';
+Story.upstream = "story";
 
 class BulkResults extends BaseAPI {
   constructor(results) {
@@ -241,7 +242,7 @@ class BulkResults extends BaseAPI {
     }, this.results);
   }
 }
-BulkResults.upstream = 'results';
+BulkResults.upstream = "results";
 
 /**
  * This corresponds to a collection in Quintype. Most groups of content are modelled with this class.
@@ -325,7 +326,7 @@ class Collection extends BaseAPI {
       defaultNestedLimit = null,
       nestedCollectionLimit = {},
     } = options;
-    const storyFields = _.get(params, ['story-fields'], DEFAULT_STORY_FIELDS);
+    const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
 
     if (!slug) {
       return Promise.resolve(null);
@@ -334,7 +335,7 @@ class Collection extends BaseAPI {
     return client
       .getCollectionBySlug(slug, params)
       .then((response) => {
-        const collection = response ? response['collection'] || response : null;
+        const collection = response ? response["collection"] || response : null;
         return (
           collection &&
           loadNestedCollectionData(client, collection, {
@@ -349,7 +350,7 @@ class Collection extends BaseAPI {
       .then((collection) => this.build(collection));
   }
 }
-Collection.upstream = 'collection';
+Collection.upstream = "collection";
 
 /**
  * This represents a logged in user. You probably do not need to use this class, it's better if
@@ -381,15 +382,15 @@ class Member extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/member/get_api_v1_members_me GET ​/api​/v1​/members/me} API documentation for a list of parameters and fields
    */
   static getCurrentMember(client, authToken) {
-    if (!authToken || authToken == '')
+    if (!authToken || authToken == "")
       return new Promise((resolve, reject) => resolve(null));
     return client
       .getCurrentMember(authToken)
-      .then((response) => response && this.build(response['member']))
+      .then((response) => response && this.build(response["member"]))
       .catch(() => null);
   }
 }
-Member.upstream = 'member';
+Member.upstream = "member";
 
 /**
  * An author represents a contributor to a story.
@@ -435,7 +436,7 @@ class Author extends BaseAPI {
   static getAuthor(client, authorId) {
     return client
       .getAuthor(authorId)
-      .then((response) => response && this.build(response['author']));
+      .then((response) => response && this.build(response["author"]));
   }
 
   /**
@@ -470,7 +471,7 @@ class Author extends BaseAPI {
       .catch((e) => catch404(e, null));
   }
 }
-Author.upstream = 'author';
+Author.upstream = "author";
 
 /**
  * CustomPath is used for managing redirects and static pages via the editor. It corresponds to the
@@ -512,11 +513,11 @@ class CustomPath extends BaseAPI {
    */
   static getCustomPathData(client, path) {
     return client
-      .getCustomPathData(path.startsWith('/') ? path : '/' + path)
-      .then((response) => response['page'] && this.build(response['page']));
+      .getCustomPathData(path.startsWith("/") ? path : "/" + path)
+      .then((response) => response["page"] && this.build(response["page"]));
   }
 }
-CustomPath.upstream = 'page';
+CustomPath.upstream = "page";
 
 /**
  * Represents the configuration of the publisher. This represents the API call of /api/v1/config.
@@ -564,7 +565,7 @@ class Config extends BaseAPI {
    * @returns {string} The slug of the home collection for a domain
    */
   getHomeCollectionSlug(domainSlug) {
-    return this.getDomainConfig(domainSlug)['home-collection-id'] || 'home';
+    return this.getDomainConfig(domainSlug)["home-collection-id"] || "home";
   }
 
   /**
@@ -579,8 +580,8 @@ class Config extends BaseAPI {
     return (
       (this.sections || []).filter(
         (section) =>
-          section['domain-slug'] === undefined ||
-          section['domain-slug'] === domainSlug
+          section["domain-slug"] === undefined ||
+          section["domain-slug"] === domainSlug
       ) || {}
     );
   }
@@ -603,7 +604,7 @@ class Config extends BaseAPI {
    *
    */
   memoize(key, f) {
-    this._memoized_data[key] = this._memoized_data[key] || {value: f()};
+    this._memoized_data[key] = this._memoized_data[key] || { value: f() };
     return this._memoized_data[key].value;
   }
 
@@ -639,7 +640,7 @@ class Config extends BaseAPI {
   }
 }
 
-Config.upstream = 'config';
+Config.upstream = "config";
 
 /**
  * Entities are the prefered way to store structured information about a topic. Entities are a
@@ -693,7 +694,7 @@ class Entity extends BaseAPI {
     return client
       .getEntities(params)
       .then((response) =>
-        _.map(response['entities'], (entity) => this.build(entity))
+        _.map(response["entities"], (entity) => this.build(entity))
       );
   }
 
@@ -732,14 +733,14 @@ class Entity extends BaseAPI {
     return client
       .getCollectionsByEntityId(this.entity.id, params)
       .then((response) =>
-        response['collections'].map((collection) =>
+        response["collections"].map((collection) =>
           Collection.build(collection)
         )
       );
   }
 }
 
-Entity.upstream = 'entity';
+Entity.upstream = "entity";
 
 /**
  * @deprecated Please use {@link CustomPath} instead
@@ -759,7 +760,7 @@ class Url extends BaseAPI {
     return client.getCustomURL(slug).then((url) => this.build(url));
   }
 }
-Url.upstream = 'url';
+Url.upstream = "url";
 
 function catch404(e, defaultValue) {
   if (e && e.statusCode == 404) return defaultValue;
@@ -782,13 +783,13 @@ class Client {
       this.interval = setInterval(
         () =>
           this.updateConfig().catch((e) =>
-            console.error('Unable to update config')
+            console.error("Unable to update config")
           ),
         120000
       );
       this.initialUpdateConfig = this.updateConfig();
     }
-    this.hostname = baseUrl.replace(/https?:\/\//, '');
+    this.hostname = baseUrl.replace(/https?:\/\//, "");
     this._cachedPostBulkLocations = {};
     this._cachedPostBulkGate = asyncGate();
   }
@@ -815,63 +816,87 @@ class Client {
    * @param {string} opts.body The body of the request (for POST requests only)
    * @returns {Promise<Response>} A promise of the response
    */
+
   request(path, opts) {
     const uri = this.baseUrl + path;
     const params = Object.assign(
       {
-        method: 'GET',
-        uri: uri,
+        uri,
         json: true,
         gzip: true,
       },
       opts
     );
-    return rp(params).catch((e) => {
-      console.error(`Error in API ${uri}: Status ${e.statusCode}`);
-      throw e;
-    });
+    axios
+      .get(uri, {
+        params,
+      })
+      .then(function (response) {
+        return response;
+      })
+      .catch((e) => {
+        console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+        throw e;
+      });
   }
 
+  // request(path, opts) {
+  //   const uri = this.baseUrl + path;
+  //   const params = Object.assign(
+  //     {
+  //       method: "GET",
+  //       uri: uri,
+  //       json: true,
+  //       gzip: true,
+  //     },
+  //     opts
+  //   );
+  //   return rp(params).catch((e) => {
+  //     console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+  //     throw e;
+  //   });
+  // }
+
   getFromBulkApiManager(slug, params) {
-    return this.request('/api/v1/bulk/' + slug, {
+    return this.request("/api/v1/bulk/" + slug, {
       qs: params,
     });
   }
 
   getTags(slug) {
-    return this.request('/api/v1/tags/' + slug);
+    return this.request("/api/v1/tags/" + slug);
   }
 
   getPublicPreviewStory(publicPreviewKey) {
-    return this.request(
-      '/api/v1/preview/story/' + publicPreviewKey
-    ).catch((e) => catch404(e, {}));
+    return this.request("/api/v1/preview/story/" + publicPreviewKey).catch(
+      (e) => catch404(e, {})
+    );
   }
 
   getCollectionBySlug(slug, params) {
-    return this.request('/api/v1/collections/' + slug, {
+    return this.request("/api/v1/collections/" + slug, {
       qs: params,
     }).catch((e) => catch404(e, null));
   }
 
   getStories(params) {
-    return this.request('/api/v1/stories', {
+    return this.request("/api/v1/stories", {
       qs: params,
     });
   }
 
   getAmpConfig() {
-    return this.request('/api/v1/amp/config');
+    return this.request("/api/v1/amp/config");
   }
 
   getStoryBySlug(slug, params) {
-    return this.request('/api/v1/stories-by-slug', {
-      qs: _.merge({slug: slug}, params),
+    return this.request("/api/v1/stories-by-slug", {
+      qs: _.merge({ slug: slug }, params),
     }).catch((e) => catch404(e, {}));
   }
 
   getStoryById(id) {
-    return this.request('/api/v1/stories/' + id).catch((e) => catch404(e, {}));
+    return this.request("/api/v1/stories/" + id).catch((e) => catch404(e, {}));
   }
 
   /**
@@ -889,60 +914,60 @@ class Client {
   }
 
   getCurrentMember(authToken) {
-    return this.request('/api/v1/members/me', {
+    return this.request("/api/v1/members/me", {
       headers: {
-        'X-QT-AUTH': authToken,
+        "X-QT-AUTH": authToken,
       },
     });
   }
 
   getAuthor(authorId) {
-    return this.request('/api/v1/authors/' + authorId).catch((e) =>
+    return this.request("/api/v1/authors/" + authorId).catch((e) =>
       catch404(e, {})
     );
   }
 
   getAuthors(params) {
-    return this.request('/api/authors', {
+    return this.request("/api/authors", {
       qs: params,
     });
   }
 
   getSearch(params) {
-    return this.request('/api/v1/search', {
+    return this.request("/api/v1/search", {
       qs: params,
     });
   }
 
   getAdvancedSearch(params) {
-    return this.request('/api/v1/advanced-search', {
+    return this.request("/api/v1/advanced-search", {
       qs: params,
     });
   }
 
   getRelatedStories(storyId = null, sectionId = null) {
     return this.request(
-      '/api/v1/stories/' + storyId + '/related-stories?section-id=' + sectionId
+      "/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId
     );
   }
 
   getStoryAttributes(storyId) {
-    return this.request('/api/v1/stories/' + storyId + '/attributes');
+    return this.request("/api/v1/stories/" + storyId + "/attributes");
   }
 
   updateConfig() {
-    return this.request('/api/v1/config').then(
+    return this.request("/api/v1/config").then(
       (config) => (this.config = Config.build(config))
     );
   }
 
   postComments(params, authToken) {
-    return this.request('/api/v1/comments', {
-      method: 'POST',
+    return this.request("/api/v1/comments", {
+      method: "POST",
       body: params,
       headers: {
-        'X-QT-AUTH': authToken,
-        'content-type': 'application/json',
+        "X-QT-AUTH": authToken,
+        "content-type": "application/json",
       },
     });
   }
@@ -955,17 +980,17 @@ class Client {
     return this.request(this._cachedPostBulkLocations[requestHash]);
 
     async function getBulkLocation() {
-      const response = await this.request('/api/v1/bulk-request', {
-        method: 'POST',
+      const response = await this.request("/api/v1/bulk-request", {
+        method: "POST",
         body: requests,
         headers: {
-          'content-type': 'application/json',
+          "content-type": "application/json",
         },
         simple: false,
         resolveWithFullResponse: true,
       });
-      if (response.statusCode === 303 && response.caseless.get('Location')) {
-        return response.caseless.get('Location');
+      if (response.statusCode === 303 && response.caseless.get("Location")) {
+        return response.caseless.get("Location");
       } else {
         throw new Error(
           `Could Not Convert POST bulk to a get, got status ${response.statusCode}`
@@ -975,36 +1000,36 @@ class Client {
   }
 
   getAmpStoryBySlug(slug) {
-    return this.request('/api/v1/amp/story', {
-      qs: {slug},
+    return this.request("/api/v1/amp/story", {
+      qs: { slug },
     });
   }
 
   getEntities(params) {
-    return this.request('/api/v1/entities', {
+    return this.request("/api/v1/entities", {
       qs: params,
     });
   }
 
   getEntity(entityId, params) {
-    return this.request('/api/v1/entity/' + entityId, {
+    return this.request("/api/v1/entity/" + entityId, {
       qs: params,
     });
   }
 
   getCollectionsByEntityId(entityId, params) {
-    return this.request('/api/v1/entity/' + entityId + '/collections', {
+    return this.request("/api/v1/entity/" + entityId + "/collections", {
       qs: params,
     });
   }
 
   getCustomURL(slug) {
-    return this.request('/api/v1/custom-urls/' + encodeURIComponent(path));
+    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path));
   }
 
   getCustomPathData(path) {
     return this.request(
-      '/api/v1/custom-urls/' + encodeURIComponent(path)
+      "/api/v1/custom-urls/" + encodeURIComponent(path)
     ).catch((e) => catch404(e, {}));
   }
   getAuthorCollection(authorId, params) {
@@ -1062,7 +1087,7 @@ class AmpConfig extends BaseAPI {
     return client.getAmpConfig().then((config) => config && this.build(config));
   }
 }
-AmpConfig.upstream = 'ampConfig';
+AmpConfig.upstream = "ampConfig";
 
 module.exports = {
   Config: Config,
