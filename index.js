@@ -1,7 +1,6 @@
 "use strict";
 
 const axios = require("axios");
-const rp = require("request-promise");
 const Promise = require("bluebird");
 const _ = require("lodash");
 const { loadNestedCollectionData } = require("./collection-loader");
@@ -817,7 +816,7 @@ class Client {
    * @returns {Promise<Response>} A promise of the response
    */
 
-  request(path, opts) {
+   request(path, opts) {
     const uri = this.baseUrl + path;
     const params = Object.assign(
       {
@@ -828,15 +827,12 @@ class Client {
       },
       opts
     );
-
-    axios({
+   
+    return  axios({
+      url: uri,
       method: params.method,
-      uri: uri,
-      params: params,
+      data: params,
     })
-      .then(function (response) {
-        return response;
-      })
       .catch((e) => {
         console.error(`Error in API ${uri}: Status ${e.statusCode}`);
         throw e;
