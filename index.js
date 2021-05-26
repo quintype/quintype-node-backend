@@ -816,7 +816,7 @@ class Client {
    * @returns {Promise<Response>} A promise of the response
    */
 
-   request(path, opts) {
+   async request(path, opts) {
     const uri = this.baseUrl + path;
     const params = Object.assign(
       {
@@ -827,34 +827,17 @@ class Client {
       },
       opts
     );
-   
-    return  axios({
+    return await axios({
       url: uri,
       method: params.method,
-      data: params,
+      params,
     })
-      .catch((e) => {
-        console.error(`Error in API ${uri}: Status ${e.statusCode}`);
-        throw e;
-      });
+    .then(res => res.data)
+    .catch((e) => {
+      console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+      throw e;
+    });
   }
-
-  // request(path, opts) {
-  //   const uri = this.baseUrl + path;
-  //   const params = Object.assign(
-  //     {
-  //       method: "GET",
-  //       uri: uri,
-  //       json: true,
-  //       gzip: true,
-  //     },
-  //     opts
-  //   );
-  //   return rp(params).catch((e) => {
-  //     console.error(`Error in API ${uri}: Status ${e.statusCode}`);
-  //     throw e;
-  //   });
-  // }
 
   getFromBulkApiManager(slug, params) {
     return this.request("/api/v1/bulk/" + slug, {
