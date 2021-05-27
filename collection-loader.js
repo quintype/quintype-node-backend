@@ -28,8 +28,8 @@ function loadCollectionItems(
   }, {});
 
   return client
-    .getInBulk({requests: bulkRequestBody})
-    .then((response) => response.results);
+  .getInBulk({requests: bulkRequestBody})
+  .then(({data}) => data.results);
 }
 
 // Ugly. This function updates all the items in place.

@@ -1,17 +1,19 @@
-const {Collection} = require('./index');
+const { Collection } = require("./index");
 
 function getClient({
   getCollectionBySlug = (slug) => {
     return Promise.resolve({
-      slug: 'home',
-      summary: null,
-      items: [
-        {
-          'associated-metadata': {layout: 'ArrowFourColTwelveStories'},
-          type: 'collection',
-          slug: 'arrow-collection',
-        },
-      ],
+      data: {
+        slug: "home",
+        summary: null,
+        items: [
+          {
+            "associated-metadata": { layout: "ArrowFourColTwelveStories" },
+            type: "collection",
+            slug: "arrow-collection",
+          },
+        ],
+      },
     });
   },
 
@@ -26,8 +28,8 @@ function getClient({
 
         for (let i = 0; i < limit; i++) {
           items.push({
-            'associated-metadata': {},
-            type: 'collection',
+            "associated-metadata": {},
+            type: "collection",
             slug: `football-sports-${i}`,
           });
         }
@@ -42,7 +44,7 @@ function getClient({
     }
 
     return Promise.resolve({
-      results: collectionItem,
+      data: { results: collectionItem },
     });
   },
 } = {}) {
@@ -53,91 +55,93 @@ function getClient({
   return clientObj;
 }
 
-describe('Collection', function () {
-  describe('Returns Home Collection based on defaultNestedLimit', function () {
-    it('Returns home-collection with depth of 1 and defaultNestedLimit of 3', async function () {
+describe("Collection", function () {
+  describe("Returns Home Collection based on defaultNestedLimit", function () {
+    it("Returns home-collection with depth of 1 and defaultNestedLimit of 3", async function () {
       const homeCollectionData = await Collection.getCollectionBySlug(
         getClient(),
-        'home',
+        "home",
         {},
-        {depth: 1, defaultNestedLimit: 3}
+        { depth: 1, defaultNestedLimit: 3 }
       );
       expect(homeCollectionData.collection.items[0].items.length).toBe(3);
     });
-    it('Returns home-collection with depth of 2 and defaultNestedLimit of 3', async function () {
+    it("Returns home-collection with depth of 2 and defaultNestedLimit of 3", async function () {
       const homeCollectionData = await Collection.getCollectionBySlug(
         getClient(),
-        'home',
+        "home",
         {},
-        {depth: 2, defaultNestedLimit: 4}
+        { depth: 2, defaultNestedLimit: 4 }
       );
       expect(homeCollectionData.collection.items[0].items.length).toBe(4);
-      expect(homeCollectionData.collection.items[0].items[0].items.length).toBe(
-        4
-      );
+      expect(
+        homeCollectionData.collection.items[0].items[0].items.length
+      ).toBe(4);
     });
-    it('Returns home-collection with depth of 2', async function () {
+    it("Returns home-collection with depth of 2", async function () {
       const homeCollectionData = await Collection.getCollectionBySlug(
         getClient(),
-        'home',
+        "home",
         {},
-        {depth: 2}
+        { depth: 2 }
       );
-      expect(homeCollectionData.collection.items[0].items[0].items.length).toBe(
-        40
-      );
+
+      expect(
+        homeCollectionData.collection.items[0].items[0].items.length
+      ).toBe(40);
     });
   });
-  describe('Returns Home Collection based on nestedCollectionLimit', function () {
-    it('Returns home-collection with depth of 2 ', async function () {
+  describe("Returns Home Collection based on nestedCollectionLimit", function () {
+    it("Returns home-collection with depth of 2 ", async function () {
       const homeCollectionData = await Collection.getCollectionBySlug(
         getClient(),
-        'home',
+        "home",
         {},
         {
           depth: 2,
           defaultNestedLimit: 4,
-          nestedCollectionLimit: {ArrowFourColTwelveStories: [1, 2, 3, 5]},
+          nestedCollectionLimit: { ArrowFourColTwelveStories: [1, 2, 3, 5] },
         }
       );
       expect(homeCollectionData.collection.items[0].items.length).toBe(4);
-      expect(homeCollectionData.collection.items[0].items[0].items.length).toBe(
-        1
-      );
-      expect(homeCollectionData.collection.items[0].items[1].items.length).toBe(
-        2
-      );
-      expect(homeCollectionData.collection.items[0].items[2].items.length).toBe(
-        3
-      );
-      expect(homeCollectionData.collection.items[0].items[3].items.length).toBe(
-        5
-      );
+      expect(
+        homeCollectionData.collection.items[0].items[0].items.length
+      ).toBe(1);
+      expect(
+        homeCollectionData.collection.items[0].items[1].items.length
+      ).toBe(2);
+      expect(
+        homeCollectionData.collection.items[0].items[2].items.length
+      ).toBe(3);
+      expect(
+        homeCollectionData.collection.items[0].items[3].items.length
+      ).toBe(5);
     });
-    it('Returns home-collection with depth of 2 and defaultlimit for the last nested collection ', async function () {
+    it("Returns home-collection with depth of 2 and defaultlimit for the last nested collection ", async function () {
       const homeCollectionData = await Collection.getCollectionBySlug(
         getClient(),
-        'home',
+        "home",
         {},
         {
           depth: 2,
           defaultNestedLimit: 4,
-          nestedCollectionLimit: {ArrowFourColTwelveStories: [6, 7, 8]},
+          nestedCollectionLimit: { ArrowFourColTwelveStories: [6, 7, 8] },
         }
       );
+
       expect(homeCollectionData.collection.items[0].items.length).toBe(4);
-      expect(homeCollectionData.collection.items[0].items[0].items.length).toBe(
-        6
-      );
-      expect(homeCollectionData.collection.items[0].items[1].items.length).toBe(
-        7
-      );
-      expect(homeCollectionData.collection.items[0].items[2].items.length).toBe(
-        8
-      );
-      expect(homeCollectionData.collection.items[0].items[3].items.length).toBe(
-        4
-      );
+      expect(
+        homeCollectionData.collection.items[0].items[0].items.length
+      ).toBe(6);
+      expect(
+        homeCollectionData.collection.items[0].items[1].items.length
+      ).toBe(7);
+      expect(
+        homeCollectionData.collection.items[0].items[2].items.length
+      ).toBe(8);
+      expect(
+        homeCollectionData.collection.items[0].items[3].items.length
+      ).toBe(4);
     });
   });
 });

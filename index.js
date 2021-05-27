@@ -9,7 +9,7 @@ const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require("./base-api");
 const { asyncGate } = require("./async-gate");
 const hash = require("object-hash");
-const querystring = require("querystring");
+const querystring = require('querystring');
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -129,7 +129,7 @@ class Story extends BaseAPI {
 
     return client
       .getStoryBySlug(slug, params)
-      .then(({ data }) => this.build(data["story"]));
+      .then(({data}) => this.build(data["story"]));
   }
 
   /**
@@ -309,13 +309,13 @@ class Collection extends BaseAPI {
    * @param {number} options.defaultNestedLimit The default limit of stories to fetch by each collection. (default: 40)
    * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}).
    eg:
-   - Home `(Level 1)`
-   - Sports Row `(Level 2)` `(template- ThreeColGrid)`
-   - Cricket `(Level 3)`
-   - Football `(Level 3)`
-   - Tennis `(Level 3)`
+    - Home `(Level 1)`
+     - Sports Row `(Level 2)` `(template- ThreeColGrid)`
+      - Cricket `(Level 3)`
+      - Football `(Level 3)`
+      - Tennis `(Level 3)`
 
-   In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
+    In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
    * @return {(Promise<Collection|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
@@ -817,7 +817,7 @@ class Client {
    * @returns {Promise<Response>} A promise of the response
    */
 
-  request(path, opts) {
+   request(path, opts) {
     const uri = this.baseUrl + path;
     let params = Object.assign(
       {
@@ -827,19 +827,16 @@ class Client {
         gzip: true,
         timeout: 4000,
       },
-      opts
+      opts,
     );
 
-    if (params.qs) {
-      params = Object.assign(params, {
-        params: querystring.stringify(params.qs),
-      });
+    if(params.qs){
+      params =  Object.assign(params, {params: querystring.stringify(params.qs)});
       delete params.qs;
     }
 
-    return axios(params)
-      .then((res) => {
-        console.log(" DEBUG: ",uri, "--------------------------->", res.data);
+    return  axios(params)
+      .then(res => {
         return res;
       })
       .catch((e) => {
@@ -847,23 +844,6 @@ class Client {
         throw e;
       });
   }
-
-  // request(path, opts) {
-  //   const uri = this.baseUrl + path;
-  //   const params = Object.assign(
-  //     {
-  //       method: "GET",
-  //       uri: uri,
-  //       json: true,
-  //       gzip: true,
-  //     },
-  //     opts
-  //   );
-  //   return rp(params).catch((e) => {
-  //     console.error(`Error in API ${uri}: Status ${e.statusCode}`);
-  //     throw e;
-  //   });
-  // }
 
   getFromBulkApiManager(slug, params) {
     return this.request("/api/v1/bulk/" + slug, {
@@ -965,7 +945,7 @@ class Client {
 
   updateConfig() {
     return this.request("/api/v1/config").then(
-      ({ data }) => (this.config = Config.build(data))
+      ({data}) => (this.config = Config.build(data))
     );
   }
 
@@ -993,12 +973,12 @@ class Client {
         data: requests,
         headers: {
           "content-type": "application/json",
-        },
+        }
       });
 
       const contentLocation = _.get(response, ["headers", "content-location"]);
 
-      if (!contentLocation) {
+      if(!contentLocation){
         throw new Error(
           `Could Not Convert post bulk to a get, got status ${response.statusCode}`
         );
