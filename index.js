@@ -823,16 +823,19 @@ class Client {
         method: "get",
         json: true,
         gzip: true,
-        timeout: 1000,
+        timeout: 1500
       },
       opts
-    );
+    );    
+    
     return await axios({
       url: uri,
-      method: params.method,
-      params,
+      ...params,
+    }) 
+    .then(res => {
+      const response = {...res, ...res.data.body};
+      return response
     })
-    .then(res => res.data)
     .catch((e) => {
       console.error(`Error in API ${uri}: Status ${e.statusCode}`);
       throw e;
@@ -945,7 +948,7 @@ class Client {
 
   postComments(params, authToken) {
     return this.request("/api/v1/comments", {
-      method: "POST",
+      method: "post",
       body: params,
       headers: {
         "X-QT-AUTH": authToken,
@@ -963,7 +966,7 @@ class Client {
 
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
-        method: "POST",
+        method: "post",
         body: requests,
         headers: {
           "content-type": "application/json",
@@ -971,8 +974,8 @@ class Client {
         simple: false,
         resolveWithFullResponse: true,
       });
-      if (response.statusCode === 303 && response.caseless.get("Location")) {
-        return response.caseless.get("Location");
+      if (response.headers.location) {
+        return response.headers.location;
       } else {
         throw new Error(
           `Could Not Convert POST bulk to a get, got status ${response.statusCode}`
