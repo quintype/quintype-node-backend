@@ -9,6 +9,7 @@ const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require("./base-api");
 const { asyncGate } = require("./async-gate");
 const hash = require("object-hash");
+const querystring = require("querystring");
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -128,7 +129,7 @@ class Story extends BaseAPI {
 
     return client
       .getStoryBySlug(slug, params)
-      .then((response) => this.build(response["story"]));
+      .then(({ data }) => this.build(data["story"]));
   }
 
   /**
@@ -196,7 +197,7 @@ class Story extends BaseAPI {
    *
    * @param {Client} client
    * @param {Object} requests
-   * @see {@link https://developers.quintype.com/swagger/#/story/post_api_v1_c_request POST /api/v1/bulk-request} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/story/post_api_v1_c_request post /api/v1/bulk-request} API documentation for a list of parameters and fields
    */
   static getInBulk(client, requests) {
     function wrapResult(result) {
@@ -306,15 +307,15 @@ class Collection extends BaseAPI {
    * @param {number} options.depth The recursion depth to fetch collections. (default: 1)
    * @param {Object} options.storyLimits The limit of stories to fetch by collection template. This defaults to unlimited for templates that are not specified. (ex: {"FourColGrid": 12}) (default: {}).
    * @param {number} options.defaultNestedLimit The default limit of stories to fetch by each collection. (default: 40)
-   * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}). 
+   * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}).
    eg:
-    - Home `(Level 1)`
-     - Sports Row `(Level 2)` `(template- ThreeColGrid)`
-      - Cricket `(Level 3)`
-      - Football `(Level 3)`
-      - Tennis `(Level 3)`
-      
-    In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
+   - Home `(Level 1)`
+   - Sports Row `(Level 2)` `(template- ThreeColGrid)`
+   - Cricket `(Level 3)`
+   - Football `(Level 3)`
+   - Tennis `(Level 3)`
+
+   In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
    * @return {(Promise<Collection|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
@@ -333,8 +334,8 @@ class Collection extends BaseAPI {
 
     return client
       .getCollectionBySlug(slug, params)
-      .then((response) => {
-        const collection = response ? response["collection"] || response : null;
+      .then(({ data }) => {
+        const collection = data ? data["collection"] || data : null;
         return (
           collection &&
           loadNestedCollectionData(client, collection, {
@@ -812,35 +813,57 @@ class Client {
    * @param {Object} opts options that passed directly to request
    * @param {string} opts.method The HTTP method to be called (default 'GET')
    * @param {Object} opts.qs An object of query parameters to be passed to the backend
-   * @param {string} opts.body The body of the request (for POST requests only)
+   * @param {string} opts.body The body of the request (for post requests only)
    * @returns {Promise<Response>} A promise of the response
    */
 
-   async request(path, opts) {
+  request(path, opts) {
     const uri = this.baseUrl + path;
-    const params = Object.assign(
+    let params = Object.assign(
       {
+        url: uri,
         method: "get",
         json: true,
         gzip: true,
-        timeout: 1500
+        timeout: 4000,
       },
       opts
-    );    
-    
-    return await axios({
-      url: uri,
-      ...params,
-    }) 
-    .then(res => {
-      const response = {...res, ...res.data.body};
-      return response
-    })
-    .catch((e) => {
-      console.error(`Error in API ${uri}: Status ${e.statusCode}`);
-      throw e;
-    });
+    );
+
+    if (params.qs) {
+      params = Object.assign(params, {
+        params: querystring.stringify(params.qs),
+      });
+      delete params.qs;
+    }
+
+    return axios(params)
+      .then((res) => {
+        console.log(" DEBUG: ",uri, "--------------------------->", res.data);
+        return res;
+      })
+      .catch((e) => {
+        console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+        throw e;
+      });
   }
+
+  // request(path, opts) {
+  //   const uri = this.baseUrl + path;
+  //   const params = Object.assign(
+  //     {
+  //       method: "GET",
+  //       uri: uri,
+  //       json: true,
+  //       gzip: true,
+  //     },
+  //     opts
+  //   );
+  //   return rp(params).catch((e) => {
+  //     console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+  //     throw e;
+  //   });
+  // }
 
   getFromBulkApiManager(slug, params) {
     return this.request("/api/v1/bulk/" + slug, {
@@ -942,14 +965,14 @@ class Client {
 
   updateConfig() {
     return this.request("/api/v1/config").then(
-      (config) => (this.config = Config.build(config))
+      ({ data }) => (this.config = Config.build(data))
     );
   }
 
   postComments(params, authToken) {
     return this.request("/api/v1/comments", {
       method: "post",
-      body: params,
+      data: params,
       headers: {
         "X-QT-AUTH": authToken,
         "content-type": "application/json",
@@ -967,20 +990,20 @@ class Client {
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
         method: "post",
-        body: requests,
+        data: requests,
         headers: {
           "content-type": "application/json",
         },
-        simple: false,
-        resolveWithFullResponse: true,
       });
-      if (response.headers.location) {
-        return response.headers.location;
-      } else {
+
+      const contentLocation = _.get(response, ["headers", "content-location"]);
+
+      if (!contentLocation) {
         throw new Error(
-          `Could Not Convert POST bulk to a get, got status ${response.statusCode}`
+          `Could Not Convert post bulk to a get, got status ${response.statusCode}`
         );
       }
+      return contentLocation;
     }
   }
 
