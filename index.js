@@ -842,46 +842,75 @@ class Client {
     });
   }
 
-  getFromBulkApiManager(slug, params) {
-    return this.request("/api/v1/bulk/" + slug, {
-      qs: params,
+  async request(path, opts) {
+    const uri = this.baseUrl + path;
+    const params = Object.assign(
+      {
+        method: "get",
+        json: true,
+        gzip: true,
+        timeout: 5000
+      },
+      opts
+    );    
+  return await axios({
+      url: uri,
+      ...params,
+    }) 
+    .then(res => res)
+    .catch((e) => {
+      console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+      throw e;
     });
   }
 
+  getFromBulkApiManager(slug, params) {
+    const { data } = this.request("/api/v1/bulk/" + slug, {
+      qs: params,
+    });
+    return data;
+  }
+
   getTags(slug) {
-    return this.request("/api/v1/tags/" + slug);
+    const {data} =this.request("/api/v1/tags/" + slug);
+    return data
   }
 
   getPublicPreviewStory(publicPreviewKey) {
-    return this.request("/api/v1/preview/story/" + publicPreviewKey).catch(
+    const {data} = this.request("/api/v1/preview/story/" + publicPreviewKey).catch(
       (e) => catch404(e, {})
     );
+    return data;
   }
 
   getCollectionBySlug(slug, params) {
-    return this.request("/api/v1/collections/" + slug, {
+   return this.request("/api/v1/collections/" + slug, {
       qs: params,
     }).catch((e) => catch404(e, null));
   }
 
   getStories(params) {
-    return this.request("/api/v1/stories", {
+    const {data } = this.request("/api/v1/stories", {
       qs: params,
     });
+    return data;
   }
 
   getAmpConfig() {
-    return this.request("/api/v1/amp/config");
+    const {data } = this.request("/api/v1/amp/config");
+    return data;
   }
 
   getStoryBySlug(slug, params) {
-    return this.request("/api/v1/stories-by-slug", {
+    const {data } = this.request("/api/v1/stories-by-slug", {
       qs: _.merge({ slug: slug }, params),
     }).catch((e) => catch404(e, {}));
+    return data;
   }
 
   getStoryById(id) {
-    return this.request("/api/v1/stories/" + id).catch((e) => catch404(e, {}));
+    const {data } = this.request("/api/v1/stories/" + id).catch((e) => catch404(e, {}));
+    return data;
   }
 
   /**
@@ -899,55 +928,63 @@ class Client {
   }
 
   getCurrentMember(authToken) {
-    return this.request("/api/v1/members/me", {
+    const {data} = this.request("/api/v1/members/me", {
       headers: {
         "X-QT-AUTH": authToken,
       },
     });
+    return data;
   }
 
   getAuthor(authorId) {
-    return this.request("/api/v1/authors/" + authorId).catch((e) =>
-      catch404(e, {})
-    );
+    const {data} = this.request("/api/v1/authors/" + authorId).catch((e) =>
+    catch404(e, {})
+  );
+  return data;
   }
 
   getAuthors(params) {
-    return this.request("/api/authors", {
+    const {data} =  this.request("/api/authors", {
       qs: params,
     });
+    return data
   }
 
   getSearch(params) {
-    return this.request("/api/v1/search", {
+    const {data} = this.request("/api/v1/search", {
       qs: params,
     });
+    return data
   }
 
   getAdvancedSearch(params) {
-    return this.request("/api/v1/advanced-search", {
+    const {data} =  this.request("/api/v1/advanced-search", {
       qs: params,
     });
+    return data
   }
 
   getRelatedStories(storyId = null, sectionId = null) {
-    return this.request(
+    const {data} = this.request(
       "/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId
     );
+    return data
   }
 
   getStoryAttributes(storyId) {
-    return this.request("/api/v1/stories/" + storyId + "/attributes");
+    const {data} =  this.request("/api/v1/stories/" + storyId + "/attributes");
+    return data
   }
 
   updateConfig() {
-    return this.request("/api/v1/config").then(
-      (config) => (this.config = Config.build(config))
+    const data = this.request("/api/v1/config").then(
+      ({data}) => (this.config = Config.build(data))
     );
+    return data;
   }
 
   postComments(params, authToken) {
-    return this.request("/api/v1/comments", {
+   return this.request("/api/v1/comments", {
       method: "post",
       body: params,
       headers: {
@@ -955,6 +992,7 @@ class Client {
         "content-type": "application/json",
       },
     });
+  
   }
 
   async getInBulk(requests) {
@@ -965,15 +1003,14 @@ class Client {
     return this.request(this._cachedPostBulkLocations[requestHash]);
 
     async function getBulkLocation() {
-      const response = await this.request("/api/v1/bulk-request", {
+    const response = await this.request("/api/v1/bulk-request", {
         method: "post",
         body: requests,
         headers: {
           "content-type": "application/json",
-        },
-        simple: false,
-        resolveWithFullResponse: true,
+        }
       });
+      
       if (response.headers.location) {
         return response.headers.location;
       } else {
@@ -985,48 +1022,56 @@ class Client {
   }
 
   getAmpStoryBySlug(slug) {
-    return this.request("/api/v1/amp/story", {
+    const {data} =this.request("/api/v1/amp/story", {
       qs: { slug },
-    });
+    })
+    return data;
   }
 
   getEntities(params) {
-    return this.request("/api/v1/entities", {
+    const {data} = this.request("/api/v1/entities", {
       qs: params,
     });
+    return data;
   }
 
   getEntity(entityId, params) {
-    return this.request("/api/v1/entity/" + entityId, {
+    const {data} =  this.request("/api/v1/entity/" + entityId, {
       qs: params,
     });
+    return data;
   }
 
   getCollectionsByEntityId(entityId, params) {
-    return this.request("/api/v1/entity/" + entityId + "/collections", {
+    const {data} = this.request("/api/v1/entity/" + entityId + "/collections", {
       qs: params,
     });
+    return data;
   }
 
   getCustomURL(slug) {
-    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path));
+    const {data} =this.request("/api/v1/custom-urls/" + encodeURIComponent(path));
+    return data;
   }
 
   getCustomPathData(path) {
-    return this.request(
+    const {data} = this.request(
       "/api/v1/custom-urls/" + encodeURIComponent(path)
     ).catch((e) => catch404(e, {}));
+    return data;
   }
   getAuthorCollection(authorId, params) {
-    return this.request(`/api/v1/authors/${authorId}/collection`, {
+    const {data} = this.request(`/api/v1/authors/${authorId}/collection`, {
       qs: params,
     });
+    return data;
   }
 
   getMenuGroups(params = {}) {
-    return this.request(`/api/v1/menu-groups`, {
+    const {data} =  this.request(`/api/v1/menu-groups`, {
       qs: params,
     });
+    return data;
   }
 }
 
