@@ -33,6 +33,7 @@
     "better-docs": "^1.2.2",
     "eslint": "^7.27.0",
     "gh-pages": "^2.1.1",
+    "husky": "^6.0.0",
     "jest": "^24.7.1",
     "jsdoc": "^3.6.3",
     "onchange": "^4.1.0"
