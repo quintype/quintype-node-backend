@@ -9,7 +9,7 @@ const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require("./base-api");
 const { asyncGate } = require("./async-gate");
 const hash = require("object-hash");
-const querystring = require('querystring');
+const querystring = require("querystring");
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -129,7 +129,7 @@ class Story extends BaseAPI {
 
     return client
       .getStoryBySlug(slug, params)
-      .then(({data}) => this.build(data["story"]));
+      .then(({ data }) => this.build(data["story"]));
   }
 
   /**
@@ -817,9 +817,9 @@ class Client {
    * @returns {Promise<Response>} A promise of the response
    */
 
-   request(path, opts) {
+  request(path, opts) {
     const uri = this.baseUrl + path;
-    let params = Object.assign(
+    let configuration = Object.assign(
       {
         url: uri,
         method: "get",
@@ -827,18 +827,18 @@ class Client {
         gzip: true,
         timeout: 4000,
       },
-      opts,
+      opts
     );
 
-    if(params.qs){
-      params =  Object.assign(params, {params: querystring.stringify(params.qs)});
-      delete params.qs;
+    if (configuration.qs) {
+      configuration = Object.assign(configuration, {
+        qs: configuration.qs,
+      });
+      delete configuration.qs;
     }
 
-    return  axios(params)
-      .then(res => {
-        return res;
-      })
+    return axios(configuration)
+      .then((res) => res)
       .catch((e) => {
         console.error(`Error in API ${uri}: Status ${e.statusCode}`);
         throw e;
@@ -945,7 +945,7 @@ class Client {
 
   updateConfig() {
     return this.request("/api/v1/config").then(
-      ({data}) => (this.config = Config.build(data))
+      ({ data }) => (this.config = Config.build(data))
     );
   }
 
@@ -973,12 +973,12 @@ class Client {
         data: requests,
         headers: {
           "content-type": "application/json",
-        }
+        },
       });
 
       const contentLocation = _.get(response, ["headers", "content-location"]);
 
-      if(!contentLocation){
+      if (!contentLocation) {
         throw new Error(
           `Could Not Convert post bulk to a get, got status ${response.statusCode}`
         );
