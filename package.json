@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-backend-js#readme",
   "dependencies": {
+    "eslint-config-standard": "^16.0.3",
     "lodash": "^4.17.15",
     "object-hash": "^2.0.1",
     "request": "^2.88.0",
@@ -30,9 +31,21 @@
   },
   "devDependencies": {
     "better-docs": "^1.2.2",
+    "eslint": "^7.27.0",
     "gh-pages": "^2.1.1",
     "jest": "^24.7.1",
-    "onchange": "^4.1.0",
-    "jsdoc": "^3.6.3"
+    "jsdoc": "^3.6.3",
+    "onchange": "^4.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run add-copyright-header && lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "npx eslint --fix",
+      "git add"
+    ]
   }
 }
