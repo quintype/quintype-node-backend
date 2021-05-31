@@ -3,15 +3,18 @@
 const rp = require('request-promise');
 const Promise = require('bluebird');
 const _ = require('lodash');
-const {loadNestedCollectionData} = require('./collection-loader');
-const {MenuGroups} = require('./menu-groups');
-const {DEFAULT_DEPTH, DEFAULT_STORY_FIELDS} = require('./constants');
-const {BaseAPI} = require('./base-api');
-const {asyncGate} = require('./async-gate');
+const { loadNestedCollectionData } = require('./collection-loader');
+const { MenuGroups } = require('./menu-groups');
+const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require('./constants');
+const { BaseAPI } = require('./base-api');
+const { asyncGate } = require('./async-gate');
 const hash = require('object-hash');
+const foo = require("test");
+
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
+    console.log("inside")
     acc[key] = f(value, key);
     return acc;
   }, {});
@@ -60,7 +63,7 @@ class Story extends BaseAPI {
    */
   static getStories(client, storyGroup, params) {
     return client
-      .getStories(_.extend({'story-group': storyGroup}, params))
+      .getStories(_.extend({ 'story-group': storyGroup }, params))
       .then((response) =>
         _.map(response['stories'], (story) => this.build(story))
       );
@@ -209,7 +212,7 @@ class Story extends BaseAPI {
     return client
       .getInBulk({
         requests: mapValues(
-          (r) => Object.assign({_type: 'stories'}, r),
+          (r) => Object.assign({ _type: 'stories' }, r),
           requests
         ),
       })
@@ -306,14 +309,14 @@ class Collection extends BaseAPI {
    * @param {number} options.depth The recursion depth to fetch collections. (default: 1)
    * @param {Object} options.storyLimits The limit of stories to fetch by collection template. This defaults to unlimited for templates that are not specified. (ex: {"FourColGrid": 12}) (default: {}).
    * @param {number} options.defaultNestedLimit The default limit of stories to fetch by each collection. (default: 40)
-   * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}). 
+   * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}).
    eg:
     - Home `(Level 1)`
      - Sports Row `(Level 2)` `(template- ThreeColGrid)`
       - Cricket `(Level 3)`
       - Football `(Level 3)`
       - Tennis `(Level 3)`
-      
+
     In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
    * @return {(Promise<Collection|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
@@ -603,7 +606,7 @@ class Config extends BaseAPI {
    *
    */
   memoize(key, f) {
-    this._memoized_data[key] = this._memoized_data[key] || {value: f()};
+    this._memoized_data[key] = this._memoized_data[key] || { value: f() };
     return this._memoized_data[key].value;
   }
 
@@ -866,7 +869,7 @@ class Client {
 
   getStoryBySlug(slug, params) {
     return this.request('/api/v1/stories-by-slug', {
-      qs: _.merge({slug: slug}, params),
+      qs: _.merge({ slug: slug }, params),
     }).catch((e) => catch404(e, {}));
   }
 
@@ -976,7 +979,7 @@ class Client {
 
   getAmpStoryBySlug(slug) {
     return this.request('/api/v1/amp/story', {
-      qs: {slug},
+      qs: { slug },
     });
   }
 
