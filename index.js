@@ -215,9 +215,9 @@ class Story extends BaseAPI {
           requests
         ),
       })
-      .then((response) =>
+      .then(({data}) =>
         BulkResults.build(
-          mapValues((result) => wrapResult(result), response["results"])
+          mapValues((result) => wrapResult(result), data["results"])
         )
       );
   }
@@ -515,7 +515,7 @@ class CustomPath extends BaseAPI {
   static getCustomPathData(client, path) {
     return client
       .getCustomPathData(path.startsWith("/") ? path : "/" + path)
-      .then((response) => response["page"] && this.build(response["page"]));
+      .then(({data}) => data["page"] && this.build(data["page"]));
   }
 }
 CustomPath.upstream = "page";
@@ -733,8 +733,8 @@ class Entity extends BaseAPI {
   getCollections(client, params) {
     return client
       .getCollectionsByEntityId(this.entity.id, params)
-      .then((response) =>
-        response["collections"].map((collection) =>
+      .then(({data}) =>
+        data["collections"].map((collection) =>
           Collection.build(collection)
         )
       );
@@ -1074,7 +1074,7 @@ class AmpConfig extends BaseAPI {
    * @returns {(Promise<AmpConfig>)} A Promise that returns an instance of {@link AmpConfig}
    */
   static getAmpConfig(client) {
-    return client.getAmpConfig().then((config) => config && this.build(config));
+    return client.getAmpConfig().then(({data}) => data && this.build(data));
   }
 }
 AmpConfig.upstream = "ampConfig";
