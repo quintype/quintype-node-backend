@@ -62,8 +62,8 @@ class Story extends BaseAPI {
   static getStories(client, storyGroup, params) {
     return client
       .getStories(_.extend({ "story-group": storyGroup }, params))
-      .then((response) =>
-        _.map(response["stories"], (story) => this.build(story))
+      .then(({ data }) =>
+        _.map(data["stories"], (story) => this.build(story))
       );
   }
 
@@ -83,8 +83,8 @@ class Story extends BaseAPI {
     const sectionId = _.get(this, ["sections", 0, "id"], null);
     return client
       .getRelatedStories(this.id, sectionId)
-      .then((response) =>
-        _.map(response["related-stories"], (story) =>
+      .then(({ data }) =>
+        _.map(data["related-stories"], (story) =>
           this.constructor.build(story)
         )
       );
@@ -146,7 +146,7 @@ class Story extends BaseAPI {
   static getPublicPreviewStory(client, publicPreviewKey) {
     return client
       .getPublicPreviewStory(publicPreviewKey)
-      .then((response) => this.build(response["story"]));
+      .then((data) => this.build(data["story"]));
   }
 
   /**
@@ -182,12 +182,13 @@ class Story extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_search GET ​/api​/v1​/search} API documentation for a list of parameters and fields
    */
   static getSearch(client, params) {
-    return client.getSearch(params).then((response) =>
-      _.merge(response["results"], {
+    return client.getSearch(params).then((response) =>{
+     return _.merge(response["results"], {
         stories: _.map(response["results"]["stories"], (story) =>
           this.build(story)
         ),
       })
+    }
     );
   }
 
@@ -436,7 +437,7 @@ class Author extends BaseAPI {
   static getAuthor(client, authorId) {
     return client
       .getAuthor(authorId)
-      .then((response) => response && this.build(response["author"]));
+      .then(({ data }) => data && this.build(data["author"]));
   }
 
   /**
@@ -832,13 +833,14 @@ class Client {
 
     if (configuration.qs) {
       configuration = Object.assign(configuration, {
-        qs: configuration.qs,
+        params: configuration.qs,
       });
       delete configuration.qs;
     }
 
     return axios(configuration)
-      .then((res) => res)
+      .then((res) => {
+      return res})
       .catch((e) => {
         console.error(`Error in API ${uri}: Status ${e.statusCode}`);
         throw e;
@@ -852,7 +854,7 @@ class Client {
   }
 
   getTags(slug) {
-    return this.request("/api/v1/tags/" + slug);
+    return this.request("/api/v1/tags/" + slug).then(({data}) => data).catch((e) => catch404(e, {}));
   }
 
   getPublicPreviewStory(publicPreviewKey) {
@@ -930,7 +932,7 @@ class Client {
   getAdvancedSearch(params) {
     return this.request("/api/v1/advanced-search", {
       qs: params,
-    });
+    }).then(({data}) => data).catch((e) => catch404(e, {}));
   }
 
   getRelatedStories(storyId = null, sectionId = null) {
