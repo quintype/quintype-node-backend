@@ -1018,6 +1018,30 @@ class Client {
       qs: params,
     });
   }
+
+  getAmpWebengageSw({ licenseCode, isIndiaDataCenter }) {
+    function externalRequest(absoluteUri) {
+      const params = {
+        method: 'GET',
+        uri: absoluteUri,
+        json: true,
+        gzip: true,
+      }
+      return rp(params).catch((e) => {
+        console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+        throw e;
+      });
+    }
+
+    if (!licenseCode) throw new Error("licenseCode is required");
+    return isIndiaDataCenter
+      ? externalRequest(
+          `https://wsdk-files.in.webengage.com/webengage/${licenseCode}/v4.js`
+        )
+      : externalRequest(
+          `https://wsdk-files.webengage.com/webengage/${licenseCode}/v4.js`
+        );
+  }
 }
 
 /**
