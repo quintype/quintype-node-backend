@@ -30,9 +30,33 @@
   },
   "devDependencies": {
     "better-docs": "^1.2.2",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-promise": "^4.1.1",
     "gh-pages": "^2.1.1",
+    "husky": "^4.3.8",
     "jest": "^24.7.1",
+    "jsdoc": "^3.6.3",
     "onchange": "^4.1.0",
-    "jsdoc": "^3.6.3"
+    "prettier": "^1.17.0",
+    "lint-staged": "^8.1.5",
+    "babel-eslint": "^10.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "npx eslint --fix",
+      "git add"
+    ]
   }
 }
