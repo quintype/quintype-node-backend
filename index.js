@@ -288,13 +288,13 @@ class Collection extends BaseAPI {
    * @param {number} options.defaultNestedLimit The default limit of stories to fetch by each collection. (default: 40)
    * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}).
    eg:
-    - Home `(Level 1)`
-     - Sports Row `(Level 2)` `(template- ThreeColGrid)`
-      - Cricket `(Level 3)`
-      - Football `(Level 3)`
-      - Tennis `(Level 3)`
+   - Home `(Level 1)`
+   - Sports Row `(Level 2)` `(template- ThreeColGrid)`
+   - Cricket `(Level 3)`
+   - Football `(Level 3)`
+   - Tennis `(Level 3)`
 
-    In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
+   In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
    * @return {(Promise<Collection|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
@@ -774,8 +774,7 @@ class Client {
         method: "get",
         json: true,
         gzip: true,
-        timeout: DEFAULT_REQUEST_TIMEOUT,
-        transformResponse: [data => ({ ...data })]
+        timeout: DEFAULT_REQUEST_TIMEOUT
       },
       ...opts
     };
@@ -788,9 +787,12 @@ class Client {
     }
 
     return axios(configuration)
-      .then(res => res)
+      .then(res => ({
+        ...res.data,
+        ...{ headers: res.headers, statusCode: res.status, redirectCount: res.request._redirectable._redirectCount }
+      }))
       .catch(e => {
-        console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+        console.error(`Error in API ${uri}: Status ${e.status}`);
         throw e;
       });
   }
@@ -893,7 +895,7 @@ class Client {
 
   postComments(params, authToken) {
     return this.request("/api/v1/comments", {
-      method: "POST",
+      method: "post",
       body: params,
       headers: {
         "X-QT-AUTH": authToken,
@@ -911,16 +913,15 @@ class Client {
 
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
-        method: "POST",
-        body: requests,
+        method: "post",
+        data: requests,
         headers: {
           "content-type": "application/json"
-        },
-        simple: false,
-        resolveWithFullResponse: true
+        }
       });
-      if (response.statusCode === 303 && response.caseless.get("Location")) {
-        return response.caseless.get("Location");
+
+      if (response.statusCode === 200 && response.redirectCount > 0) {
+        return response.headers["content-location"];
       } else {
         throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
       }
