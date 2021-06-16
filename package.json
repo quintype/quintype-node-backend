@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "1.25.4-axios-transform.0",
+  "version": "1.25.4-axios-transform.1",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
