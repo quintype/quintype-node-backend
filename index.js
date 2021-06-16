@@ -780,9 +780,12 @@ class Client {
     };
 
     if (configuration.qs) {
-      configuration = Object.assign(configuration, {
-        params: configuration.qs
-      });
+      configuration = {
+        ...configuration,
+        ...{
+          params: configuration.qs
+        }
+      };
       delete configuration.qs;
     }
 
