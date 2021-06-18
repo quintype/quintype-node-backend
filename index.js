@@ -288,11 +288,11 @@ class Collection extends BaseAPI {
    * @param {number} options.defaultNestedLimit The default limit of stories to fetch by each collection. (default: 40)
    * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}).
    eg:
-   - Home `(Level 1)`
-   - Sports Row `(Level 2)` `(template- ThreeColGrid)`
-   - Cricket `(Level 3)`
-   - Football `(Level 3)`
-   - Tennis `(Level 3)`
+    - Home `(Level 1)`
+      - Sports Row `(Level 2)` `(template- ThreeColGrid)`
+        - Cricket `(Level 3)`
+        - Football `(Level 3)`
+        - Tennis `(Level 3)`
 
    In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
    * @return {(Promise<Collection|null>)}
