@@ -768,15 +768,18 @@ class Client {
    */
   request(path, opts) {
     const uri = this.baseUrl + path;
+    const abort = axios.CancelToken.source();
+    const cancelTimeout = DEFAULT_REQUEST_TIMEOUT + 500;
+    const timeoutID = setTimeout(() => abort.cancel(`Timeout of ${cancelTimeout}ms.`), cancelTimeout);
     let configuration = {
       ...{
         url: uri,
         method: "get",
         json: true,
-        gzip: true,
-        timeout: DEFAULT_REQUEST_TIMEOUT
+        gzip: true
       },
-      ...opts
+      ...opts,
+      ...{ timeout: DEFAULT_REQUEST_TIMEOUT, cancelToken: abort.token }
     };
 
     if (configuration.qs) {
@@ -790,10 +793,13 @@ class Client {
     }
 
     return axios(configuration)
-      .then(res => ({
-        ...res.data,
-        ...{ headers: res.headers, statusCode: res.status, redirectCount: res.request._redirectable._redirectCount }
-      }))
+      .then(res => {
+        clearTimeout(timeoutID);
+        return {
+          ...res.data,
+          ...{ headers: res.headers, statusCode: res.status, redirectCount: res.request._redirectable._redirectCount }
+        };
+      })
       .catch(e => {
         console.error(`Error in API ${uri}: Status ${e.status}`);
         throw e;
