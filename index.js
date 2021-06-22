@@ -716,7 +716,8 @@ class Url extends BaseAPI {
 Url.upstream = "url";
 
 function catch404(e, defaultValue) {
-  if (e && e.statusCode == 404) return defaultValue;
+  const statusCode = _.get(e, ["response", "status"]);
+  if (statusCode === 404) return defaultValue;
   throw e;
 }
 
