@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "1.25.3",
+  "version": "1.26.0-axios-transform.3",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
@@ -24,10 +24,10 @@
   },
   "homepage": "https://github.com/quintype/quintype-backend-js#readme",
   "dependencies": {
+    "axios": "^0.21.1",
+    "bluebird": "^3.7.2",
     "lodash": "^4.17.15",
-    "object-hash": "^2.0.1",
-    "request": "^2.88.0",
-    "request-promise": "^4.1.1"
+    "object-hash": "^2.0.1"
   },
   "devDependencies": {
     "better-docs": "^1.2.2",
