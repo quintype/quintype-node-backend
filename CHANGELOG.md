@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2](https://github.com/quintype/quintype-backend-js/compare/v2.0.1...v2.0.2) (2021-07-22)
+
+
+### Bug Fixes
+
+* **timeout:** Increase dev timeout to 50s ([3b217b2](https://github.com/quintype/quintype-backend-js/commit/3b217b2fac6efe989844d0545392720a41964ac4))
+
 ### [2.0.1](https://github.com/quintype/quintype-backend-js/compare/v1.26.0...v2.0.1) (2021-07-22)
 
 ## [1.26.0](https://github.com/quintype/quintype-backend-js/compare/v1.25.3...v1.26.0) (2021-07-22)
