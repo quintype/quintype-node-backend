@@ -1,6 +1,6 @@
 "use strict";
 
-const rp = require("request-promise");
+const axios = require("axios");
 const Promise = require("bluebird");
 const _ = require("lodash");
 const { loadNestedCollectionData } = require("./collection-loader");
@@ -9,6 +9,7 @@ const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require("./base-api");
 const { asyncGate } = require("./async-gate");
 const hash = require("object-hash");
+const { DEFAULT_REQUEST_TIMEOUT } = require("./constants");
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -285,15 +286,15 @@ class Collection extends BaseAPI {
    * @param {number} options.depth The recursion depth to fetch collections. (default: 1)
    * @param {Object} options.storyLimits The limit of stories to fetch by collection template. This defaults to unlimited for templates that are not specified. (ex: {"FourColGrid": 12}) (default: {}).
    * @param {number} options.defaultNestedLimit The default limit of stories to fetch by each collection. (default: 40)
-   * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}). 
+   * @param {Object} options.nestedCollectionLimit The number of stories or collection to fetch from each nested collection. (Ex: nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}).
    eg:
     - Home `(Level 1)`
-     - Sports Row `(Level 2)` `(template- ThreeColGrid)`
-      - Cricket `(Level 3)`
-      - Football `(Level 3)`
-      - Tennis `(Level 3)`
-      
-    In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
+      - Sports Row `(Level 2)` `(template- ThreeColGrid)`
+        - Cricket `(Level 3)`
+        - Football `(Level 3)`
+        - Tennis `(Level 3)`
+
+   In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
    * @return {(Promise<Collection|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
@@ -715,7 +716,8 @@ class Url extends BaseAPI {
 Url.upstream = "url";
 
 function catch404(e, defaultValue) {
-  if (e && e.statusCode == 404) return defaultValue;
+  const statusCode = _.get(e, ["response", "status"]);
+  if (statusCode === 404) return defaultValue;
   throw e;
 }
 
@@ -767,19 +769,57 @@ class Client {
    */
   request(path, opts) {
     const uri = this.baseUrl + path;
-    const params = Object.assign(
-      {
-        method: "GET",
-        uri: uri,
+    const abort = axios.CancelToken.source();
+    const cancelTimeout = DEFAULT_REQUEST_TIMEOUT + 500;
+    const timeoutID = setTimeout(() => abort.cancel(`Timeout of ${cancelTimeout}ms.`), cancelTimeout);
+    let configuration = {
+      ...{
+        url: uri,
+        method: "get",
         json: true,
         gzip: true
       },
-      opts
-    );
-    return rp(params).catch(e => {
-      console.error(`Error in API ${uri}: Status ${e.statusCode}`);
-      throw e;
-    });
+      ...opts,
+      ...{ timeout: DEFAULT_REQUEST_TIMEOUT, cancelToken: abort.token, validateStatus: status => status < 500 }
+    };
+
+    if (configuration.qs) {
+      configuration = {
+        ...configuration,
+        ...{
+          params: configuration.qs
+        }
+      };
+      delete configuration.qs;
+    }
+
+    return axios(configuration)
+      .then(res => {
+        clearTimeout(timeoutID);
+        return {
+          ...res.data,
+          ...{ headers: res.headers, statusCode: res.status, redirectCount: res.request._redirectable._redirectCount }
+        };
+      })
+      .catch(error => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+        console.log(error.config);
+        throw error;
+      });
   }
 
   getFromBulkApiManager(slug, params) {
@@ -880,7 +920,7 @@ class Client {
 
   postComments(params, authToken) {
     return this.request("/api/v1/comments", {
-      method: "POST",
+      method: "post",
       body: params,
       headers: {
         "X-QT-AUTH": authToken,
@@ -898,16 +938,15 @@ class Client {
 
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
-        method: "POST",
-        body: requests,
+        method: "post",
+        data: requests,
         headers: {
           "content-type": "application/json"
-        },
-        simple: false,
-        resolveWithFullResponse: true
+        }
       });
-      if (response.statusCode === 303 && response.caseless.get("Location")) {
-        return response.caseless.get("Location");
+
+      if (response.statusCode === 200 && response.redirectCount > 0) {
+        return response.headers["content-location"];
       } else {
         throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
       }
