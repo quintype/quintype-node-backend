@@ -38,7 +38,7 @@ function updateItemsInPlace(
   client,
   depth,
   items,
-  {storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
+  {storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit, collectionOfCollectionsIndex = []}
 ) {
   const collections = items.filter((item) => item && item.type == 'collection');
 
@@ -73,25 +73,34 @@ function updateItemsInPlace(
       }
     });
 
-    return updateItemsInPlace(
-      client,
-      depth - 1,
-      flatMap(collections, (collection) => collection.items),
-      {storyFields, storyLimits, defaultNestedLimit}
-    );
+    if (collectionOfCollectionsIndex.length) {
+      const updatedCollections = collections
+        .filter((_, index) => collectionOfCollectionsIndex.includes(index))
+        .map(childCollection => {
+          return updateItemsInPlace(client, 1, childCollection.items, {
+            storyFields,
+            storyLimits,
+            defaultNestedLimit
+          });
+        });
+      return Promise.all(updatedCollections).then((collections) => collections);
+    } else {
+    return updateItemsInPlace(client, depth - 1, flatMap(collections, collection => collection.items), {storyFields, storyLimits, defaultNestedLimit})
+    }
   });
 }
 
 function loadNestedCollectionData(
   client,
   collection,
-  {depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit}
+  {depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit, collectionOfCollectionsIndex}
 ) {
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
     storyLimits,
     defaultNestedLimit,
     nestedCollectionLimit,
+    collectionOfCollectionsIndex
   }).then(() => collection);
 }
 

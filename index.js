@@ -299,7 +299,7 @@ class Collection extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
   static getCollectionBySlug(client, slug, params, options = {}) {
-    const { depth = DEFAULT_DEPTH, storyLimits = {}, defaultNestedLimit = null, nestedCollectionLimit = {} } = options;
+    const { depth = DEFAULT_DEPTH, storyLimits = {}, defaultNestedLimit = null, nestedCollectionLimit = {}, collectionOfCollectionsIndex = [] } = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
 
     if (!slug) {
@@ -317,7 +317,8 @@ class Collection extends BaseAPI {
             storyFields,
             storyLimits,
             defaultNestedLimit,
-            nestedCollectionLimit
+            nestedCollectionLimit,
+            collectionOfCollectionsIndex
           })
         );
       })
