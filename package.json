@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "2.0.2",
+  "version": "2.0.3-home-collection-index.0",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
