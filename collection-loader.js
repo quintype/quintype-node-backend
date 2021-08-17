@@ -32,7 +32,7 @@ function updateItemsInPlace(
   client,
   depth,
   items,
-  { storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit, collectionOfCollectionsIndex = [] }
+  { storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit, collectionOfCollectionsIndexes = [] }
 ) {
   const collections = items.filter(item => item && item.type == "collection");
 
@@ -64,9 +64,9 @@ function updateItemsInPlace(
       }
     });
 
-    if (collectionOfCollectionsIndex.length) {
+    if (collectionOfCollectionsIndexes.length) {
       const updatedCollections = collections
-        .filter((_, index) => collectionOfCollectionsIndex.includes(index))
+        .filter((_, index) => collectionOfCollectionsIndexes.includes(index))
         .map(childCollection => {
           return updateItemsInPlace(client, 1, childCollection.items, {
             storyFields,
@@ -88,14 +88,14 @@ function updateItemsInPlace(
 function loadNestedCollectionData(
   client,
   collection,
-  { depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit, collectionOfCollectionsIndex }
+  { depth, storyFields, storyLimits, defaultNestedLimit, nestedCollectionLimit, collectionOfCollectionsIndexes }
 ) {
   return updateItemsInPlace(client, depth, collection.items, {
     storyFields,
     storyLimits,
     defaultNestedLimit,
     nestedCollectionLimit,
-    collectionOfCollectionsIndex
+    collectionOfCollectionsIndexes
   }).then(() => collection);
 }
 
