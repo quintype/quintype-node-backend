@@ -1,5 +1,5 @@
 const { Collection } = require("./index");
-const _ = require("lodash");
+const get = require("lodash/get");
 
 function getClient({
   getCollectionBySlug = slug => {
@@ -59,7 +59,7 @@ function request(slug, params) {
 }
 
 function catch404(e, defaultValue) {
-  const statusCode = _.get(e, ["response", "status"]);
+  const statusCode = get(e, ["response", "status"]);
   if (statusCode === 404) return Promise.resolve(defaultValue);
   throw e;
 }
