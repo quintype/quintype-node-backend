@@ -79,7 +79,7 @@ function getClientWhenCollectionDoesNotExist({
 }
 
 describe("Collection", function() {
-  it("foo", async function() {
+  it("Returns null if collection does not exist", async function() {
     const homeCollectionData = await Collection.getCollectionBySlug(
       getClientWhenCollectionDoesNotExist(),
       "hot-news",
