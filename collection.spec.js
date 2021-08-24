@@ -54,34 +54,25 @@ function getClient({
   return clientObj;
 }
 
-function request(slug, params) {
-  throw { response: { status: 404 } };
-}
-
 function catch404(e, defaultValue) {
   const statusCode = get(e, ["response", "status"]);
   if (statusCode === 404) return Promise.resolve(defaultValue);
   throw e;
 }
 
-function getClientWhenCollectionDoesNotExist({
-  getCollectionBySlug = (slug, params) => {
+const clientThatCallsCollectionThatDoesntExist = getClient({
+  getCollectionBySlug: () => {
     try {
-      return request("/api/v1/collections/" + slug, {
-        qs: params
-      });
+      throw { response: { status: 404 } };
     } catch (e) {
       return catch404(e, null);
     }
   }
-} = {}) {
-  return { getCollectionBySlug };
-}
-
+});
 describe("Collection", function() {
   it("Returns null if collection does not exist", async function() {
     const homeCollectionData = await Collection.getCollectionBySlug(
-      getClientWhenCollectionDoesNotExist(),
+      clientThatCallsCollectionThatDoesntExist,
       "hot-news",
       {},
       { depth: 1, defaultNestedLimit: 3 }
