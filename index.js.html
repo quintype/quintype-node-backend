@@ -873,6 +873,9 @@ class Client {
     return axios(configuration)
       .then(res => {
         clearTimeout(timeoutID);
+
+        if (res.status === 404) throw { response: { status: res.status } };
+
         return {
           ...res.data,
           ...{ headers: res.headers, statusCode: res.status, redirectCount: res.request._redirectable._redirectCount }
