@@ -294,14 +294,16 @@ class Collection extends BaseAPI {
         - Football `(Level 3)`
         - Tennis `(Level 3)`
    In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
-   * @param {Object} options.collectionOfCollectionsIndexes It accepts array of indexes(child collection's position) to fetch collection of collection of items when the depth is 1. (Ex: collectionOfCollectionsIndexes: [0, 4]).
+   * @param {Object} options.collectionOfCollectionsIndexes It accepts array of indexes(collection's position) to fetch collection of collection of items when the depth is 1. (Ex: collectionOfCollectionsIndexes: [0, 4]).
   eg:
     - Home `(Level 1)`
       - Sports Row `(Level 2)`
         - Cricket `(Level 3)`
         - Football `(Level 3)`
-        - Tennis `(Level 3)`
-    In the above example if we need to fetch the stories from `Cricket` and `Tennis` we need to pass collectionOfCollectionsIndexes : [0, 2], where 0 is the position of collection Cricket and 2 is the position of collection Tennis
+      - Entertainment Row `(Level 2)`
+        - Movie `(Level 3)`
+        - Song `(Level 3)`
+    In the above example if we need to fetch the stories from `Sports Row` child collection we need to pass collectionOfCollectionsIndexes : [0], where 0 is the position of collection Sports Row and stories from Cricket and Football will be fetched
    * @return {(Promise<Collection|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
