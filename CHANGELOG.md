@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/quintype/quintype-backend-js/compare/v2.0.3...v2.1.0) (2021-09-08)
+
+
+### Features
+
+* support collection of collection of stories data based on index ([#67](https://github.com/quintype/quintype-backend-js/issues/67)) ([5caaf7b](https://github.com/quintype/quintype-backend-js/commit/5caaf7bcf901a5d368fc9ca46916ef0964b430ef))
+
 ### [2.0.3](https://github.com/quintype/quintype-backend-js/compare/v1.25.3...v2.0.3) (2021-08-25)
 
 
