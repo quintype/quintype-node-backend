@@ -512,8 +512,40 @@ eg:
 - Sports Row <code>(Level 2)</code> <code>(template- ThreeColGrid)</code>
 - Cricket <code>(Level 3)</code>
 - Football <code>(Level 3)</code>
-- Tennis <code>(Level 3)</code></p>
-<p>In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)</p></td>
+- Tennis <code>(Level 3)</code>
+In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>collectionOfCollectionsIndexes</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>It accepts array of indexes(collection's position) to fetch collection of collection of items when the depth is 1. (Ex: collectionOfCollectionsIndexes: [0, 4]).
+eg:
+- Home <code>(Level 1)</code>
+- Sports Row <code>(Level 2)</code>
+- Cricket <code>(Level 3)</code>
+- Football <code>(Level 3)</code>
+- Entertainment Row <code>(Level 2)</code>
+- Movie <code>(Level 3)</code>
+- Song <code>(Level 3)</code>
+In the above example if we need to fetch the stories from <code>Sports Row</code> child collection we need to pass collectionOfCollectionsIndexes : [0], where 0 is the position of collection Sports Row and stories from Cricket and Football will be fetched</p></td>
 </tr>
 
   
@@ -569,7 +601,7 @@ eg:
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line301">line 301</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line310">line 310</a>
             </span>
         </p>
     
