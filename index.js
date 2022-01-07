@@ -313,7 +313,8 @@ class Collection extends BaseAPI {
       storyLimits = {},
       defaultNestedLimit = null,
       nestedCollectionLimit = {},
-      collectionOfCollectionsIndexes = []
+      collectionOfCollectionsIndexes = [],
+      customLayouts = []
     } = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
 
@@ -333,7 +334,8 @@ class Collection extends BaseAPI {
             storyLimits,
             defaultNestedLimit,
             nestedCollectionLimit,
-            collectionOfCollectionsIndexes
+            collectionOfCollectionsIndexes,
+            customLayouts
           })
         );
       })
