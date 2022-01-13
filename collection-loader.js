@@ -69,11 +69,16 @@ function updateItemsInPlace(
         []
       );
       collection.items = get(collectionSlugToCollection, [slugWithIndex, "items"], []);
-
       if (nestedCollectionLimit && collection.items) {
+        const customLayout = customLayouts[index];
         collection.items.forEach((item, index) => {
-          if (item.type === "collection" && nestedCollectionLimit[get(collection, ["associated-metadata", "layout"])]) {
+          if (
+            item.type === "collection" &&
+            (nestedCollectionLimit[customLayout] ||
+              nestedCollectionLimit[get(collection, ["associated-metadata", "layout"])])
+          ) {
             item.childCollectionLimit =
+              nestedCollectionLimit[customLayout][index] ||
               nestedCollectionLimit[get(collection, ["associated-metadata", "layout"])][index];
           }
         });
