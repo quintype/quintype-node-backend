@@ -8,7 +8,7 @@ function loadCollectionItems(
 ) {
   const bulkRequestBody = collections.reduce((acc, collection, index) => {
     let limit;
-    if (customLayouts.length && customLayouts[index]) {
+    if (customLayouts[index]) {
       limit = storyLimits[customLayouts[index]];
     } else {
       limit = storyLimits[get(collection, ["associated-metadata", "layout"])];
@@ -72,14 +72,13 @@ function updateItemsInPlace(
       if (nestedCollectionLimit && collection.items) {
         const customLayout = customLayouts[index];
         collection.items.forEach((item, index) => {
-          if (
-            item.type === "collection" &&
-            (nestedCollectionLimit[customLayout] ||
-              nestedCollectionLimit[get(collection, ["associated-metadata", "layout"])])
-          ) {
-            item.childCollectionLimit =
-              nestedCollectionLimit[customLayout][index] ||
-              nestedCollectionLimit[get(collection, ["associated-metadata", "layout"])][index];
+          if (item.type === "collection") {
+            if (customLayout && nestedCollectionLimit[customLayout]) {
+              item.childCollectionLimit = nestedCollectionLimit[customLayout][index];
+            } else if (nestedCollectionLimit[get(collection, ["associated-metadata", "layout"])]) {
+              item.childCollectionLimit =
+                nestedCollectionLimit[get(collection, ["associated-metadata", "layout"])][index];
+            }
           }
         });
       }

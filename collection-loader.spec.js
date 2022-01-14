@@ -162,4 +162,55 @@ describe("Collection Loader", function() {
     });
     expect(collectionDetails.items[0].items.length).toBe(1);
   });
+
+  it("should load child collection items w.r.t storylimit and nestedCollectionLimit when customlayouts is passed", async () => {
+    const collection = {
+      slug: "dumbledore-army",
+      name: "Dumbledore Army",
+      "data-source": "automated",
+      id: 147,
+      items: [
+        {
+          id: 147009,
+          type: "collection",
+          name: "Potter More",
+          slug: "potter-more"
+        }
+      ],
+      "collection-cache-keys": ["c/1088/147"]
+    };
+    let client = {
+      getInBulk: jest.fn().mockResolvedValue({
+        results: {
+          "potter-more-0": {
+            "updated-at": 1619675928521,
+            "collection-cache-keys": ["c/1088/147009", "e/1088/195845", "e/1088/198144"],
+            slug: "potter-more",
+            name: "potter more",
+            "data-source": "automated",
+            automated: true,
+            template: "default",
+            summary: "boy who lived",
+            id: 147009,
+            items: [
+              {
+                id: "353b4f32-5fae-4165-9b67-50e0c765789",
+                type: "story"
+              }
+            ],
+            "created-at": 1619029886576
+          }
+        }
+      })
+    };
+    let collectionData = await loadNestedCollectionData(client, collection, {
+      depth: 2,
+      storyLimits: { ArrowOneColGrid: 1 },
+      defaultNestedLimit: 1,
+      nestedCollectionLimit: { ArrowOneColGrid: [1] },
+      customLayouts: ["ArrowOneColGrid"]
+    });
+    expect(collectionData.items.length).toBe(1);
+    expect(collectionData.items[0].items.length).toBe(1);
+  });
 });
