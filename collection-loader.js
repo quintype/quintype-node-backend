@@ -7,12 +7,11 @@ function loadCollectionItems(
   { storyFields, storyLimits, defaultNestedLimit, customLayouts = [] }
 ) {
   const bulkRequestBody = collections.reduce((acc, collection, index) => {
-    let limit;
+    let limit = storyLimits[get(collection, ["associated-metadata", "layout"])];
     if (customLayouts[index]) {
       limit = storyLimits[customLayouts[index]];
-    } else {
-      limit = storyLimits[get(collection, ["associated-metadata", "layout"])];
     }
+
     if (!limit && get(collection, ["childCollectionLimit"])) {
       limit = get(collection, ["childCollectionLimit"]);
     }
