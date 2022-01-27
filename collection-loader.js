@@ -4,12 +4,12 @@ const flatMap = require("lodash/flatMap");
 function loadCollectionItems(
   client,
   collections,
-  { storyFields, storyLimits, defaultNestedLimit, customLayouts = [] }
+  { storyFields, storyLimits = {}, defaultNestedLimit, customLayoutsStoryLimit = [] }
 ) {
   const bulkRequestBody = collections.reduce((acc, collection, index) => {
-    let limit = storyLimits[get(collection, ["associated-metadata", "layout"])];
-    if (customLayouts[index]) {
-      limit = storyLimits[customLayouts[index]];
+    let limit = storyLimits[get(collection, ["associated-metadata", "layout"], "")];
+    if (customLayoutsStoryLimit[index]) {
+      [limit] = Object.values(customLayoutsStoryLimit[index]);
     }
 
     if (!limit && get(collection, ["childCollectionLimit"])) {
@@ -45,7 +45,7 @@ function updateItemsInPlace(
     defaultNestedLimit,
     nestedCollectionLimit,
     collectionOfCollectionsIndexes = [],
-    customLayouts = []
+    customLayoutsStoryLimit = []
   }
 ) {
   const collections = items.filter(item => item && item.type == "collection");
@@ -56,7 +56,7 @@ function updateItemsInPlace(
     storyFields,
     storyLimits,
     defaultNestedLimit,
-    customLayouts
+    customLayoutsStoryLimit
   }).then(collectionSlugToCollection => {
     collections.forEach((collection, index) => {
       const slugWithIndex = `${collection.slug}-${index}`;
@@ -69,7 +69,10 @@ function updateItemsInPlace(
       );
       collection.items = get(collectionSlugToCollection, [slugWithIndex, "items"], []);
       if (nestedCollectionLimit && collection.items) {
-        const customLayout = customLayouts[index];
+        let customLayout;
+        if (customLayoutsStoryLimit[index]) {
+          [customLayout] = Object.keys(customLayoutsStoryLimit[index]);
+        }
         collection.items.forEach((item, index) => {
           if (item.type === "collection") {
             if (customLayout && nestedCollectionLimit[customLayout]) {
@@ -114,7 +117,7 @@ function loadNestedCollectionData(
     defaultNestedLimit,
     nestedCollectionLimit,
     collectionOfCollectionsIndexes,
-    customLayouts
+    customLayoutsStoryLimit
   }
 ) {
   return updateItemsInPlace(client, depth, collection.items, {
@@ -123,7 +126,7 @@ function loadNestedCollectionData(
     defaultNestedLimit,
     nestedCollectionLimit,
     collectionOfCollectionsIndexes,
-    customLayouts
+    customLayoutsStoryLimit
   }).then(() => collection);
 }
 
