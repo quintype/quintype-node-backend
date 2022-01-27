@@ -140,7 +140,7 @@ describe("Collection", function() {
       expect(homeCollectionData.collection.items[0].items[3].items.length).toBe(4);
     });
   });
-  describe("Returns Home Collection based on customLayoutsStoryLimit", function() {
+  describe("Returns Home Collection based on customLayouts", function() {
     it("Returns home-collection with custom-layout's storylimit", async function() {
       const homeCollectionData = await Collection.getCollectionBySlug(
         getClient(),
@@ -148,7 +148,7 @@ describe("Collection", function() {
         {},
         {
           depth: 1,
-          customLayoutsStoryLimit: [{ ArrowThreeColGrid: 6 }]
+          customLayouts: [{ layout: "ArrowThreeColGrid", storyLimit: 6 }]
         }
       );
       expect(homeCollectionData.collection.items[0].items.length).toBe(6);
@@ -161,8 +161,7 @@ describe("Collection", function() {
         {
           depth: 1,
           collectionOfCollectionsIndexes: [0],
-          nestedCollectionLimit: { ArrowFourColTwelveStories: [3, 3, 3] },
-          customLayoutsStoryLimit: [{ ArrowFourColTwelveStories: 4 }]
+          customLayouts: [{ layout: "ArrowFourColTwelveStories", storyLimit: 4, nestedCollectionLimit: [3, 3, 3] }]
         }
       );
       expect(homeCollectionData.collection.items[0].items.length).toBe(4);

@@ -4,12 +4,13 @@ const flatMap = require("lodash/flatMap");
 function loadCollectionItems(
   client,
   collections,
-  { storyFields, storyLimits = {}, defaultNestedLimit, customLayoutsStoryLimit = [] }
+  { storyFields, storyLimits = {}, defaultNestedLimit, customLayouts = [] }
 ) {
   const bulkRequestBody = collections.reduce((acc, collection, index) => {
     let limit = storyLimits[get(collection, ["associated-metadata", "layout"], "")];
-    if (customLayoutsStoryLimit[index]) {
-      [limit] = Object.values(customLayoutsStoryLimit[index]);
+    const customLayout = get(customLayouts, [index]);
+    if (customLayout) {
+      limit = get(customLayout, ["storyLimit"]);
     }
 
     if (!limit && get(collection, ["childCollectionLimit"])) {
@@ -45,7 +46,7 @@ function updateItemsInPlace(
     defaultNestedLimit,
     nestedCollectionLimit,
     collectionOfCollectionsIndexes = [],
-    customLayoutsStoryLimit = []
+    customLayouts = []
   }
 ) {
   const collections = items.filter(item => item && item.type == "collection");
@@ -56,7 +57,7 @@ function updateItemsInPlace(
     storyFields,
     storyLimits,
     defaultNestedLimit,
-    customLayoutsStoryLimit
+    customLayouts
   }).then(collectionSlugToCollection => {
     collections.forEach((collection, index) => {
       const slugWithIndex = `${collection.slug}-${index}`;
@@ -69,14 +70,11 @@ function updateItemsInPlace(
       );
       collection.items = get(collectionSlugToCollection, [slugWithIndex, "items"], []);
       if (nestedCollectionLimit && collection.items) {
-        let customLayout;
-        if (customLayoutsStoryLimit[index]) {
-          [customLayout] = Object.keys(customLayoutsStoryLimit[index]);
-        }
+        const customLayout = get(customLayouts, [index]);
         collection.items.forEach((item, index) => {
           if (item.type === "collection") {
-            if (customLayout && nestedCollectionLimit[customLayout]) {
-              item.childCollectionLimit = nestedCollectionLimit[customLayout][index];
+            if (customLayout && customLayout.nestedCollectionLimit) {
+              item.childCollectionLimit = get(customLayout, ["nestedCollectionLimit", index]);
             } else if (nestedCollectionLimit[get(collection, ["associated-metadata", "layout"])]) {
               item.childCollectionLimit =
                 nestedCollectionLimit[get(collection, ["associated-metadata", "layout"])][index];
@@ -117,7 +115,7 @@ function loadNestedCollectionData(
     defaultNestedLimit,
     nestedCollectionLimit,
     collectionOfCollectionsIndexes,
-    customLayoutsStoryLimit
+    customLayouts
   }
 ) {
   return updateItemsInPlace(client, depth, collection.items, {
@@ -126,7 +124,7 @@ function loadNestedCollectionData(
     defaultNestedLimit,
     nestedCollectionLimit,
     collectionOfCollectionsIndexes,
-    customLayoutsStoryLimit
+    customLayouts
   }).then(() => collection);
 }
 

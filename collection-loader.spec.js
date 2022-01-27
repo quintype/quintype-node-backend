@@ -163,7 +163,7 @@ describe("Collection Loader", function() {
     expect(collectionDetails.items[0].items.length).toBe(1);
   });
 
-  it("should load child collection items w.r.t storylimit and nestedCollectionLimit when customLayoutsStoryLimit is passed", async () => {
+  it("should load child collection items w.r.t storylimit and nestedCollectionLimit when customLayouts is passed", async () => {
     const collection = {
       slug: "dumbledore-army",
       name: "Dumbledore Army",
@@ -206,8 +206,7 @@ describe("Collection Loader", function() {
     let collectionData = await loadNestedCollectionData(client, collection, {
       depth: 2,
       defaultNestedLimit: 1,
-      nestedCollectionLimit: { ArrowOneColGrid: [1] },
-      customLayoutsStoryLimit: [{ ArrowOneColGrid: 1 }]
+      customLayouts: [{ layout: "ArrowOneColGrid", storyLimit: 1, nestedCollectionLimit: [1] }]
     });
     expect(collectionData.items.length).toBe(1);
     expect(collectionData.items[0].items.length).toBe(1);
