@@ -304,6 +304,7 @@ class Collection extends BaseAPI {
         - Movie `(Level 3)`
         - Song `(Level 3)`
     In the above example if we need to fetch the stories from `Sports Row` child collection we need to pass collectionOfCollectionsIndexes : [0], where 0 is the position of collection Sports Row and stories from Cricket and Football will be fetched
+   * @param {Object} options.customLayouts It accepts an array of objects to fetch the custom storyLimit and custom nestedCollectionLimit of custom layouts. (Ex: customLayouts: [{layout: "ArrowThreeColGrid", storyLimit: 9}, {layout: "ArrowTwoColTenStories", storyLimit: 2, nestedCollectionLimit: [5,5]}]).
    * @return {(Promise<Collection|null>)}
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
@@ -313,7 +314,8 @@ class Collection extends BaseAPI {
       storyLimits = {},
       defaultNestedLimit = null,
       nestedCollectionLimit = {},
-      collectionOfCollectionsIndexes = []
+      collectionOfCollectionsIndexes = [],
+      customLayouts = []
     } = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
 
@@ -333,7 +335,8 @@ class Collection extends BaseAPI {
             storyLimits,
             defaultNestedLimit,
             nestedCollectionLimit,
-            collectionOfCollectionsIndexes
+            collectionOfCollectionsIndexes,
+            customLayouts
           })
         );
       })

@@ -140,4 +140,34 @@ describe("Collection", function() {
       expect(homeCollectionData.collection.items[0].items[3].items.length).toBe(4);
     });
   });
+  describe("Returns Home Collection based on customLayouts", function() {
+    it("Returns home-collection with custom-layout's storylimit", async function() {
+      const homeCollectionData = await Collection.getCollectionBySlug(
+        getClient(),
+        "home",
+        {},
+        {
+          depth: 1,
+          customLayouts: [{ layout: "ArrowThreeColGrid", storyLimit: 6 }]
+        }
+      );
+      expect(homeCollectionData.collection.items[0].items.length).toBe(6);
+    });
+    it("Returns home-collection with custom-layout's nestedCollectionLimit", async function() {
+      const homeCollectionData = await Collection.getCollectionBySlug(
+        getClient(),
+        "home",
+        {},
+        {
+          depth: 1,
+          collectionOfCollectionsIndexes: [0],
+          customLayouts: [{ layout: "ArrowFourColTwelveStories", storyLimit: 4, nestedCollectionLimit: [3, 3, 3] }]
+        }
+      );
+      expect(homeCollectionData.collection.items[0].items.length).toBe(4);
+      expect(homeCollectionData.collection.items[0].items[0].items.length).toBe(3);
+      expect(homeCollectionData.collection.items[0].items[1].items.length).toBe(3);
+      expect(homeCollectionData.collection.items[0].items[2].items.length).toBe(3);
+    });
+  });
 });
