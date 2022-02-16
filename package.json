@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "2.2.0",
+  "version": "2.2.1-socket-timeout.0",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
