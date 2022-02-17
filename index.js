@@ -1,5 +1,6 @@
 "use strict";
 
+const rp = require("request-promise");
 const axios = require("axios");
 const Promise = require("bluebird");
 const _ = require("lodash");
@@ -787,6 +788,13 @@ class Client {
    * @returns {Promise<Response>} A promise of the response
    */
   request(path, opts) {
+    if (opts.useAxios) {
+      return this.axiosRequest(path, opts);
+    }
+    return this.nativeRequest(path, opts);
+  }
+
+  axiosRequest(path, opts) {
     const uri = this.baseUrl + path;
     const abort = axios.CancelToken.source();
     const cancelTimeout = DEFAULT_REQUEST_TIMEOUT + 500;
@@ -842,6 +850,23 @@ class Client {
         console.log(error.config);
         throw error;
       });
+  }
+
+  nativeRequest(path, opts) {
+    const uri = this.baseUrl + path;
+    const params = Object.assign(
+      {
+        method: "GET",
+        uri: uri,
+        json: true,
+        gzip: true
+      },
+      opts
+    );
+    return rp(params).catch(e => {
+      console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+      throw e;
+    });
   }
 
   getFromBulkApiManager(slug, params) {
@@ -999,7 +1024,7 @@ class Client {
     });
   }
 
-  getCustomURL(slug) {
+  getCustomURL(path) {
     return this.request("/api/v1/custom-urls/" + encodeURIComponent(path));
   }
 
