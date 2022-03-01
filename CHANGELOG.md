@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/quintype/quintype-backend-js/compare/v2.2.0...v2.3.0) (2022-03-01)
+
+
+### Features
+
+* **request:** Implement request fallback for external calls ([#76](https://github.com/quintype/quintype-backend-js/issues/76)) ([bc107f9](https://github.com/quintype/quintype-backend-js/commit/bc107f9544d4fec5c16af63f6a48bcf1bc754ce4))
+
 ## [2.2.0](https://github.com/quintype/quintype-backend-js/compare/v2.1.0...v2.2.0) (2022-02-11)
 
 
