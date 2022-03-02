@@ -787,7 +787,7 @@ class Client {
    * @param {string} opts.body The body of the request (for POST requests only)
    * @returns {Promise<Response>} A promise of the response
    */
-  request(path, opts) {
+  request(path, opts = {}) {
     if (opts.useAxios) {
       return this.axiosRequest(path, opts);
     }
