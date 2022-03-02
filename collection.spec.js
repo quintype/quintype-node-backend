@@ -55,8 +55,7 @@ function getClient({
 }
 
 function catch404(e, defaultValue) {
-  const statusCode = get(e, ["response", "status"]);
-  if (statusCode === 404) return Promise.resolve(defaultValue);
+  if (e && e.statusCode === 404) return defaultValue;
   throw e;
 }
 

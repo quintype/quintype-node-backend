@@ -1,7 +1,6 @@
 "use strict";
 
 const rp = require("request-promise");
-const axios = require("axios");
 const Promise = require("bluebird");
 const _ = require("lodash");
 const { loadNestedCollectionData } = require("./collection-loader");
@@ -10,7 +9,6 @@ const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require("./base-api");
 const { asyncGate } = require("./async-gate");
 const hash = require("object-hash");
-const { DEFAULT_REQUEST_TIMEOUT } = require("./constants");
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -788,71 +786,6 @@ class Client {
    * @returns {Promise<Response>} A promise of the response
    */
   request(path, opts) {
-    if (opts.useAxios) {
-      return this.axiosRequest(path, opts);
-    }
-    return this.nativeRequest(path, opts);
-  }
-
-  axiosRequest(path, opts) {
-    const uri = this.baseUrl + path;
-    const abort = axios.CancelToken.source();
-    const cancelTimeout = DEFAULT_REQUEST_TIMEOUT + 500;
-    const timeoutID = setTimeout(() => abort.cancel(`Timeout of ${cancelTimeout}ms.`), cancelTimeout);
-    let configuration = {
-      ...{
-        url: uri,
-        method: "get",
-        json: true,
-        gzip: true
-      },
-      ...opts,
-      ...{ timeout: DEFAULT_REQUEST_TIMEOUT, cancelToken: abort.token, validateStatus: status => status < 500 }
-    };
-
-    if (configuration.qs) {
-      configuration = {
-        ...configuration,
-        ...{
-          params: configuration.qs
-        }
-      };
-      delete configuration.qs;
-    }
-
-    return axios(configuration)
-      .then(res => {
-        clearTimeout(timeoutID);
-
-        if (res.status === 404) throw { response: { status: res.status } };
-
-        return {
-          ...res.data,
-          ...{ headers: res.headers, statusCode: res.status, redirectCount: res.request._redirectable._redirectCount }
-        };
-      })
-      .catch(error => {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log("Error", error.message);
-        }
-        console.log(error.config);
-        throw error;
-      });
-  }
-
-  nativeRequest(path, opts) {
     const uri = this.baseUrl + path;
     const params = Object.assign(
       {
@@ -967,7 +900,7 @@ class Client {
 
   postComments(params, authToken) {
     return this.request("/api/v1/comments", {
-      method: "post",
+      method: "POST",
       body: params,
       headers: {
         "X-QT-AUTH": authToken,
@@ -985,15 +918,17 @@ class Client {
 
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
-        method: "post",
-        data: requests,
+        method: "POST",
+        body: requests,
         headers: {
           "content-type": "application/json"
-        }
+        },
+        simple: false,
+        resolveWithFullResponse: true
       });
 
-      if (response.statusCode === 200 && response.redirectCount > 0) {
-        return response.headers["content-location"];
+      if (response.statusCode === 303 && response.caseless.get("Location")) {
+        return response.caseless.get("Location");
       } else {
         throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
       }
