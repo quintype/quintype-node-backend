@@ -968,8 +968,9 @@ class Client {
 
   postComments(params, authToken) {
     return this.request("/api/v1/comments", {
-      method: ENABLE_AXIOS ? "POST" : "post",
-      body: params,
+      method: ENABLE_AXIOS ? "post" : "POST",
+      ...(ENABLE_AXIOS && { data: params }),
+      ...(!ENABLE_AXIOS && { body: params }),
       headers: {
         "X-QT-AUTH": authToken,
         "content-type": "application/json"
@@ -986,9 +987,9 @@ class Client {
 
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
-        method: ENABLE_AXIOS ? "POST" : "post",
-        data: requests,
-        body: requests,
+        method: ENABLE_AXIOS ? "post" : "POST",
+        ...(ENABLE_AXIOS && { data: requests }),
+        ...(!ENABLE_AXIOS && { body: requests }),
         headers: {
           "content-type": "application/json"
         },
