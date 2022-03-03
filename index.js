@@ -10,7 +10,8 @@ const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require("./base-api");
 const { asyncGate } = require("./async-gate");
 const hash = require("object-hash");
-const { DEFAULT_REQUEST_TIMEOUT } = require("./constants");
+
+const { DEFAULT_REQUEST_TIMEOUT, ENABLE_AXIOS } = require("./constants");
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -735,8 +736,8 @@ class Url extends BaseAPI {
 }
 Url.upstream = "url";
 
-function catch404(e, defaultValue) {
-  const statusCode = _.get(e, ["response", "status"]);
+function catch404(e = {}, defaultValue) {
+  const statusCode = _.get(e, ["statusCode"]) || _.get(e, ["response", "status"]);
   if (statusCode === 404) return defaultValue;
   throw e;
 }
@@ -788,7 +789,7 @@ class Client {
    * @returns {Promise<Response>} A promise of the response
    */
   request(path, opts) {
-    if (opts.useAxios) {
+    if (ENABLE_AXIOS) {
       return this.axiosRequest(path, opts);
     }
     return this.nativeRequest(path, opts);
@@ -967,8 +968,9 @@ class Client {
 
   postComments(params, authToken) {
     return this.request("/api/v1/comments", {
-      method: "post",
-      body: params,
+      method: ENABLE_AXIOS ? "post" : "POST",
+      ...(ENABLE_AXIOS && { data: params }),
+      ...(!ENABLE_AXIOS && { body: params }),
       headers: {
         "X-QT-AUTH": authToken,
         "content-type": "application/json"
@@ -985,15 +987,20 @@ class Client {
 
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
-        method: "post",
-        data: requests,
+        method: ENABLE_AXIOS ? "post" : "POST",
+        ...(ENABLE_AXIOS && { data: requests }),
+        ...(!ENABLE_AXIOS && { body: requests }),
         headers: {
           "content-type": "application/json"
-        }
+        },
+        simple: false,
+        resolveWithFullResponse: true
       });
 
-      if (response.statusCode === 200 && response.redirectCount > 0) {
+      if (ENABLE_AXIOS && response.statusCode === 200 && response.redirectCount > 0) {
         return response.headers["content-location"];
+      } else if (response.statusCode === 303 && response.caseless.get("Location")) {
+        return response.caseless.get("Location");
       } else {
         throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
       }
