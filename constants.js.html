@@ -88,7 +88,9 @@ const DEFAULT_STORY_FIELDS =
 
 const DEFAULT_REQUEST_TIMEOUT = process.env.NODE_ENV === "production" ? 2000 : 50000;
 
-module.exports = { DEFAULT_DEPTH, DEFAULT_LIMIT, DEFAULT_STORY_FIELDS, DEFAULT_REQUEST_TIMEOUT };
+const ENABLE_AXIOS = false;
+
+module.exports = { DEFAULT_DEPTH, DEFAULT_LIMIT, DEFAULT_STORY_FIELDS, DEFAULT_REQUEST_TIMEOUT, ENABLE_AXIOS };
 </code></pre>
         </article>
     </section>
