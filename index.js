@@ -954,7 +954,7 @@ class Client {
     });
   }
 
-  getRelatedStories(storyId = null, sectionId = null, params) {
+  getRelatedStories(storyId = null, sectionId = null, params = {}) {
     return this.request("/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId, {
       qs: params
     });
