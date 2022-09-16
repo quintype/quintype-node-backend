@@ -79,10 +79,10 @@ class Story extends BaseAPI {
    * @returns {(Array<Story>)}
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__related_stories GET ​/api​/v1​/stories​/:story-id​/related-stories} API Documentation for a list of fields returned
    */
-  getRelatedStories(client) {
+  getRelatedStories(client, params) {
     const sectionId = _.get(this, ["sections", 0, "id"], null);
     return client
-      .getRelatedStories(this.id, sectionId)
+      .getRelatedStories(this.id, sectionId, params)
       .then(response => _.map(response["related-stories"], story => this.constructor.build(story)));
   }
 
@@ -954,8 +954,10 @@ class Client {
     });
   }
 
-  getRelatedStories(storyId = null, sectionId = null) {
-    return this.request("/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId);
+  getRelatedStories(storyId = null, sectionId = null, params) {
+    return this.request("/api/v1/stories/" + storyId + "/related-stories?section-id=" + sectionId, {
+      qs: params
+    });
   }
 
   getStoryAttributes(storyId) {
