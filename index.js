@@ -80,6 +80,7 @@ class Story extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__related_stories GET ​/api​/v1​/stories​/:story-id​/related-stories} API Documentation for a list of fields returned
    */
   getRelatedStories(client) {
+    // foo bar
     const sectionId = _.get(this, ["sections", 0, "id"], null);
     return client
       .getRelatedStories(this.id, sectionId)
