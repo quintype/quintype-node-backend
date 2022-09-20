@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "2.3.2-related-stories-inf-scroll.1",
+  "version": "2.3.2-related-stories-inf-scroll.2",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
