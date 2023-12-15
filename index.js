@@ -126,12 +126,12 @@ class Story extends BaseAPI {
     return client.getStoryBySlug(slug, params).then(response => this.build(response["story"]));
   }
 
-  static getStoryByExternalId(client, slug, params) {
+  static getStoryByExternalId(client, slug) {
     if (!slug) {
       return Promise.resolve(null);
     }
 
-    return client.getStoryByExternalId(slug, params).then(response => this.build(response["story"]));
+    return client.getStoryByExternalId(slug).then(response => this.build(response["story"]));
   }
 
   /**
@@ -914,10 +914,8 @@ class Client {
     }).catch(e => catch404(e, {}));
   }
 
-  getStoryByExternalId(slug, params) {
-    return this.request("/api/v1/story-by-external-id", {
-      qs: _.merge({ slug: slug }, params)
-    }).catch(e => catch404(e, {}));
+  getStoryByExternalId(slug) {
+    return this.request(`/api/v1/story-by-external-id/${slug}`).catch(e => catch404(e, {}));
   }
 
   getStoryById(id) {
@@ -970,7 +968,7 @@ class Client {
 
   getRelatedStories(storyId = null, sectionId = null, params = {}) {
     return this.request("/api/v1/stories/" + storyId + "/related-stories", {
-      qs: { ...(sectionId && {"section-id": sectionId}), ...params }
+      qs: { ...(sectionId && { "section-id": sectionId }), ...params }
     });
   }
 
