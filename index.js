@@ -126,6 +126,25 @@ class Story extends BaseAPI {
     return client.getStoryBySlug(slug, params).then(response => this.build(response["story"]));
   }
 
+  /**
+   * This function can be used to fetch a story given an external id. This is typically done on story pages.
+   *
+   * This returned promise will resolve to null if the story is not found
+   *
+   * Example
+   * ```javascript
+   * const story = await Story.getStoryByExternalId(client, externalId);
+   * if(!story) {
+   *   render404();
+   * } else {
+   *   renderTheStoryPage(story);
+   * }
+   * ```
+   * @param {Client} client
+   * @param {string} externalId The external id of the story.
+   * @returns {(Promise<Story|null>)}
+   */
+
   static getStoryByExternalId(client, externalId) {
     if (!externalId) {
       return Promise.resolve(null);
