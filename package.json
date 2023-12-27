@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "2.3.4-stories-by-external-id.1",
+  "version": "2.3.4-stories-by-external-id.2",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
