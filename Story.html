@@ -347,7 +347,7 @@ used by developers directly, please consider using <a href="Collection.html">Col
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line190">line 190</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line217">line 217</a>
             </span>
         </p>
     
@@ -531,7 +531,7 @@ This is the only API which will give you the latest draft / un published version
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line140">line 140</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line167">line 167</a>
             </span>
         </p>
     
@@ -767,7 +767,7 @@ JSON.stringify(stories.map(story => story.asJson()));
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line174">line 174</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line201">line 201</a>
             </span>
         </p>
     
@@ -1059,6 +1059,212 @@ console.log(JSON.stringify(stories.map(s => s.asJson())))
                 <div class="member">
 
     
+    <h4 class="name" id=".getStoryByExternalId">
+        
+            
+                <span class='tag'>static</span>
+            
+        
+        <span class="code-name">
+            getStoryByExternalId<span class="signature">(client, externalId)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="Story.html">Story</a>|null)>}</span>
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>This function can be used to fetch a story given an external id. This is typically done on story pages.</p>
+<p>This returned promise will resolve to null if the story is not found</p>
+<p>Example</p>
+<pre class="prettyprint source lang-javascript"><code>const story = await Story.getStoryByExternalId(client, externalId);
+if(!story) {
+  render404();
+} else {
+  renderTheStoryPage(story);
+}
+</code></pre>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>client</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type"><a href="Client.html">Client</a></span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"></td>
+</tr>
+
+
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>externalId</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The external id of the story.</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="index.js.html" class="button">View Source</a>
+            <span>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line148">line 148</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">Promise.&lt;(<a href="Story.html">Story</a>|null)></span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+    
     <h4 class="name" id=".getStoryById">
         
             
@@ -1210,7 +1416,7 @@ console.log(JSON.stringify(stories.map(s => s.asJson())))
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line153">line 153</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line180">line 180</a>
             </span>
         </p>
     
