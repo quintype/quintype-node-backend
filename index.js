@@ -885,7 +885,7 @@ class Client {
     const params = Object.assign(
       {
         method: "GET",
-        uri: uri,
+        uri: encodeURI(uri),
         json: true,
         gzip: true
       },
