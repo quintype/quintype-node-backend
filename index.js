@@ -784,7 +784,7 @@ class Client {
     if (!temporaryClient) {
       this.interval = setInterval(() => {
         this.updateConfig().catch(e => console.error("Unable to update config"));
-        console.log("Config cache --> ", this)
+        console.log("Config cache --> ", this);
       }, 5000);
       this.initialUpdateConfig = this.updateConfig();
     }
