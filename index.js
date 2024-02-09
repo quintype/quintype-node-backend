@@ -64,7 +64,7 @@ class Story extends BaseAPI {
   static getStories(client, storyGroup, params) {
     return client
       .getStories(_.extend({ "story-group": storyGroup }, params))
-      .then((response) => _.map(response["stories"], (story) => this.build(story)));
+      .then(response => _.map(response["stories"], story => this.build(story)));
   }
 
   /**
@@ -83,7 +83,7 @@ class Story extends BaseAPI {
     const sectionId = _.get(this, ["sections", 0, "id"], null);
     return client
       .getRelatedStories(this.id, sectionId, params)
-      .then((response) => _.map(response["related-stories"], (story) => this.constructor.build(story)));
+      .then(response => _.map(response["related-stories"], story => this.constructor.build(story)));
   }
 
   /**
@@ -123,7 +123,7 @@ class Story extends BaseAPI {
       return Promise.resolve(null);
     }
 
-    return client.getStoryBySlug(slug, params).then((response) => this.build(response["story"]));
+    return client.getStoryBySlug(slug, params).then(response => this.build(response["story"]));
   }
 
   /**
@@ -150,7 +150,7 @@ class Story extends BaseAPI {
       return Promise.resolve(null);
     }
 
-    return client.getStoryByExternalId(externalId).then((response) => this.build(response["story"]));
+    return client.getStoryByExternalId(externalId).then(response => this.build(response["story"]));
   }
 
   /**
@@ -165,7 +165,7 @@ class Story extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_preview_story__public_preview_key_ GET ​/api​/v1​/preview​/story​/:public-preview-key} API documentation for a list of parameters and fields
    */
   static getPublicPreviewStory(client, publicPreviewKey) {
-    return client.getPublicPreviewStory(publicPreviewKey).then((response) => this.build(response["story"]));
+    return client.getPublicPreviewStory(publicPreviewKey).then(response => this.build(response["story"]));
   }
 
   /**
@@ -178,7 +178,7 @@ class Story extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id_ GET ​/api​/v1​/preview​/stories/:story-id} API documentation for a list of parameters and fields
    */
   static getStoryById(client, id) {
-    return client.getStoryById(id).then((response) => this.build(response["story"]));
+    return client.getStoryById(id).then(response => this.build(response["story"]));
   }
 
   /**
@@ -199,9 +199,9 @@ class Story extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_search GET ​/api​/v1​/search} API documentation for a list of parameters and fields
    */
   static getSearch(client, params) {
-    return client.getSearch(params).then((response) =>
+    return client.getSearch(params).then(response =>
       _.merge(response["results"], {
-        stories: _.map(response["results"]["stories"], (story) => this.build(story)),
+        stories: _.map(response["results"]["stories"], story => this.build(story))
       })
     );
   }
@@ -218,15 +218,15 @@ class Story extends BaseAPI {
     function wrapResult(result) {
       if (!result.stories) return result;
       return Object.assign({}, result, {
-        stories: result.stories.map(this.build),
+        stories: result.stories.map(this.build)
       });
     }
 
     return client
       .getInBulk({
-        requests: mapValues((r) => Object.assign({ _type: "stories" }, r), requests),
+        requests: mapValues(r => Object.assign({ _type: "stories" }, r), requests)
       })
-      .then((response) => BulkResults.build(mapValues((result) => wrapResult(result), response["results"])));
+      .then(response => BulkResults.build(mapValues(result => wrapResult(result), response["results"])));
   }
 }
 Story.upstream = "story";
@@ -239,10 +239,10 @@ class BulkResults extends BaseAPI {
 
   /** Use this to convert to a simple javascript object, suitable for JSON. */
   asJson() {
-    return mapValues((response) => {
+    return mapValues(response => {
       if (response.stories) {
         return Object.assign({}, response, {
-          stories: response.stories.map((story) => story.asJson()),
+          stories: response.stories.map(story => story.asJson())
         });
       } else {
         return response;
@@ -344,7 +344,7 @@ class Collection extends BaseAPI {
       defaultNestedLimit = null,
       nestedCollectionLimit = {},
       collectionOfCollectionsIndexes = [],
-      customLayouts = [],
+      customLayouts = []
     } = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
 
@@ -354,7 +354,7 @@ class Collection extends BaseAPI {
 
     return client
       .getCollectionBySlug(slug, params)
-      .then((response) => {
+      .then(response => {
         const collection = response ? response["collection"] || response : null;
         return (
           collection &&
@@ -365,11 +365,11 @@ class Collection extends BaseAPI {
             defaultNestedLimit,
             nestedCollectionLimit,
             collectionOfCollectionsIndexes,
-            customLayouts,
+            customLayouts
           })
         );
       })
-      .then((collection) => this.build(collection));
+      .then(collection => this.build(collection));
   }
 }
 Collection.upstream = "collection";
@@ -407,7 +407,7 @@ class Member extends BaseAPI {
     if (!authToken || authToken == "") return new Promise((resolve, reject) => resolve(null));
     return client
       .getCurrentMember(authToken)
-      .then((response) => response && this.build(response["member"]))
+      .then(response => response && this.build(response["member"]))
       .catch(() => null);
   }
 }
@@ -455,7 +455,7 @@ class Author extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/author/get_api_v1_authors__author_id_ GET ​/api​/v1​/authors​/:author-id} API documentation for a list of parameters and fields
    */
   static getAuthor(client, authorId) {
-    return client.getAuthor(authorId).then((response) => response && this.build(response["author"]));
+    return client.getAuthor(authorId).then(response => response && this.build(response["author"]));
   }
 
   /**
@@ -469,7 +469,7 @@ class Author extends BaseAPI {
    * @deprecated This API is very slow if there are more than ~100 authors.
    */
   static getAuthors(client, params) {
-    return client.getAuthors(params).then((authors) => _.map(authors, (author) => this.build(author)));
+    return client.getAuthors(params).then(authors => _.map(authors, author => this.build(author)));
   }
 
   /**
@@ -483,7 +483,7 @@ class Author extends BaseAPI {
    * @deprecated This will be deprecated in favor of a method which returns a {@link Collection}.
    */
   static getAuthorCollection(client, authorId, params) {
-    return client.getAuthorCollection(authorId, params).catch((e) => catch404(e, null));
+    return client.getAuthorCollection(authorId, params).catch(e => catch404(e, null));
   }
 }
 Author.upstream = "author";
@@ -529,7 +529,7 @@ class CustomPath extends BaseAPI {
   static getCustomPathData(client, path) {
     return client
       .getCustomPathData(path.startsWith("/") ? path : "/" + path)
-      .then((response) => response["page"] && this.build(response["page"]));
+      .then(response => response["page"] && this.build(response["page"]));
   }
 }
 CustomPath.upstream = "page";
@@ -560,7 +560,7 @@ class Config extends BaseAPI {
 
   /** @deprecated */
   getStack(heading) {
-    return this.config.layout.stacks.find((stack) => stack.heading == heading);
+    return this.config.layout.stacks.find(stack => stack.heading == heading);
   }
 
   /**
@@ -569,7 +569,7 @@ class Config extends BaseAPI {
    * @returns {object} Configuration for the domain
    */
   getDomainConfig(domainSlug) {
-    return (this.domains || []).find((domain) => domain.slug === domainSlug) || {};
+    return (this.domains || []).find(domain => domain.slug === domainSlug) || {};
   }
 
   /**
@@ -592,7 +592,7 @@ class Config extends BaseAPI {
     }
     return (
       (this.sections || []).filter(
-        (section) => section["domain-slug"] === undefined || section["domain-slug"] === domainSlug
+        section => section["domain-slug"] === undefined || section["domain-slug"] === domainSlug
       ) || {}
     );
   }
@@ -702,7 +702,7 @@ class Entity extends BaseAPI {
    * @returns {(Array<Entity>)}
    */
   static getEntities(client, params) {
-    return client.getEntities(params).then((response) => _.map(response["entities"], (entity) => this.build(entity)));
+    return client.getEntities(params).then(response => _.map(response["entities"], entity => this.build(entity)));
   }
 
   /**
@@ -714,7 +714,7 @@ class Entity extends BaseAPI {
    * @returns {(Promise<Entity|null>)}
    */
   static getEntity(client, entityId, params) {
-    return client.getEntity(entityId, params).then((response) => this.build(response));
+    return client.getEntity(entityId, params).then(response => this.build(response));
   }
 
   /**
@@ -737,7 +737,7 @@ class Entity extends BaseAPI {
   getCollections(client, params) {
     return client
       .getCollectionsByEntityId(this.entity.id, params)
-      .then((response) => response["collections"].map((collection) => Collection.build(collection)));
+      .then(response => response["collections"].map(collection => Collection.build(collection)));
   }
 }
 
@@ -758,7 +758,7 @@ class Url extends BaseAPI {
   }
 
   static getCustomURL(client, slug) {
-    return client.getCustomURL(slug).then((url) => this.build(url));
+    return client.getCustomURL(slug).then(url => this.build(url));
   }
 }
 Url.upstream = "url";
@@ -783,7 +783,7 @@ class Client {
     this.config = null;
     if (!temporaryClient) {
       this.interval = setInterval(
-        () => this.updateConfig().catch((e) => console.error("Unable to update config")),
+        () => this.updateConfig().catch(e => console.error("Unable to update config")),
         120000
       );
       this.initialUpdateConfig = this.updateConfig();
@@ -832,34 +832,34 @@ class Client {
         url: uri,
         method: "get",
         json: true,
-        gzip: true,
+        gzip: true
       },
       ...opts,
-      ...{ timeout: DEFAULT_REQUEST_TIMEOUT, cancelToken: abort.token, validateStatus: (status) => status < 500 },
+      ...{ timeout: DEFAULT_REQUEST_TIMEOUT, cancelToken: abort.token, validateStatus: status => status < 500 }
     };
 
     if (configuration.qs) {
       configuration = {
         ...configuration,
         ...{
-          params: configuration.qs,
-        },
+          params: configuration.qs
+        }
       };
       delete configuration.qs;
     }
 
     return axios(configuration)
-      .then((res) => {
+      .then(res => {
         clearTimeout(timeoutID);
 
         if (res.status === 404) throw { response: { status: res.status } };
 
         return {
           ...res.data,
-          ...{ headers: res.headers, statusCode: res.status, redirectCount: res.request._redirectable._redirectCount },
+          ...{ headers: res.headers, statusCode: res.status, redirectCount: res.request._redirectable._redirectCount }
         };
       })
-      .catch((error) => {
+      .catch(error => {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -887,11 +887,11 @@ class Client {
         method: "GET",
         uri: uri,
         json: true,
-        gzip: true,
+        gzip: true
       },
       opts
     );
-    return rp(params).catch((e) => {
+    return rp(params).catch(e => {
       console.error(`Error in API ${uri}: Status ${e.statusCode}`);
       throw e;
     });
@@ -899,7 +899,7 @@ class Client {
 
   getFromBulkApiManager(slug, params) {
     return this.request("/api/v1/bulk/" + slug, {
-      qs: params,
+      qs: params
     });
   }
 
@@ -908,18 +908,18 @@ class Client {
   }
 
   getPublicPreviewStory(publicPreviewKey) {
-    return this.request("/api/v1/preview/story/" + publicPreviewKey).catch((e) => catch404(e, {}));
+    return this.request("/api/v1/preview/story/" + publicPreviewKey).catch(e => catch404(e, {}));
   }
 
   getCollectionBySlug(slug, params) {
     return this.request("/api/v1/collections/" + slug, {
-      qs: params,
-    }).catch((e) => catch404(e, null));
+      qs: params
+    }).catch(e => catch404(e, null));
   }
 
   getStories(params) {
     return this.request("/api/v1/stories", {
-      qs: params,
+      qs: params
     });
   }
 
@@ -929,16 +929,16 @@ class Client {
 
   getStoryBySlug(slug, params) {
     return this.request("/api/v1/stories-by-slug", {
-      qs: _.merge({ slug: slug }, params),
-    }).catch((e) => catch404(e, {}));
+      qs: _.merge({ slug: slug }, params)
+    }).catch(e => catch404(e, {}));
   }
 
   getStoryByExternalId(externalId) {
-    return this.request(`/api/v1/story-by-external-id/${externalId}`).catch((e) => catch404(e, {}));
+    return this.request(`/api/v1/story-by-external-id/${externalId}`).catch(e => catch404(e, {}));
   }
 
   getStoryById(id) {
-    return this.request("/api/v1/stories/" + id).catch((e) => catch404(e, {}));
+    return this.request("/api/v1/stories/" + id).catch(e => catch404(e, {}));
   }
 
   /**
@@ -958,36 +958,36 @@ class Client {
   getCurrentMember(authToken) {
     return this.request("/api/v1/members/me", {
       headers: {
-        "X-QT-AUTH": authToken,
-      },
+        "X-QT-AUTH": authToken
+      }
     });
   }
 
   getAuthor(authorId) {
-    return this.request("/api/v1/authors/" + authorId).catch((e) => catch404(e, {}));
+    return this.request("/api/v1/authors/" + authorId).catch(e => catch404(e, {}));
   }
 
   getAuthors(params) {
     return this.request("/api/authors", {
-      qs: params,
+      qs: params
     });
   }
 
   getSearch(params) {
     return this.request("/api/v1/search", {
-      qs: params,
+      qs: params
     });
   }
 
   getAdvancedSearch(params) {
     return this.request("/api/v1/advanced-search", {
-      qs: params,
+      qs: params
     });
   }
 
   getRelatedStories(storyId = null, sectionId = null, params = {}) {
     return this.request("/api/v1/stories/" + storyId + "/related-stories", {
-      qs: { ...(sectionId && { "section-id": sectionId }), ...params },
+      qs: { ...(sectionId && { "section-id": sectionId }), ...params }
     });
   }
 
@@ -996,7 +996,7 @@ class Client {
   }
 
   updateConfig() {
-    return this.request("/api/v1/config").then((config) => (this.config = Config.build(config)));
+    return this.request("/api/v1/config").then(config => (this.config = Config.build(config)));
   }
 
   postComments(params, authToken) {
@@ -1006,8 +1006,8 @@ class Client {
       ...(!ENABLE_AXIOS && { body: params }),
       headers: {
         "X-QT-AUTH": authToken,
-        "content-type": "application/json",
-      },
+        "content-type": "application/json"
+      }
     });
   }
 
@@ -1024,10 +1024,10 @@ class Client {
         ...(ENABLE_AXIOS && { data: requests }),
         ...(!ENABLE_AXIOS && { body: requests }),
         headers: {
-          "content-type": "text/plain",
+          "content-type": "text/plain"
         },
         simple: false,
-        resolveWithFullResponse: true,
+        resolveWithFullResponse: true
       });
 
       if (ENABLE_AXIOS && response.statusCode === 200 && response.redirectCount > 0) {
@@ -1042,25 +1042,25 @@ class Client {
 
   getAmpStoryBySlug(slug) {
     return this.request("/api/v1/amp/story", {
-      qs: { slug },
+      qs: { slug }
     });
   }
 
   getEntities(params) {
     return this.request("/api/v1/entities", {
-      qs: params,
+      qs: params
     });
   }
 
   getEntity(entityId, params) {
     return this.request("/api/v1/entity/" + entityId, {
-      qs: params,
+      qs: params
     });
   }
 
   getCollectionsByEntityId(entityId, params) {
     return this.request("/api/v1/entity/" + entityId + "/collections", {
-      qs: params,
+      qs: params
     });
   }
 
@@ -1069,17 +1069,17 @@ class Client {
   }
 
   getCustomPathData(path) {
-    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path)).catch((e) => catch404(e, {}));
+    return this.request("/api/v1/custom-urls/" + encodeURIComponent(path)).catch(e => catch404(e, {}));
   }
   getAuthorCollection(authorId, params) {
     return this.request(`/api/v1/authors/${authorId}/collection`, {
-      qs: params,
+      qs: params
     });
   }
 
   getMenuGroups(params = {}) {
     return this.request(`/api/v1/menu-groups`, {
-      qs: params,
+      qs: params
     });
   }
 }
@@ -1093,7 +1093,7 @@ class Client {
  */
 function buildClient(host, temporaryClient) {
   const client = new Client(host, temporaryClient);
-  return client.config().then((_) => client);
+  return client.config().then(_ => client);
 }
 
 /**
@@ -1123,7 +1123,7 @@ class AmpConfig extends BaseAPI {
    * @returns {(Promise<AmpConfig>)} A Promise that returns an instance of {@link AmpConfig}
    */
   static getAmpConfig(client) {
-    return client.getAmpConfig().then((config) => config && this.build(config));
+    return client.getAmpConfig().then(config => config && this.build(config));
   }
 }
 AmpConfig.upstream = "ampConfig";
@@ -1140,5 +1140,5 @@ module.exports = {
   Entity: Entity,
   Url: Url,
   MenuGroups: MenuGroups,
-  buildClient: buildClient,
+  buildClient: buildClient
 };
