@@ -10,18 +10,15 @@ const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require("./base-api");
 const { asyncGate } = require("./async-gate");
 const hash = require("object-hash");
-const { createCache, memoryStore } =  require('cache-manager');
+const { createCache, memoryStore } = require("cache-manager");
 const { DEFAULT_REQUEST_TIMEOUT, ENABLE_AXIOS } = require("./constants");
 const { CACHE_TIME, MAX_CACHE } = require("./cache-constant");
-
 
 // Create memory cache synchronously
 const memoryCache = createCache(memoryStore(), {
   max: MAX_CACHE,
-  ttl: CACHE_TIME /*milliseconds*/,
+  ttl: CACHE_TIME /* milliseconds */
 });
-
-
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
