@@ -10,8 +10,18 @@ const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require("./base-api");
 const { asyncGate } = require("./async-gate");
 const hash = require("object-hash");
-
+const { createCache, memoryStore } =  require('cache-manager');
 const { DEFAULT_REQUEST_TIMEOUT, ENABLE_AXIOS } = require("./constants");
+const { CACHE_TIME, MAX_CACHE } = require("./cache-constant");
+
+
+// Create memory cache synchronously
+const memoryCache = createCache(memoryStore(), {
+  max: MAX_CACHE,
+  ttl: CACHE_TIME /*milliseconds*/,
+});
+
+
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -782,15 +792,12 @@ class Client {
     this.baseUrl = baseUrl;
     this.config = null;
     if (!temporaryClient) {
-      this.interval = setInterval(() => {
-        this.updateConfig().catch(e => console.error("Unable to update config"));
-        console.log("Config cache --> ", this);
-      }, 5000);
       this.initialUpdateConfig = this.updateConfig();
     }
     this.hostname = baseUrl.replace(/https?:\/\//, "");
     this._cachedPostBulkLocations = {};
     this._cachedPostBulkGate = asyncGate();
+    this.sections = [];
   }
 
   /**
@@ -942,17 +949,13 @@ class Client {
   }
 
   /**
-   * This can be used to get the current config for this publisher this client points to. By default, this reloads every 2 minutes.
+   * This can be used to get the current config for this publisher this client points to. By default, this reloads every 4 minutes.
    * You will not typically need to call this method, as `@quintype/framework` does this for you.
    *
    * @returns {(Promise<Config>)} A Promise that returns an instance of {@link Config}
    */
   getConfig() {
-    if (this.config) return Promise.resolve(this.config);
-
-    this.initialUpdateConfig = this.initialUpdateConfig || this.updateConfig();
-
-    return this.initialUpdateConfig;
+    return memoryCache.wrap(`config-${this.hostname}`, () => this.updateConfig(), CACHE_TIME);
   }
 
   getCurrentMember(authToken) {
