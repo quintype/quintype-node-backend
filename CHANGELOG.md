@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.5](https://github.com/quintype/quintype-backend-js/compare/v2.3.4...v2.3.5) (2024-02-14)
+
+
+### Bug Fixes
+
+* **bulk request:** POST bulk to a get ([#87](https://github.com/quintype/quintype-backend-js/issues/87)) ([e664524](https://github.com/quintype/quintype-backend-js/commit/e664524c9775b0d0a66e2945c63261719e274a4a))
+
 ### [2.3.4](https://github.com/quintype/quintype-backend-js/compare/v2.3.3...v2.3.4) (2023-12-27)
 
 ### [2.3.3](https://github.com/quintype/quintype-backend-js/compare/v2.3.2...v2.3.3) (2022-10-17)
