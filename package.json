@@ -46,7 +46,7 @@
     "husky": "^4.3.8",
     "jest": "^24.7.1",
     "jsdoc": "^3.6.3",
-    "lint-staged": "^8.1.5",
+    "lint-staged": "^15.2.2",
     "onchange": "^4.1.0",
     "prettier": "^1.17.0",
     "standard-version": "^9.5.0"
