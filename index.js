@@ -799,7 +799,6 @@ class Client {
     this.hostname = baseUrl.replace(/https?:\/\//, "");
     this._cachedPostBulkLocations = {};
     this._cachedPostBulkGate = asyncGate();
-    this.sections = [];
   }
 
   /**
