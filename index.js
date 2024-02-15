@@ -957,7 +957,7 @@ class Client {
    * @returns {(Promise<Config>)} A Promise that returns an instance of {@link Config}
    */
   async getConfig() {
-    // Handle with IN-MEM TTL cache if ENABLE_TTL_CACHE is enabled
+    // Handle with LRU TTL cache if ENABLE_TTL_CACHE is enabled
     if (ENABLE_TTL_CACHE) return this.getCacheConfig();
 
     if (this.config) return Promise.resolve(this.config);
@@ -968,9 +968,11 @@ class Client {
   }
 
   async getCacheConfig() {
+    const cacheKeyAttribute = `config-${this.hostname}`;
     const cacheConfig = await memoryCache.wrap(
-      `config-${this.hostname}`,
+      cacheKeyAttribute,
       async () => {
+        console.log(`**** CACHE CONFIG UPDATE TRIGGERED *** ${cacheKeyAttribute}`);
         const updatedConfig = await this.updateConfig();
         return updatedConfig.asJson();
       },
