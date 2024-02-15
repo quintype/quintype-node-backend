@@ -1048,7 +1048,7 @@ class Client {
         ...(ENABLE_AXIOS && { data: requests }),
         ...(!ENABLE_AXIOS && { body: requests }),
         headers: {
-          "content-type": "application/json"
+          "content-type": "text/plain"
         },
         simple: false,
         resolveWithFullResponse: true
