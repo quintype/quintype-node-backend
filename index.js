@@ -966,6 +966,11 @@ class Client {
     return this.initialUpdateConfig;
   }
 
+  /**
+   * This method is used to get the current in-memory cached config for this publisher. By default, this has a TTL of 4 minutes.
+   * This can be enabled by the toggle ENABLE_TTL_CACHE in cache-constants.js file, can be modified via black-knight
+   * @returns {(Promise<Config>)} A Promise that returns a in-memory cached instance of {@link Config}
+   */
   async getCacheConfig() {
     const cacheKeyAttribute = `config-${this.hostname}`;
     const cacheConfig = await memoryCache.wrap(
