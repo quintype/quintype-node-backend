@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/quintype/quintype-backend-js/compare/v2.3.5...v2.4.0) (2024-02-22)
+
+
+### Features
+
+* **cache:** Implement TTL cache for config ([#93](https://github.com/quintype/quintype-backend-js/issues/93)) ([e161ac2](https://github.com/quintype/quintype-backend-js/commit/e161ac2df47517d909d570800f29ec007bacb031))
+
 ### [2.3.5](https://github.com/quintype/quintype-backend-js/compare/v2.3.4...v2.3.5) (2024-02-14)
 
 
