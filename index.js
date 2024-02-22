@@ -10,8 +10,16 @@ const { DEFAULT_DEPTH, DEFAULT_STORY_FIELDS } = require("./constants");
 const { BaseAPI } = require("./base-api");
 const { asyncGate } = require("./async-gate");
 const hash = require("object-hash");
+const { createCache, memoryStore } = require("cache-manager");
 
 const { DEFAULT_REQUEST_TIMEOUT, ENABLE_AXIOS } = require("./constants");
+const { CACHE_TIME, MAX_CACHE, ENABLE_TTL_CACHE } = require("./cache-constant");
+
+const memoryStoreInit = memoryStore();
+const memoryCache = createCache(memoryStoreInit, {
+  max: MAX_CACHE,
+  ttl: CACHE_TIME /* milliseconds */
+});
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -77,7 +85,7 @@ class Story extends BaseAPI {
    * ```
    * @param {Client} client
    * @returns {(Array<Story>)}
-   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__related_stories GET ​/api​/v1​/stories​/:story-id​/related-stories} API Documentation for a list of fields returned
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__related_stories GET /api/v1/stories/:story-id/related-stories} API Documentation for a list of fields returned
    */
   getRelatedStories(client, params = {}) {
     const sectionId = _.get(this, ["sections", 0, "id"], null);
@@ -92,7 +100,7 @@ class Story extends BaseAPI {
    *
    * @param {Client} client
    * @returns {Object} Please see [API documentation](https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__attributes) for more details
-   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__attributes GET ​/api​/v1​/stories​/:story-id​/attributes} API Documentation for a list of fields returned
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id__attributes GET /api/v1/stories/:story-id/attributes} API Documentation for a list of fields returned
    */
   getStoryAttributes(client) {
     return client.getStoryAttributes(this.id);
@@ -116,7 +124,7 @@ class Story extends BaseAPI {
    * @param {string} slug The slug of the story.
    * @param {Object} params Parameters that are passed directly as query paremeters to the API
    * @returns {(Promise<Story|null>)}
-   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories_by_slug GET ​/api​/v1​/stories-by-slug} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories_by_slug GET /api/v1/stories-by-slug} API documentation for a list of parameters and fields
    */
   static getStoryBySlug(client, slug, params) {
     if (!slug) {
@@ -162,7 +170,7 @@ class Story extends BaseAPI {
    * @param {Client} client
    * @param {string} publicPreviewKey
    * @returns {(Promise<Story|null>)}
-   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_preview_story__public_preview_key_ GET ​/api​/v1​/preview​/story​/:public-preview-key} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_preview_story__public_preview_key_ GET /api/v1/preview/story/:public-preview-key} API documentation for a list of parameters and fields
    */
   static getPublicPreviewStory(client, publicPreviewKey) {
     return client.getPublicPreviewStory(publicPreviewKey).then(response => this.build(response["story"]));
@@ -175,7 +183,7 @@ class Story extends BaseAPI {
    * @param {Client} client
    * @param {string} id
    * @returns {(Promise<Story|null>)}
-   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id_ GET ​/api​/v1​/preview​/stories/:story-id} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_stories__story_id_ GET /api/v1/preview/stories/:story-id} API documentation for a list of parameters and fields
    */
   static getStoryById(client, id) {
     return client.getStoryById(id).then(response => this.build(response["story"]));
@@ -196,7 +204,7 @@ class Story extends BaseAPI {
    * @param {Object} params Please see the [Search API documentation](https://developers.quintype.com/swagger/#/story/get_api_v1_search) for more details.
    * @param {string} params.q The search string
    * @returns {({stories: Array<Story>})} Please see [Search API documentation](https://developers.quintype.com/swagger/#/story/get_api_v1_search) for more details.
-   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_search GET ​/api​/v1​/search} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/story/get_api_v1_search GET /api/v1/search} API documentation for a list of parameters and fields
    */
   static getSearch(client, params) {
     return client.getSearch(params).then(response =>
@@ -401,10 +409,10 @@ class Member extends BaseAPI {
    * @param {Client} client
    * @param {string} authToken
    * @returns {(Promise<Member|null>)}
-   * @see {@link https://developers.quintype.com/swagger/#/member/get_api_v1_members_me GET ​/api​/v1​/members/me} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/member/get_api_v1_members_me GET /api/v1/members/me} API documentation for a list of parameters and fields
    */
   static getCurrentMember(client, authToken) {
-    if (!authToken || authToken == "") return new Promise((resolve, reject) => resolve(null));
+    if (!authToken || authToken === "") return new Promise((resolve, reject) => resolve(null));
     return client
       .getCurrentMember(authToken)
       .then(response => response && this.build(response["member"]))
@@ -452,7 +460,7 @@ class Author extends BaseAPI {
    * @param {Client} client
    * @param {number} authorId
    * @returns {(Promise<Author|null>)}
-   * @see {@link https://developers.quintype.com/swagger/#/author/get_api_v1_authors__author_id_ GET ​/api​/v1​/authors​/:author-id} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/author/get_api_v1_authors__author_id_ GET /api/v1/authors/:author-id} API documentation for a list of parameters and fields
    */
   static getAuthor(client, authorId) {
     return client.getAuthor(authorId).then(response => response && this.build(response["author"]));
@@ -524,7 +532,7 @@ class CustomPath extends BaseAPI {
    * This function is used to get the page from the API. See {@link CustomPath}'s example for a usage example
    * @param {Client} client Client
    * @param {string} path The path which may be a redirect or static page
-   * @see {@link https://developers.quintype.com/swagger/#/custom-url/get_api_v1_custom_urls__path_ GET ​/api​/v1​/custom-urls​/:path} API documentation for a list of parameters and fields
+   * @see {@link https://developers.quintype.com/swagger/#/custom-url/get_api_v1_custom_urls__path_ GET /api/v1/custom-urls/:path} API documentation for a list of parameters and fields
    */
   static getCustomPathData(client, path) {
     return client
@@ -560,7 +568,7 @@ class Config extends BaseAPI {
 
   /** @deprecated */
   getStack(heading) {
-    return this.config.layout.stacks.find(stack => stack.heading == heading);
+    return this.config.layout.stacks.find(stack => stack.heading === heading);
   }
 
   /**
@@ -781,7 +789,7 @@ class Client {
   constructor(baseUrl, temporaryClient) {
     this.baseUrl = baseUrl;
     this.config = null;
-    if (!temporaryClient) {
+    if (!temporaryClient && !ENABLE_TTL_CACHE) {
       this.interval = setInterval(
         () => this.updateConfig().catch(e => console.error("Unable to update config")),
         120000
@@ -852,7 +860,7 @@ class Client {
       .then(res => {
         clearTimeout(timeoutID);
 
-        if (res.status === 404) throw { response: { status: res.status } };
+        if (res.status === 404) return { response: { status: res.status } };
 
         return {
           ...res.data,
@@ -942,17 +950,39 @@ class Client {
   }
 
   /**
-   * This can be used to get the current config for this publisher this client points to. By default, this reloads every 2 minutes.
+   * This can be used to get the current config for this publisher this client points to. By default, this reloads every 4 minutes.
    * You will not typically need to call this method, as `@quintype/framework` does this for you.
    *
    * @returns {(Promise<Config>)} A Promise that returns an instance of {@link Config}
    */
-  getConfig() {
+  async getConfig() {
+    // Handle with LRU TTL cache if ENABLE_TTL_CACHE is enabled
+    if (ENABLE_TTL_CACHE) return this.getCacheConfig();
+
     if (this.config) return Promise.resolve(this.config);
 
     this.initialUpdateConfig = this.initialUpdateConfig || this.updateConfig();
 
     return this.initialUpdateConfig;
+  }
+
+  /**
+   * This method is used to get the current in-memory cached config for this publisher. By default, this has a TTL of 4 minutes.
+   * This can be enabled by the toggle ENABLE_TTL_CACHE in cache-constants.js file, can be modified via black-knight
+   * @returns {(Promise<Config>)} A Promise that returns a in-memory cached instance of {@link Config}
+   */
+  async getCacheConfig() {
+    const cacheKeyAttribute = `config-${this.hostname}`;
+    const cacheConfig = await memoryCache.wrap(
+      cacheKeyAttribute,
+      async () => {
+        console.log(`**** CACHE CONFIG UPDATE TRIGGERED *** ${cacheKeyAttribute}`);
+        const updatedConfig = await this.updateConfig();
+        return updatedConfig.asJson();
+      },
+      CACHE_TIME
+    );
+    return Config.build(cacheConfig);
   }
 
   getCurrentMember(authToken) {
