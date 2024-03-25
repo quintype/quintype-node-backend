@@ -893,7 +893,7 @@ class Client {
     const params = Object.assign(
       {
         method: "GET",
-        uri: uri !== decodeURI(uri) ? uri : encodeURI(uri),
+        uri: recursiveURIDecode(uri) && encodeURI(uri),
         json: true,
         gzip: true
       },
@@ -903,6 +903,24 @@ class Client {
       console.error(`Error in API ${uri}: Status ${e.statusCode}`);
       throw e;
     });
+
+    function recursiveURIDecode(url) {
+      let decodedUrl;
+      try {
+        decodedUrl = decodeURI(url);
+      } catch (error) {
+        console.error("Error decoding URL:", error);
+        // Return the original URL if decoding fails
+        return url;
+      }
+
+      if (decodedUrl === url) {
+        // Base case: URL is completely decoded
+        return decodedUrl;
+      }
+      // Recursive case: Continue decoding until fully decoded
+      return recursiveURIDecode(decodedUrl);
+    }
   }
 
   getFromBulkApiManager(slug, params) {
