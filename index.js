@@ -809,6 +809,23 @@ class Client {
     return this.hostname;
   }
 
+  recursiveURIDecode(url) {
+    let decodedUrl;
+    try {
+      decodedUrl = decodeURI(url);
+    } catch (error) {
+      console.error("Error decoding URL:", error);
+      // Return the original URL if decoding fails
+      return url;
+    }
+
+    if (decodedUrl === url) {
+      // Base case: URL is completely decoded
+      return decodedUrl;
+    }
+    // Recursive case: Continue decoding until fully decoded
+    return this.recursiveURIDecode(decodedUrl);
+  }
   /**
    * @external Response
    * @see https://github.com/request/request-promise
@@ -890,10 +907,11 @@ class Client {
 
   nativeRequest(path, opts) {
     const uri = this.baseUrl + path;
+    const decodedUrl = this.recursiveURIDecode(uri);
     const params = Object.assign(
       {
         method: "GET",
-        uri: uri,
+        uri: encodeURI(decodedUrl),
         json: true,
         gzip: true
       },
