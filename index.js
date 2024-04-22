@@ -1042,10 +1042,23 @@ class Client {
   }
 
   async getInBulk(requests) {
+    console.log("*** Inside getInBulk ***");
     const requestHash = hash(requests);
-    this._cachedPostBulkLocations[requestHash] =
-      this._cachedPostBulkLocations[requestHash] ||
-      (await this._cachedPostBulkGate(requestHash, getBulkLocation.bind(this)));
+
+    if (this._cachedPostBulkLocations[requestHash]) {
+      console.log("** hash found, making GET call");
+      return this.request(this._cachedPostBulkLocations[requestHash]);
+    }
+
+    console.log("** hash not found, making POST call");
+
+    this._cachedPostBulkLocations[requestHash] = await this._cachedPostBulkGate(
+      requestHash,
+      getBulkLocation.bind(this)
+    );
+
+    console.log("** requestHash > ", requestHash);
+    console.log(`** this._cachedPostBulkLocation > `, this._cachedPostBulkLocations);
     return this.request(this._cachedPostBulkLocations[requestHash]);
 
     async function getBulkLocation() {
