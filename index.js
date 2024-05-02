@@ -346,6 +346,7 @@ class Collection extends BaseAPI {
    * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
    */
   static getCollectionBySlug(client, slug, params, options = {}) {
+    console.log(`\n\n** Inside getCollectionBySlug slug > '${slug}' | params > '${JSON.stringify(params)}'`);
     const {
       depth = DEFAULT_DEPTH,
       storyLimits = {},
@@ -1057,8 +1058,6 @@ class Client {
       getBulkLocation.bind(this)
     );
 
-    console.log("** requestHash > ", requestHash);
-    console.log(`** this._cachedPostBulkLocation > `, this._cachedPostBulkLocations);
     return this.request(this._cachedPostBulkLocations[requestHash]);
 
     async function getBulkLocation() {
