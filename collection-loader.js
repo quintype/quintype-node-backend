@@ -36,6 +36,8 @@ function loadCollectionItems(
 
 // Ugly. This function updates all the items in place.
 // However, this is way more readable than a pure version
+
+// probable problem area
 function updateItemsInPlace(
   client,
   depth,
@@ -49,6 +51,7 @@ function updateItemsInPlace(
     customLayouts = []
   }
 ) {
+  console.log("** nestedCollectionLimit >> ", nestedCollectionLimit);
   const collections = items.filter(item => item && item.type == "collection");
 
   if (depth == 0 || collections.length == 0) return Promise.resolve();
@@ -84,7 +87,8 @@ function updateItemsInPlace(
       }
     });
 
-    if (collectionOfCollectionsIndexes.length) {
+    // if (collectionOfCollectionsIndexes.length) {
+    if (false) {
       const updatedCollections = collections
         .filter((_, index) => collectionOfCollectionsIndexes.includes(index))
         .map(childCollection => {
