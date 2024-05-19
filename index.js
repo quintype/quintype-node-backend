@@ -1042,13 +1042,16 @@ class Client {
   }
 
   async getInBulk(requests) {
+    console.log("\n\n**** getInBulk requests > ", JSON.stringify(requests));
     const requestHash = hash(requests);
     this._cachedPostBulkLocations[requestHash] =
       this._cachedPostBulkLocations[requestHash] ||
       (await this._cachedPostBulkGate(requestHash, getBulkLocation.bind(this)));
+    console.log("\n\n ** this._cachedPostBulkLocations >> ", this._cachedPostBulkLocations);
     return this.request(this._cachedPostBulkLocations[requestHash]);
 
     async function getBulkLocation() {
+      console.log("*** Making POST call ***");
       const response = await this.request("/api/v1/bulk-request", {
         method: ENABLE_AXIOS ? "post" : "POST",
         ...(ENABLE_AXIOS && { data: requests }),
@@ -1061,8 +1064,10 @@ class Client {
       });
 
       if (ENABLE_AXIOS && response.statusCode === 200 && response.redirectCount > 0) {
+        console.log("*** Returning content-location header", JSON.stringify(response.headers["content-location"]));
         return response.headers["content-location"];
       } else if (response.statusCode === 303 && response.caseless.get("Location")) {
+        console.log("*** [INFO] returning Location", JSON.stringify(response.caseless.get("Location")));
         return response.caseless.get("Location");
       } else {
         throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
