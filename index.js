@@ -1046,6 +1046,8 @@ class Client {
     this._cachedPostBulkLocations[requestHash] =
       this._cachedPostBulkLocations[requestHash] ||
       (await this._cachedPostBulkGate(requestHash, getBulkLocation.bind(this)));
+    console.log("Cached responses -------------> ", this._cachedPostBulkLocations);
+    console.log("This variable --> ", this);
     return this.request(this._cachedPostBulkLocations[requestHash]);
 
     async function getBulkLocation() {
@@ -1063,6 +1065,7 @@ class Client {
       if (ENABLE_AXIOS && response.statusCode === 200 && response.redirectCount > 0) {
         return response.headers["content-location"];
       } else if (response.statusCode === 303 && response.caseless.get("Location")) {
+        console.log("API called  ---------------> ", response.caseless.get("Location"));
         return response.caseless.get("Location");
       } else {
         throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
