@@ -1041,6 +1041,10 @@ class Client {
     });
   }
 
+  getCachedPostBulkLocations() {
+    return this._cachedPostBulkLocations;
+  }
+
   async getInBulk(requests) {
     console.log("\n\n**** getInBulk requests > ", JSON.stringify(requests));
     const requestHash = hash(requests);
