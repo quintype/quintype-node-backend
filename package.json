@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "2.4.1-reduce-bulk-requests.0",
+  "version": "2.4.1-reduce-bulk-requests.1",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
