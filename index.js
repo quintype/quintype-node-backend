@@ -13,13 +13,15 @@ const hash = require("object-hash");
 const { createCache, memoryStore } = require("cache-manager");
 
 const { DEFAULT_REQUEST_TIMEOUT, ENABLE_AXIOS } = require("./constants");
-const { CACHE_TIME, MAX_CACHE, ENABLE_TTL_CACHE } = require("./cache-constant");
+const { CACHE_TIME, MAX_CACHE, ENABLE_TTL_CACHE, BULK_REQ_TTL_CACHE } = require("./cache-constant");
 
 const memoryStoreInit = memoryStore();
 const memoryCache = createCache(memoryStoreInit, {
   max: MAX_CACHE,
   ttl: CACHE_TIME /* milliseconds */
 });
+
+const bulkReqCacheMs = BULK_REQ_TTL_CACHE || 12 * 60 * 60 * 1000; /* 12 hours in milliseconds */
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -330,8 +332,8 @@ class Collection extends BaseAPI {
         - Cricket `(Level 3)`
         - Football `(Level 3)`
         - Tennis `(Level 3)`
-   In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
-   * @param {Object} options.collectionOfCollectionsIndexes It accepts array of indexes(collection's position) to fetch collection of collection of items when the depth is 1. (Ex: collectionOfCollectionsIndexes: [0, 4]).
+  In the above example with nestedCollectionLimit: {ThreeColGrid: [2, 3, 4]}, Cricket collection will fetch 2 items, Football will fetch 5 items and Tennis will fetch 4 items. (default: defaultNestedLimit || 40)
+  * @param {Object} options.collectionOfCollectionsIndexes It accepts array of indexes(collection's position) to fetch collection of collection of items when the depth is 1. (Ex: collectionOfCollectionsIndexes: [0, 4]).
   eg:
     - Home `(Level 1)`
       - Sports Row `(Level 2)`
@@ -341,10 +343,10 @@ class Collection extends BaseAPI {
         - Movie `(Level 3)`
         - Song `(Level 3)`
     In the above example if we need to fetch the stories from `Sports Row` child collection we need to pass collectionOfCollectionsIndexes : [0], where 0 is the position of collection Sports Row and stories from Cricket and Football will be fetched
-   * @param {Object} options.customLayouts It accepts an array of objects to fetch the custom storyLimit and custom nestedCollectionLimit of custom layouts. (Ex: customLayouts: [{layout: "ArrowThreeColGrid", storyLimit: 9}, {layout: "ArrowTwoColTenStories", storyLimit: 2, nestedCollectionLimit: [5,5]}]).
-   * @return {(Promise<Collection|null>)}
-   * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
-   */
+  * @param {Object} options.customLayouts It accepts an array of objects to fetch the custom storyLimit and custom nestedCollectionLimit of custom layouts. (Ex: customLayouts: [{layout: "ArrowThreeColGrid", storyLimit: 9}, {layout: "ArrowTwoColTenStories", storyLimit: 2, nestedCollectionLimit: [5,5]}]).
+  * @return {(Promise<Collection|null>)}
+  * @see {@link https://developers.quintype.com/swagger/#/collection/get_api_v1_collections__slug_ GET /api/v1/collections/:slug} API documentation for a list of parameters and fields
+  */
   static getCollectionBySlug(client, slug, params, options = {}) {
     const {
       depth = DEFAULT_DEPTH,
@@ -1044,10 +1046,7 @@ class Client {
   async getInBulk(requests) {
     const requestHash = hash(requests);
     this._cachedPostBulkLocations[requestHash] =
-      this._cachedPostBulkLocations[requestHash] ||
-      (await this._cachedPostBulkGate(requestHash, getBulkLocation.bind(this)));
-    console.log("Cached responses -------------> ", this._cachedPostBulkLocations);
-    console.log("This variable --> ", this);
+      (await memoryCache.get(requestHash)) || (await this._cachedPostBulkGate(requestHash, getBulkLocation.bind(this)));
     return this.request(this._cachedPostBulkLocations[requestHash]);
 
     async function getBulkLocation() {
@@ -1063,10 +1062,13 @@ class Client {
       });
 
       if (ENABLE_AXIOS && response.statusCode === 200 && response.redirectCount > 0) {
-        return response.headers["content-location"];
+        const contentLocation = response.headers["content-location"];
+        await memoryCache.set(requestHash, contentLocation, bulkReqCacheMs);
+        return contentLocation;
       } else if (response.statusCode === 303 && response.caseless.get("Location")) {
-        console.log("API called  ---------------> ", response.caseless.get("Location"));
-        return response.caseless.get("Location");
+        const contentLocation = response.caseless.get("Location");
+        await memoryCache.set(requestHash, contentLocation, bulkReqCacheMs);
+        return contentLocation;
       } else {
         throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
       }
