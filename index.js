@@ -13,7 +13,7 @@ const hash = require("object-hash");
 const { createCache, memoryStore } = require("cache-manager");
 
 const { DEFAULT_REQUEST_TIMEOUT, ENABLE_AXIOS } = require("./constants");
-const { CACHE_TIME, MAX_CACHE, ENABLE_TTL_CACHE, BULK_REQ_TTL_CACHE } = require("./cache-constant");
+const { CACHE_TIME, MAX_CACHE, ENABLE_TTL_CACHE } = require("./cache-constant");
 
 const memoryStoreInit = memoryStore();
 const memoryCache = createCache(memoryStoreInit, {
@@ -21,7 +21,9 @@ const memoryCache = createCache(memoryStoreInit, {
   ttl: CACHE_TIME /* milliseconds */
 });
 
-const bulkReqCacheMs = BULK_REQ_TTL_CACHE || 12 * 60 * 60 * 1000; /* 12 hours in milliseconds */
+console.log("IS it reinitiated ?");
+
+// const bulkReqCacheMs = BULK_REQ_TTL_CACHE || 12 * 60 * 60 * 1000; /* 12 hours in milliseconds */
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -1045,9 +1047,6 @@ class Client {
 
   async getInBulk(requests) {
     const requestHash = hash(requests);
-    this._cachedPostBulkLocations[requestHash] =
-      (await memoryCache.get(requestHash)) || (await this._cachedPostBulkGate(requestHash, getBulkLocation.bind(this)));
-    return this.request(this._cachedPostBulkLocations[requestHash]);
 
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
@@ -1060,19 +1059,26 @@ class Client {
         simple: false,
         resolveWithFullResponse: true
       });
-
-      if (ENABLE_AXIOS && response.statusCode === 200 && response.redirectCount > 0) {
-        const contentLocation = response.headers["content-location"];
-        await memoryCache.set(requestHash, contentLocation, bulkReqCacheMs);
-        return contentLocation;
-      } else if (response.statusCode === 303 && response.caseless.get("Location")) {
+      if (response.statusCode === 303 && response.caseless.get("Location")) {
         const contentLocation = response.caseless.get("Location");
-        await memoryCache.set(requestHash, contentLocation, bulkReqCacheMs);
+        await memoryCache.set(requestHash, contentLocation, 10000000);
+        console.log("*********HASH SET TO CACHE**********", requestHash, contentLocation);
         return contentLocation;
       } else {
         throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
       }
     }
+
+    let cachedRequestHash = await memoryCache.get(requestHash);
+
+    console.log("CACHED RES ------> ", cachedRequestHash, requestHash);
+
+    if (!cachedRequestHash) {
+      cachedRequestHash = await getBulkLocation.bind(this)();
+      console.log("NOT CACHED ------", cachedRequestHash);
+    }
+    console.log("IS IT CACHED? -----> ", cachedRequestHash, await memoryCache.get(requestHash));
+    return this.request(cachedRequestHash);
   }
 
   getAmpStoryBySlug(slug) {
