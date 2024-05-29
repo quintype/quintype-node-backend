@@ -1040,7 +1040,7 @@ class Client {
       ...(!ENABLE_AXIOS && { body: params }),
       headers: {
         "X-QT-AUTH": authToken,
-        "content-type": "application/json"
+        "content-type": "text/plain"
       }
     });
   }
