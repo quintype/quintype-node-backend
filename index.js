@@ -13,7 +13,7 @@ const hash = require("object-hash");
 const { createCache, memoryStore } = require("cache-manager");
 
 const { DEFAULT_REQUEST_TIMEOUT, ENABLE_AXIOS } = require("./constants");
-const { CACHE_TIME, MAX_CACHE, ENABLE_TTL_CACHE } = require("./cache-constant");
+const { CACHE_TIME, MAX_CACHE, ENABLE_TTL_CACHE, BULK_REQ_TTL_CACHE } = require("./cache-constant");
 
 const memoryStoreInit = memoryStore();
 const memoryCache = createCache(memoryStoreInit, {
@@ -22,8 +22,6 @@ const memoryCache = createCache(memoryStoreInit, {
 });
 
 console.log("IS it reinitiated ?");
-
-// const bulkReqCacheMs = BULK_REQ_TTL_CACHE || 12 * 60 * 60 * 1000; /* 12 hours in milliseconds */
 
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
@@ -1040,7 +1038,7 @@ class Client {
       ...(!ENABLE_AXIOS && { body: params }),
       headers: {
         "X-QT-AUTH": authToken,
-        "content-type": "text/plain"
+        "content-type": "application/json"
       }
     });
   }
@@ -1061,8 +1059,7 @@ class Client {
       });
       if (response.statusCode === 303 && response.caseless.get("Location")) {
         const contentLocation = response.caseless.get("Location");
-        await memoryCache.set(requestHash, contentLocation, 10000000);
-        console.log("*********HASH SET TO CACHE**********", requestHash, contentLocation);
+        await memoryCache.set(requestHash, contentLocation, BULK_REQ_TTL_CACHE);
         return contentLocation;
       } else {
         throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
@@ -1070,14 +1067,9 @@ class Client {
     }
 
     let cachedRequestHash = await memoryCache.get(requestHash);
-
-    console.log("CACHED RES ------> ", cachedRequestHash, requestHash);
-
     if (!cachedRequestHash) {
       cachedRequestHash = await getBulkLocation.bind(this)();
-      console.log("NOT CACHED ------", cachedRequestHash);
     }
-    console.log("IS IT CACHED? -----> ", cachedRequestHash, await memoryCache.get(requestHash));
     return this.request(cachedRequestHash);
   }
 

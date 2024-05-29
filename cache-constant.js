@@ -1,6 +1,6 @@
 const CACHE_TIME = 240000;
 const MAX_CACHE = 200;
-const BULK_REQ_TTL_CACHE = 12 * 60 * 60 * 1000;
+const BULK_REQ_TTL_CACHE = 10000000;
 const ENABLE_TTL_CACHE = false;
 
 module.exports = {
