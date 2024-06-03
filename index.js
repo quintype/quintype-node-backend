@@ -21,8 +21,6 @@ const memoryCache = createCache(memoryStoreInit, {
   ttl: CACHE_TIME /* milliseconds */
 });
 
-console.log("IS it reinitiated ?");
-
 function mapValues(f, object) {
   return Object.entries(object).reduce((acc, [key, value]) => {
     acc[key] = f(value, key);
