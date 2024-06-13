@@ -1042,7 +1042,8 @@ class Client {
   }
 
   async getInBulk(requests) {
-    const requestHash = hash(requests);
+    const config = await this.getConfig();
+    const requestHash = hash({ ...requests, ...{ publisherId: config["publisher-id"] } });
 
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
