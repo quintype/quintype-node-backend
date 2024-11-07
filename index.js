@@ -1099,6 +1099,7 @@ class Client {
       }
       throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
     }
+
     if (opts?.qtInternalAppsKey && opts?.previewId) {
       const data = await getBulkPreviewData.bind(this)();
       return data;
