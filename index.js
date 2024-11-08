@@ -358,7 +358,7 @@ class Collection extends BaseAPI {
       customLayouts = []
     } = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
-
+    console.log("clug----", slug);
     if (!slug) {
       return Promise.resolve(null);
     }
@@ -369,6 +369,7 @@ class Collection extends BaseAPI {
     return client
       .getCollectionBySlug(slug, params, opts)
       .then(response => {
+        console.log("response----", response);
         const collection = response ? response["collection"] || response : null;
         return (
           collection &&
@@ -929,6 +930,7 @@ class Client {
 
   getCollectionBySlug(slug, params, opts = {}) {
     if (opts?.previewId && opts?.qtInternalAppsKey) {
+      console.log("coming in collectionbyslug");
       return this.request(`/api/v1/preview/${opts?.previewId}/collections/${slug}`, {
         qs: params,
         headers: {
@@ -1081,6 +1083,7 @@ class Client {
     }
 
     async function getBulkPreviewData() {
+      console.log("coming in bulk preview data");
       const response = await this.request(`/api/v1/preview/${opts?.previewId}/bulk-request`, {
         method: ENABLE_AXIOS ? "post" : "POST",
         ...(ENABLE_AXIOS && { data: requests }),
@@ -1092,9 +1095,10 @@ class Client {
         simple: false,
         resolveWithFullResponse: true
       });
-
+      console.log("response.statusCode", response.statusCode);
       if (response.statusCode === 200) {
         const data = response.toJSON();
+        console.log("data?.body------", data?.body);
         return data?.body;
       }
       throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
