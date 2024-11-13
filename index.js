@@ -841,6 +841,7 @@ class Client {
 
   axiosRequest(path, opts) {
     const uri = this.baseUrl + path;
+    console.log("axios uri------", uri);
     const abort = axios.CancelToken.source();
     const cancelTimeout = DEFAULT_REQUEST_TIMEOUT + 500;
     const timeoutID = setTimeout(() => abort.cancel(`Timeout of ${cancelTimeout}ms.`), cancelTimeout);
@@ -899,6 +900,7 @@ class Client {
 
   nativeRequest(path, opts) {
     const uri = this.baseUrl + path;
+    console.log("uri=-", uri);
     const params = Object.assign(
       {
         method: "GET",
@@ -930,7 +932,8 @@ class Client {
 
   getCollectionBySlug(slug, params, opts = {}) {
     if (opts?.previewId && opts?.qtInternalAppsKey) {
-      console.log("coming in collectionbyslug");
+      console.log("coming in collectionbyslug------------", `/api/v1/preview/${opts?.previewId}/collections/${slug}`);
+      console.log("params-----------", params);
       return this.request(`/api/v1/preview/${opts?.previewId}/collections/${slug}`, {
         qs: params,
         headers: {
