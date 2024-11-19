@@ -989,13 +989,13 @@ class Client {
    * This method is used to get the current in-memory cached host-to-api mapping for publishers. By default, this has a TTL of 4 minutes.
    * @returns {(Promise<Config>)} A Promise that returns a in-memory cached instance of {@link Config}
    */
-  async getHostToAPIMappingCache() {
+  async getHostToAPIMappingCache(xHostAPIToken) {
     // Cache key need not be unique across client instances
     const cacheKeyAttribute = `hostToApiMapping`;
     const hostToApiCache = await memoryCache.wrap(
       cacheKeyAttribute,
       async () => {
-        const mapping = await this.getHostToAPIMapping();
+        const mapping = await this.getHostToAPIMapping(xHostAPIToken);
         return mapping.asJson();
       },
       CACHE_TIME
