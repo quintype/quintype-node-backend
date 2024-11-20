@@ -995,8 +995,7 @@ class Client {
     const hostToApiCache = await memoryCache.wrap(
       cacheKeyAttribute,
       async () => {
-        const mapping = await this.getHostToAPIMapping(xHostAPIToken);
-        return mapping.asJson();
+        return this.getHostToAPIMapping(xHostAPIToken);
       },
       CACHE_TIME
     );
