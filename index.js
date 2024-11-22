@@ -358,7 +358,6 @@ class Collection extends BaseAPI {
       customLayouts = []
     } = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
-    console.log("clug----", slug);
     if (!slug) {
       return Promise.resolve(null);
     }
@@ -369,7 +368,6 @@ class Collection extends BaseAPI {
     return client
       .getCollectionBySlug(slug, params, opts)
       .then(response => {
-        console.log("response----", response);
         const collection = response ? response["collection"] || response : null;
         return (
           collection &&
@@ -841,7 +839,6 @@ class Client {
 
   axiosRequest(path, opts) {
     const uri = this.baseUrl + path;
-    console.log("axios uri------", uri);
     const abort = axios.CancelToken.source();
     const cancelTimeout = DEFAULT_REQUEST_TIMEOUT + 500;
     const timeoutID = setTimeout(() => abort.cancel(`Timeout of ${cancelTimeout}ms.`), cancelTimeout);
@@ -900,7 +897,6 @@ class Client {
 
   nativeRequest(path, opts) {
     const uri = this.baseUrl + path;
-    console.log("uri=-", uri);
     const params = Object.assign(
       {
         method: "GET",
@@ -932,8 +928,6 @@ class Client {
 
   getCollectionBySlug(slug, params, opts = {}) {
     if (opts?.previewId && opts?.qtInternalAppsKey) {
-      console.log("coming in collectionbyslug------------", `/api/v1/preview/${opts?.previewId}/collections/${slug}`);
-      console.log("params-----------", params);
       return this.request(`/api/v1/preview/${opts?.previewId}/collections/${slug}`, {
         qs: params,
         headers: {
@@ -1086,7 +1080,6 @@ class Client {
     }
 
     async function getBulkPreviewData() {
-      console.log("coming in bulk preview data");
       const response = await this.request(`/api/v1/preview/${opts?.previewId}/bulk-request`, {
         method: ENABLE_AXIOS ? "post" : "POST",
         ...(ENABLE_AXIOS && { data: requests }),
@@ -1098,10 +1091,8 @@ class Client {
         simple: false,
         resolveWithFullResponse: true
       });
-      console.log("response.statusCode", response.statusCode);
       if (response.statusCode === 200) {
         const data = response.toJSON();
-        console.log("data?.body------", data?.body);
         return data?.body;
       }
       throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
