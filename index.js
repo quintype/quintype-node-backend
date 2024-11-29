@@ -368,6 +368,7 @@ class Collection extends BaseAPI {
     return client
       .getCollectionBySlug(slug, params, opts)
       .then(response => {
+        console.log("getCollectionBySlug=", response);
         const collection = response ? response["collection"] || response : null;
         return (
           collection &&
@@ -1070,7 +1071,7 @@ class Client {
         simple: false,
         resolveWithFullResponse: true
       });
-
+      console.log("response bulk", response);
       if (response.statusCode === 303 && response.caseless.get("Location")) {
         const contentLocation = response.caseless.get("Location");
         await memoryCache.set(requestHash, contentLocation, BULK_REQ_TTL_CACHE);
@@ -1091,6 +1092,7 @@ class Client {
         simple: false,
         resolveWithFullResponse: true
       });
+      console.log("response bulk preview", response);
       if (response.statusCode === 200) {
         const data = response.toJSON();
         return data?.body;
@@ -1100,11 +1102,14 @@ class Client {
 
     if (opts?.qtInternalAppsKey && opts?.previewId) {
       const data = await getBulkPreviewData.bind(this)();
+      console.log("bulk data if", data);
       return data;
     } else {
       let cachedRequestHash = await memoryCache.get(requestHash);
+      console.log("cachedRequestHash=======", cachedRequestHash);
       if (!cachedRequestHash) {
         cachedRequestHash = await getBulkLocation.bind(this)();
+        console.log("bulk data if cachedRequestHash", cachedRequestHash);
       }
       return this.request(cachedRequestHash);
     }
