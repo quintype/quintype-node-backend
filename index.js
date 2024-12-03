@@ -222,7 +222,7 @@ class Story extends BaseAPI {
    * @param {Object} requests
    * @see {@link https://developers.quintype.com/swagger/#/story/post_api_v1_c_request POST /api/v1/bulk-request} API documentation for a list of parameters and fields
    */
-  static getInBulk(client, requests) {
+  static getInBulk(client, requests, opts = {}) {
     function wrapResult(result) {
       if (!result.stories) return result;
       return Object.assign({}, result, {
@@ -231,9 +231,12 @@ class Story extends BaseAPI {
     }
 
     return client
-      .getInBulk({
-        requests: mapValues(r => Object.assign({ _type: "stories" }, r), requests)
-      })
+      .getInBulk(
+        {
+          requests: mapValues(r => Object.assign({ _type: "stories" }, r), requests)
+        },
+        opts
+      )
       .then(response => BulkResults.build(mapValues(result => wrapResult(result), response["results"])));
   }
 }
@@ -355,13 +358,15 @@ class Collection extends BaseAPI {
       customLayouts = []
     } = options;
     const storyFields = _.get(params, ["story-fields"], DEFAULT_STORY_FIELDS);
-
     if (!slug) {
       return Promise.resolve(null);
     }
-
+    const opts =
+      options?.previewId && options?.qtInternalAppsKey
+        ? { previewId: options?.previewId, qtInternalAppsKey: options?.qtInternalAppsKey }
+        : {};
     return client
-      .getCollectionBySlug(slug, params)
+      .getCollectionBySlug(slug, params, opts)
       .then(response => {
         const collection = response ? response["collection"] || response : null;
         return (
@@ -373,7 +378,9 @@ class Collection extends BaseAPI {
             defaultNestedLimit,
             nestedCollectionLimit,
             collectionOfCollectionsIndexes,
-            customLayouts
+            customLayouts,
+            previewId: options?.previewId || "",
+            qtInternalAppsKey: options?.qtInternalAppsKey || ""
           })
         );
       })
@@ -919,7 +926,15 @@ class Client {
     return this.request("/api/v1/preview/story/" + publicPreviewKey).catch(e => catch404(e, {}));
   }
 
-  getCollectionBySlug(slug, params) {
+  getCollectionBySlug(slug, params, opts = {}) {
+    if (opts?.previewId && opts?.qtInternalAppsKey) {
+      return this.request(`/api/v1/preview/${opts?.previewId}/collections/${slug}`, {
+        qs: params,
+        headers: {
+          "qt-internal-apps-key": opts?.qtInternalAppsKey
+        }
+      }).catch(e => catch404(e, null));
+    }
     return this.request("/api/v1/collections/" + slug, {
       qs: params
     }).catch(e => catch404(e, null));
@@ -1067,10 +1082,9 @@ class Client {
     });
   }
 
-  async getInBulk(requests) {
+  async getInBulk(requests, opts = {}) {
     const config = await this.getConfig();
     const requestHash = hash({ ...requests, ...{ publisherId: config["publisher-id"] } });
-
     async function getBulkLocation() {
       const response = await this.request("/api/v1/bulk-request", {
         method: ENABLE_AXIOS ? "post" : "POST",
@@ -1082,20 +1096,44 @@ class Client {
         simple: false,
         resolveWithFullResponse: true
       });
+
       if (response.statusCode === 303 && response.caseless.get("Location")) {
         const contentLocation = response.caseless.get("Location");
         await memoryCache.set(requestHash, contentLocation, BULK_REQ_TTL_CACHE);
         return contentLocation;
-      } else {
-        throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
       }
+      throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
     }
 
-    let cachedRequestHash = await memoryCache.get(requestHash);
-    if (!cachedRequestHash) {
-      cachedRequestHash = await getBulkLocation.bind(this)();
+    async function getBulkPreviewData() {
+      const response = await this.request(`/api/v1/preview/${opts?.previewId}/bulk-request`, {
+        method: ENABLE_AXIOS ? "post" : "POST",
+        ...(ENABLE_AXIOS && { data: requests }),
+        ...(!ENABLE_AXIOS && { body: requests }),
+        headers: {
+          "content-type": "text/plain",
+          "qt-internal-apps-key": opts?.qtInternalAppsKey
+        },
+        simple: false,
+        resolveWithFullResponse: true
+      });
+      if (response.statusCode === 200) {
+        const data = response.toJSON();
+        return data?.body;
+      }
+      throw new Error(`Could Not Convert POST bulk to a get, got status ${response.statusCode}`);
     }
-    return this.request(cachedRequestHash);
+
+    if (opts?.qtInternalAppsKey && opts?.previewId) {
+      const data = await getBulkPreviewData.bind(this)();
+      return data;
+    } else {
+      let cachedRequestHash = await memoryCache.get(requestHash);
+      if (!cachedRequestHash) {
+        cachedRequestHash = await getBulkLocation.bind(this)();
+      }
+      return this.request(cachedRequestHash);
+    }
   }
 
   getAmpStoryBySlug(slug) {
