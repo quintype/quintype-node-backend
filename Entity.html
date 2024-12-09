@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
     <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+    
 </head>
 
 <body>
@@ -24,10 +26,10 @@
         <div class="container">
             <nav class="navbar" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
-                     
+                    
                         <img src="https://images.assettype.com/quintype-website/2018-10/013e8cbe-92b4-435f-bbbb-3e101efbc99a/quintype_logo.png?w=180" alt="logo">
                     
-                     
+                    
                         <h1 class="navbar-item">@quintype/backend</h1>
                     
                     <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
@@ -36,12 +38,14 @@
                         <span aria-hidden="true"></span>
                     </a>
                 </div>
-                 
+                
                 <div class="navbar-menu">
                     <div class="navbar-end">
                     
                         <div class="navbar-item">
-                            <a href="https://github.com/quintype/quintype-node-backend" target="_blank">Github</a>
+                            <a href="https://github.com/quintype/quintype-node-backend" target="_blank">
+                                Github
+                            </a>
                         </div>
                     
                     </div>
@@ -65,7 +69,7 @@
                         <p>Class</p>
                         <h1>Entity</h1>
                     </header>
-                    
+
                     
 
 
@@ -95,7 +99,6 @@ City may have a name, population, and be associated with a mayor (person).</p>
     
         
             
-
 
 
 
@@ -145,7 +148,7 @@ City may have a name, population, and be associated with a mayor (person).</p>
         <p class="tag-source">
             <a href="index.js.html" class="button">View Source</a>
             <span>
-                <a href="index.js.html">index.js</a>, <a href="index.js.html#line688">line 688</a>
+                <a href="index.js.html">index.js</a>, <a href="index.js.html#line687">line 687</a>
             </span>
         </p>
     
@@ -175,7 +178,7 @@ City may have a name, population, and be associated with a mayor (person).</p>
         
     
     </div>
-
+    
     
 
     
@@ -197,15 +200,19 @@ City may have a name, population, and be associated with a mayor (person).</p>
             
                 <div class="member">
 
+
     
     <h4 class="name" id=".getEntities">
+        <a class="href-link" href="#.getEntities">#</a>
         
             
                 <span class='tag'>static</span>
             
         
         <span class="code-name">
-            getEntities<span class="signature">(client, params)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Entity.html">Entity</a>>}</span>
+            
+                getEntities<span class="signature">(client, params)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Entity.html">Entity</a>>}</span>
+            
         </span>
     </h4>
     
@@ -223,8 +230,6 @@ showEntities(entities.map(e => e.asJson()))
 </code></pre>
     </div>
     
-
-
 
 
 
@@ -496,15 +501,19 @@ showEntities(entities.map(e => e.asJson()))
             
                 <div class="member">
 
+
     
     <h4 class="name" id=".getEntity">
+        <a class="href-link" href="#.getEntity">#</a>
         
             
                 <span class='tag'>static</span>
             
         
         <span class="code-name">
-            getEntity<span class="signature">(client, entityId, params)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="Entity.html">Entity</a>|null)>}</span>
+            
+                getEntity<span class="signature">(client, entityId, params)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="Entity.html">Entity</a>|null)>}</span>
+            
         </span>
     </h4>
     
@@ -515,8 +524,6 @@ showEntities(entities.map(e => e.asJson()))
         <p>Fetches an entity given it's Id.</p>
     </div>
     
-
-
 
 
 
@@ -718,11 +725,15 @@ showEntities(entities.map(e => e.asJson()))
             
                 <div class="member">
 
+
     
     <h4 class="name" id="asJson">
+        <a class="href-link" href="#asJson">#</a>
         
         <span class="code-name">
-            asJson<span class="signature">()</span><span class="type-signature"></span>
+            
+                asJson<span class="signature">()</span><span class="type-signature"></span>
+            
         </span>
     </h4>
     
@@ -733,8 +744,6 @@ showEntities(entities.map(e => e.asJson()))
         <p>Use this to convert to a simple javascript object, suitable for JSON.</p>
     </div>
     
-
-
 
 
 
@@ -813,11 +822,15 @@ showEntities(entities.map(e => e.asJson()))
             
                 <div class="member">
 
+
     
     <h4 class="name" id="getCollections">
+        <a class="href-link" href="#getCollections">#</a>
         
         <span class="code-name">
-            getCollections<span class="signature">(client, params)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Collection.html">Collection</a>>}</span>
+            
+                getCollections<span class="signature">(client, params)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Collection.html">Collection</a>>}</span>
+            
         </span>
     </h4>
     
@@ -836,8 +849,6 @@ const issues = await magazine.getCollections(client, {
 </code></pre>
     </div>
     
-
-
 
 
 
@@ -1031,17 +1042,20 @@ const issues = await magazine.getCollections(client, {
         </div>
     </div>
 
+
 <footer class="footer">
     <div class="content has-text-centered">
-        <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a></p>
+        <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a></p>
         <p class="sidebar-created-by">
-            <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+            <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
             <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
         </p>
     </div>
 </footer>
 
+
 <script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
 <script src="scripts/linenumber.js"> </script>
 </body>
 </html>
