@@ -1000,6 +1000,32 @@ class Client {
     return Config.build(cacheConfig);
   }
 
+  /*
+   * This method is used to get the current in-memory cached host-to-api mapping for publishers. By default, this has a TTL of 4 minutes.
+   * @returns {(Promise<Config>)} A Promise that returns a in-memory cached instance of {@link Config}
+   */
+  async getHostToAPIMappingCache(xHostAPIToken) {
+    // Cache key need not be unique across client instances
+    const cacheKeyAttribute = `hostToApiMapping`;
+    const hostToApiCache = await memoryCache.wrap(
+      cacheKeyAttribute,
+      async () => {
+        return this.getHostToAPIMapping(xHostAPIToken);
+      },
+      CACHE_TIME
+    );
+    return hostToApiCache;
+  }
+
+  async getHostToAPIMapping(xHostAPIToken) {
+    if (!xHostAPIToken) return new Promise(resolve => resolve({}));
+    return this.request("/api/v1/mappings/host-to-publisher-name", {
+      headers: {
+        "x-host-mapping-token": xHostAPIToken
+      }
+    });
+  }
+
   getCurrentMember(authToken) {
     return this.request("/api/v1/members/me", {
       headers: {
