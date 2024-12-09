@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-backend-js#readme",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.28.0",
     "bluebird": "^3.7.2",
     "cache-manager": "^5.4.0",
     "lodash": "^4.17.15",
