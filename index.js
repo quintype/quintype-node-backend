@@ -907,7 +907,7 @@ class Client {
       opts
     );
     return rp(params).catch(e => {
-      console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+      console.error(`Error in API ${uri} Opts ${opts}: Status ${e.statusCode}`);
       throw e;
     });
   }
