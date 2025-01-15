@@ -14,6 +14,7 @@ const { createCache, memoryStore } = require("cache-manager");
 
 const { DEFAULT_REQUEST_TIMEOUT, ENABLE_AXIOS } = require("./constants");
 const { CACHE_TIME, MAX_CACHE, ENABLE_TTL_CACHE, BULK_REQ_TTL_CACHE } = require("./cache-constant");
+const { v4: uuidv4 } = require("uuid");
 
 const memoryStoreInit = memoryStore();
 const memoryCache = createCache(memoryStoreInit, {
@@ -830,11 +831,25 @@ class Client {
    * @param {string} opts.body The body of the request (for POST requests only)
    * @returns {Promise<Response>} A promise of the response
    */
+
   request(path, opts) {
+    /**
+     * Ensures the presence of a 'qt-trace-id' in the options (`opts`).
+     * If `opts.headers['qt-trace-id']` exists, it uses that value; otherwise, it generates a new UUID.
+     */
+    const qtTraceId = (opts && opts.headers && opts.headers["qt-trace-id"]) || uuidv4();
+    const updatedOpts = {
+      ...opts,
+      headers: {
+        ...opts?.headers,
+        "qt-trace-id": qtTraceId
+      }
+    };
+
     if (ENABLE_AXIOS) {
-      return this.axiosRequest(path, opts);
+      return this.axiosRequest(path, updatedOpts);
     }
-    return this.nativeRequest(path, opts);
+    return this.nativeRequest(path, updatedOpts);
   }
 
   axiosRequest(path, opts) {
