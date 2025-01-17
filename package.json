@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "2.7.1",
+  "version": "2.7.2-qttracelogs.0",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
