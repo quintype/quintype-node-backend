@@ -838,6 +838,7 @@ class Client {
      * If `opts.headers['qt-trace-id']` exists, it uses that value; otherwise, it generates a new UUID.
      */
     const qtTraceId = (opts && opts.headers && opts.headers["qt-trace-id"]) || uuidv4();
+    console.log("QT TRACE ID NBE", qtTraceId);
     const updatedOpts = {
       ...opts,
       headers: {
