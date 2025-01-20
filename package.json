@@ -1,6 +1,6 @@
 {
   "name": "@quintype/backend",
-  "version": "2.7.0",
+  "version": "2.7.2-qttracelogs.6",
   "description": "client for accessing quintype API",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,8 @@
     "cache-manager": "^5.4.0",
     "lodash": "^4.17.15",
     "object-hash": "^2.0.1",
-    "request-promise": "^4.2.6"
+    "request-promise": "^4.2.6",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
