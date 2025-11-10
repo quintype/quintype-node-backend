@@ -904,10 +904,25 @@ class Client {
         json: true,
         gzip: true
       },
+      opts?.enableLog ? { resolveWithFullResponse: true } : {},
       opts
     );
-    return rp(params).catch(e => {
-      console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+    return rp(params)
+        .then(response => {
+          if (opts?.enableLog) {
+            console.log("log--request params", params);
+            console.log(`log--response headers for ${uri}:`, response.headers);
+            console.log(`log--response content for ${uri}:`, response.body);
+            return response.body;
+           }     
+           return response;
+        })
+        .catch(e => {
+          console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+          if (e.response) {
+            console.error(`log--error headers for ${uri}:`, e.response.headers);
+            console.error(`log--error content for ${uri}:`, e.response.body);
+          }
       throw e;
     });
   }
@@ -1169,7 +1184,8 @@ class Client {
   }
   getAuthorCollection(authorId, params) {
     return this.request(`/api/v1/authors/${authorId}/collection`, {
-      qs: params
+      qs: params,
+      enableLog: true
     });
   }
 
