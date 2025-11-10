@@ -897,6 +897,7 @@ class Client {
 
   nativeRequest(path, opts) {
     const uri = this.baseUrl + path;
+    console.log("log--opts?.enableLog", opts?.enableLog);
     const params = Object.assign(
       {
         method: "GET",
@@ -907,24 +908,25 @@ class Client {
       opts?.enableLog ? { resolveWithFullResponse: true } : {},
       opts
     );
+    console.log("log--opts?.enableLog2", opts?.enableLog);
     return rp(params)
-        .then(response => {
-          if (opts?.enableLog) {
-            console.log("log--request params", params);
-            console.log(`log--response headers for ${uri}:`, response.headers);
-            console.log(`log--response content for ${uri}:`, response.body);
-            return response.body;
-           }     
-           return response;
-        })
-        .catch(e => {
-          console.error(`Error in API ${uri}: Status ${e.statusCode}`);
-          if (e.response) {
-            console.error(`log--error headers for ${uri}:`, e.response.headers);
-            console.error(`log--error content for ${uri}:`, e.response.body);
-          }
-      throw e;
-    });
+      .then(response => {
+        if (opts?.enableLog) {
+          console.log("log--request params", params);
+          console.log(`log--response headers for ${uri}:`, response.headers);
+          console.log(`log--response content for ${uri}:`, response.body);
+          return response.body;
+        }
+        return response;
+      })
+      .catch(e => {
+        console.error(`Error in API ${uri}: Status ${e.statusCode}`);
+        if (e.response) {
+          console.error(`log--error headers for ${uri}:`, e.response.headers);
+          console.error(`log--error content for ${uri}:`, e.response.body);
+        }
+        throw e;
+      });
   }
 
   getFromBulkApiManager(slug, params) {
