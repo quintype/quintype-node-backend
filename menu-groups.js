@@ -1,6 +1,6 @@
-const { BaseAPI } = require('./base-api');
+const { BaseAPI } = require("./base-api");
 
-class MenuGroups extends BaseAPI{
+class MenuGroups extends BaseAPI {
   constructor(menuGroups) {
     super();
     this.menuGroups = menuGroups;
@@ -15,9 +15,7 @@ class MenuGroups extends BaseAPI{
   }
 
   static getMenuGroups(client, params = {}) {
-    return client
-      .getMenuGroups(params)
-      .then(response => this.build(response['menu-groups']));
+    return client.getMenuGroups(params).then(response => this.build(response["menu-groups"]));
   }
 }
 
